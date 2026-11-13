@@ -906,6 +906,20 @@
                 </button>
               </div>
             </div>
+
+            <!-- Manage / Delete Members -->
+            <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
+              <h3
+                class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
+              >
+                <i data-lucide="user-x" class="w-5 h-5 text-red-600"></i>
+                <span>Manage & Delete Members</span>
+              </h3>
+              <div
+                id="admin-members-list"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+              ></div>
+            </div>
           </div>
         </section>
       </main>
@@ -991,11 +1005,18 @@
             </div>
           </div>
 
-          <div id="modal-admin-actions" class="mt-4 hidden">
+          <div id="modal-admin-actions" class="mt-4 hidden space-y-2">
             <button
               id="modal-suspend-btn"
               class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
             ></button>
+            <button
+              id="modal-delete-btn"
+              class="w-full py-2.5 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Delete Member Permanently</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1169,7 +1190,6 @@
           const email = document.getElementById("reg-email").value.trim();
           const password = document.getElementById("reg-pass").value;
 
-          // Change approved: false to approved: true if you want instant login without Admin approval
           pendingRegistrationProfile = {
             name,
             email,
@@ -1196,10 +1216,12 @@
       // Logout buttons
       const doLogout = async () => {
         if (currentUser) {
-          await set(ref(rtdb, `status/${currentUser.uid}`), {
-            state: "offline",
-            lastChanged: rtdbTimestamp(),
-          });
+          try {
+            await set(ref(rtdb, `status/${currentUser.uid}`), {
+              state: "offline",
+              lastChanged: rtdbTimestamp(),
+            });
+          } catch (_) {}
         }
         leaveMeeting();
         await signOut(auth);
@@ -1214,6 +1236,15 @@
         if (user) {
           currentUser = user;
           try {
+            const delSnap = await getDoc(doc(db, "deletedIds", user.uid));
+            if (delSnap.exists()) {
+              const errEl = document.getElementById("login-error");
+              errEl.innerText = "This account has been deleted by the Admin.";
+              errEl.classList.remove("hidden");
+              await signOut(auth);
+              return;
+            }
+
             if (pendingRegistrationProfile) {
               currentUserProfile = pendingRegistrationProfile;
               pendingRegistrationProfile = null;
@@ -1295,7 +1326,6 @@
           avatarUrl(currentUserProfile);
       }
 
-      // Real-time Online / Away / Offline Presence
       function setupPresence(uid) {
         const userStatusRef = ref(rtdb, `status/${uid}`);
         const connectedRef = ref(rtdb, ".info/connected");
@@ -1322,9 +1352,16 @@
         });
       }
 
-      // Listen Firestore & RTDB
       let firstUpdateLoad = true;
       function listenAllData() {
+        // Kick user out immediately if Admin deletes their ID
+        onSnapshot(doc(db, "deletedIds", currentUser.uid), (snap) => {
+          if (snap.exists()) {
+            alert("Your account has been deleted by the Admin.");
+            doLogout();
+          }
+        });
+
         onValue(ref(rtdb, "status"), (snap) => {
           presenceMap = snap.val() || {};
           renderMembers();
@@ -1334,6 +1371,7 @@
           allMembers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
           renderMembers();
           renderPendingApprovals();
+          renderAdminMembersList();
         });
 
         const qUpdates = query(
@@ -1369,6 +1407,58 @@
         });
       }
 
+      function renderAdminMembersList() {
+        const container = document.getElementById("admin-members-list");
+        if (!container || currentUserProfile?.role !== "admin") return;
+
+        const others = allMembers.filter((m) => m.id !== currentUser?.uid);
+        if (others.length === 0) {
+          container.innerHTML = `<p class="text-xs text-slate-400 col-span-full">No other members found.</p>`;
+          return;
+        }
+
+        container.innerHTML = others
+          .map(
+            (m) => `
+        <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="${avatarUrl(m)}" class="w-9 h-9 rounded-xl object-cover shrink-0" />
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-slate-800 truncate">${escapeHtml(m.name)}</p>
+              <p class="text-[11px] text-slate-500 truncate">${escapeHtml(m.email)}</p>
+            </div>
+          </div>
+          <button onclick="deleteMember('${m.id}', '${escapeHtml(m.name)}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition shrink-0">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>Delete</span>
+          </button>
+        </div>
+      `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      window.deleteMember = async (uid, name) => {
+        if (
+          !confirm(
+            `Are you sure you want to permanently delete "${name}"? This member will lose all access immediately.`,
+          )
+        )
+          return;
+        try {
+          await setDoc(doc(db, "deletedIds", uid), {
+            deletedAt: serverTimestamp(),
+            deletedBy: currentUserProfile?.name || "Admin",
+          });
+          await deleteDoc(doc(db, "users", uid));
+          closeMemberModal();
+          showToast(`Member "${name}" has been deleted.`, "warn");
+        } catch (err) {
+          showToast("Error deleting member: " + err.message, "error");
+        }
+      };
+
       function renderPendingApprovals() {
         const pending = allMembers.filter((m) => m.approved === false);
         const badge = document.getElementById("admin-pending-badge");
@@ -1389,7 +1479,7 @@
             </div>
             <div class="flex gap-1.5 shrink-0">
               <button onclick="approveMember('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">Approve</button>
-              <button onclick="rejectMember('${m.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Reject</button>
+              <button onclick="deleteMember('${m.id}', '${escapeHtml(m.name)}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Delete</button>
             </div>
           </div>
         `,
@@ -1407,13 +1497,6 @@
         showToast("Member approved!");
       };
 
-      window.rejectMember = async (uid) => {
-        if (confirm("Reject and remove this registration request?")) {
-          await deleteDoc(doc(db, "users", uid));
-          showToast("Registration rejected", "warn");
-        }
-      };
-
       function statusBadgeHtml(uid) {
         const st = presenceMap[uid]?.state || "offline";
         if (st === "active") {
@@ -1425,7 +1508,6 @@
         return `<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>Offline</span>`;
       }
 
-      // Render Members
       window.renderMembers = () => {
         const search = (
           document.getElementById("member-search").value || ""
@@ -1496,18 +1578,21 @@
 
         const adminBox = document.getElementById("modal-admin-actions");
         const suspendBtn = document.getElementById("modal-suspend-btn");
+        const deleteBtn = document.getElementById("modal-delete-btn");
+
         if (currentUserProfile?.role === "admin" && m.id !== currentUser?.uid) {
           adminBox.classList.remove("hidden");
           suspendBtn.innerText = m.disabled
             ? "Re-enable Member Account"
-            : "Suspend / Remove Member";
+            : "Suspend Member Temporarily";
           suspendBtn.className = m.disabled
             ? "w-full py-2.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition"
-            : "w-full py-2.5 rounded-xl text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition";
+            : "w-full py-2.5 rounded-xl text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition";
           suspendBtn.onclick = async () => {
             await toggleDisableMember(m.id, !m.disabled);
             closeMemberModal();
           };
+          deleteBtn.onclick = () => deleteMember(m.id, m.name);
         } else {
           adminBox.classList.add("hidden");
         }
@@ -1520,7 +1605,6 @@
         document.getElementById("member-modal").classList.add("hidden");
       };
 
-      // Render Updates
       window.renderUpdates = () => {
         const filter = document.getElementById("filter-update-type").value;
         const list = document.getElementById("updates-list");
@@ -1599,7 +1683,6 @@
         lucide.createIcons();
       };
 
-      // Direct Image Upload & Compression
       document
         .getElementById("prof-photo-file")
         .addEventListener("change", (e) => {
@@ -1681,7 +1764,6 @@
           showToast("Profile updated successfully!");
         });
 
-      // Admin: Add Member Directly
       document
         .getElementById("admin-add-member-form")
         .addEventListener("submit", async (e) => {
@@ -1723,7 +1805,6 @@
           }
         });
 
-      // Admin: Post Update
       document
         .getElementById("admin-post-update-form")
         .addEventListener("submit", async (e) => {
