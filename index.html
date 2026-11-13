@@ -906,20 +906,6 @@
                 </button>
               </div>
             </div>
-
-            <!-- Manage / Delete Members -->
-            <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
-              <h3
-                class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
-              >
-                <i data-lucide="user-x" class="w-5 h-5 text-red-600"></i>
-                <span>Manage & Delete Members</span>
-              </h3>
-              <div
-                id="admin-members-list"
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
-              ></div>
-            </div>
           </div>
         </section>
       </main>
@@ -1005,18 +991,11 @@
             </div>
           </div>
 
-          <div id="modal-admin-actions" class="mt-4 hidden space-y-2">
+          <div id="modal-admin-actions" class="mt-4 hidden">
             <button
               id="modal-suspend-btn"
               class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
             ></button>
-            <button
-              id="modal-delete-btn"
-              class="w-full py-2.5 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1.5 transition"
-            >
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>Delete Member Permanently</span>
-            </button>
           </div>
         </div>
       </div>
@@ -1024,742 +1003,864 @@
 
     <!-- ================= FIREBASE & APP LOGIC ================= -->
     <script type="module">
-          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-          import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-          import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-          import { getDatabase, ref, set, onValue, onDisconnect, serverTimestamp as rtdbTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+        createUserWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        getDocs,
+        setDoc,
+        updateDoc,
+        deleteDoc,
+        collection,
+        addDoc,
+        query,
+        orderBy,
+        onSnapshot,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+        onValue,
+        onDisconnect,
+        serverTimestamp as rtdbTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-          // ⚠️ Paste your Firebase Project Config below
-          const firebaseConfig = {
+      // ⚠️ Paste your Firebase Project Config below
+      const firebaseConfig = {
         apiKey: "AIzaSyDc6eeu0ZFcXNYxPt4WyigTT3cVTv_X9Mo",
         authDomain: "darber-e-chandpurishah.firebaseapp.com",
-        databaseURL: "https://darber-e-chandpurishah-default-rtdb.asia-southeast1.firebasedatabase.app",
+        databaseURL:
+          "https://darber-e-chandpurishah-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "darber-e-chandpurishah",
         storageBucket: "darber-e-chandpurishah.firebasestorage.app",
         messagingSenderId: "97064040653",
         appId: "1:97064040653:web:6e4fc2aee354262f7d9184",
-        measurementId: "G-V558RP0KWT"
+        measurementId: "G-V558RP0KWT",
       };
 
-          };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const rtdb = getDatabase(app);
 
-          const app = initializeApp(firebaseConfig);
-          const auth = getAuth(app);
-          const db = getFirestore(app);
-          const rtdb = getDatabase(app);
+      const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+      const secondaryAuth = getAuth(secondaryApp);
 
-          const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
-          const secondaryAuth = getAuth(secondaryApp);
+      let currentUser = null;
+      let currentUserProfile = null;
+      let allMembers = [];
+      let presenceMap = {};
+      let allUpdates = [];
+      let jitsiApi = null;
+      let currentMeetingRoom = "DarberEChandpurishahMainRoom2025";
+      let uploadedPhotoBase64 = "";
+      let pendingRegistrationProfile = null;
 
-          let currentUser = null;
-          let currentUserProfile = null;
-          let allMembers = [];
-          let presenceMap = {};
-          let allUpdates = [];
-          let jitsiApi = null;
-          let currentMeetingRoom = "DarberEChandpurishahMainRoom2025";
-          let uploadedPhotoBase64 = "";
-          let pendingRegistrationProfile = null;
+      lucide.createIcons();
 
-          lucide.createIcons();
+      function escapeHtml(str = "") {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
 
-          function escapeHtml(str = "") {
-            return String(str)
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#039;");
+      function avatarUrl(m) {
+        return (
+          m?.photoURL ||
+          `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(m?.name || "M")}`
+        );
+      }
+
+      window.showToast = (msg, type = "info") => {
+        const container = document.getElementById("toast-container");
+        const colors = {
+          info: "bg-emerald-900/95 border-emerald-500/40 text-white",
+          warn: "bg-amber-600/95 border-amber-300/40 text-white",
+          error: "bg-red-600/95 border-red-300/40 text-white",
+        };
+        const el = document.createElement("div");
+        el.className = `${colors[type] || colors.info} backdrop-blur-md border px-4 py-3 rounded-2xl shadow-xl text-sm font-medium transition`;
+        el.innerText = msg;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 4500);
+      };
+
+      window.toggleAuthMode = (mode) => {
+        const loginForm = document.getElementById("login-form");
+        const regForm = document.getElementById("register-form");
+        const tabLogin = document.getElementById("auth-tab-login");
+        const tabReg = document.getElementById("auth-tab-register");
+        document.getElementById("login-error").classList.add("hidden");
+
+        if (mode === "register") {
+          loginForm.classList.add("hidden");
+          regForm.classList.remove("hidden");
+          tabReg.className =
+            "py-2 rounded-xl text-sm font-bold bg-emerald-700 text-white shadow transition";
+          tabLogin.className =
+            "py-2 rounded-xl text-sm font-bold text-emerald-800 hover:bg-emerald-100/70 transition";
+        } else {
+          regForm.classList.add("hidden");
+          loginForm.classList.remove("hidden");
+          tabLogin.className =
+            "py-2 rounded-xl text-sm font-bold bg-emerald-700 text-white shadow transition";
+          tabReg.className =
+            "py-2 rounded-xl text-sm font-bold text-emerald-800 hover:bg-emerald-100/70 transition";
+        }
+        lucide.createIcons();
+      };
+
+      window.switchTab = (tabName) => {
+        ["updates", "meeting", "members", "profile", "admin"].forEach((t) => {
+          document.getElementById(`section-${t}`).classList.add("hidden");
+          document.getElementById(`tab-${t}`).classList.remove("tab-active");
+        });
+        document
+          .getElementById(`section-${tabName}`)
+          .classList.remove("hidden");
+        document.getElementById(`tab-${tabName}`).classList.add("tab-active");
+        lucide.createIcons();
+      };
+
+      // Login Form
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("login-email").value.trim();
+          const password = document.getElementById("login-password").value;
+          const errEl = document.getElementById("login-error");
+          errEl.classList.add("hidden");
+          try {
+            await signInWithEmailAndPassword(auth, email, password);
+          } catch (err) {
+            errEl.innerText =
+              "Login failed! Please enter a valid email and password.";
+            errEl.classList.remove("hidden");
           }
+        });
 
-          function avatarUrl(m) {
-            return m?.photoURL || `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(m?.name || 'M')}`;
-          }
+      // Self-Register Form
+      document
+        .getElementById("register-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const errEl = document.getElementById("login-error");
+          errEl.classList.add("hidden");
 
-          window.showToast = (msg, type = "info") => {
-            const container = document.getElementById("toast-container");
-            const colors = {
-              info: "bg-emerald-900/95 border-emerald-500/40 text-white",
-              warn: "bg-amber-600/95 border-amber-300/40 text-white",
-              error: "bg-red-600/95 border-red-300/40 text-white"
-            };
-            const el = document.createElement("div");
-            el.className = `${colors[type] || colors.info} backdrop-blur-md border px-4 py-3 rounded-2xl shadow-xl text-sm font-medium transition`;
-            el.innerText = msg;
-            container.appendChild(el);
-            setTimeout(() => el.remove(), 4500);
+          const name = document.getElementById("reg-name").value.trim();
+          const country = document.getElementById("reg-country").value.trim();
+          const phone = document.getElementById("reg-phone").value.trim();
+          const designation =
+            document.getElementById("reg-desig").value.trim() || "Member";
+          const email = document.getElementById("reg-email").value.trim();
+          const password = document.getElementById("reg-pass").value;
+
+          // Change approved: false to approved: true if you want instant login without Admin approval
+          pendingRegistrationProfile = {
+            name,
+            email,
+            country,
+            phone,
+            designation,
+            role: "member",
+            bio: "",
+            photoURL: "",
+            approved: false,
+            disabled: false,
           };
 
-          window.toggleAuthMode = (mode) => {
-            const loginForm = document.getElementById("login-form");
-            const regForm = document.getElementById("register-form");
-            const tabLogin = document.getElementById("auth-tab-login");
-            const tabReg = document.getElementById("auth-tab-register");
-            document.getElementById("login-error").classList.add("hidden");
-
-            if (mode === "register") {
-              loginForm.classList.add("hidden");
-              regForm.classList.remove("hidden");
-              tabReg.className = "py-2 rounded-xl text-sm font-bold bg-emerald-700 text-white shadow transition";
-              tabLogin.className = "py-2 rounded-xl text-sm font-bold text-emerald-800 hover:bg-emerald-100/70 transition";
-            } else {
-              regForm.classList.add("hidden");
-              loginForm.classList.remove("hidden");
-              tabLogin.className = "py-2 rounded-xl text-sm font-bold bg-emerald-700 text-white shadow transition";
-              tabReg.className = "py-2 rounded-xl text-sm font-bold text-emerald-800 hover:bg-emerald-100/70 transition";
-            }
-            lucide.createIcons();
-          };
-
-          window.switchTab = (tabName) => {
-            ["updates", "meeting", "members", "profile", "admin"].forEach(t => {
-              document.getElementById(`section-${t}`).classList.add("hidden");
-              document.getElementById(`tab-${t}`).classList.remove("tab-active");
-            });
-            document.getElementById(`section-${tabName}`).classList.remove("hidden");
-            document.getElementById(`tab-${tabName}`).classList.add("tab-active");
-            lucide.createIcons();
-          };
-
-          // Login Form
-          document.getElementById("login-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const email = document.getElementById("login-email").value.trim();
-            const password = document.getElementById("login-password").value;
-            const errEl = document.getElementById("login-error");
-            errEl.classList.add("hidden");
-            try {
-              await signInWithEmailAndPassword(auth, email, password);
-            } catch (err) {
-              errEl.innerText = "Login failed! Please enter a valid email and password.";
-              errEl.classList.remove("hidden");
-            }
-          });
-
-          // Self-Register Form
-          document.getElementById("register-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const errEl = document.getElementById("login-error");
-            errEl.classList.add("hidden");
-
-            const name = document.getElementById("reg-name").value.trim();
-            const country = document.getElementById("reg-country").value.trim();
-            const phone = document.getElementById("reg-phone").value.trim();
-            const designation = document.getElementById("reg-desig").value.trim() || "Member";
-            const email = document.getElementById("reg-email").value.trim();
-            const password = document.getElementById("reg-pass").value;
-
-            pendingRegistrationProfile = {
-              name, email, country, phone, designation,
-              role: "member", bio: "", photoURL: "", approved: false, disabled: false
-            };
-
-            try {
-              await createUserWithEmailAndPassword(auth, email, password);
-              e.target.reset();
-            } catch (err) {
-              pendingRegistrationProfile = null;
-              errEl.innerText = "Registration failed: " + err.message;
-              errEl.classList.remove("hidden");
-            }
-          });
-
-          // Logout buttons
-          const doLogout = async () => {
-            if (currentUser) {
-              try {
-                await set(ref(rtdb, `status/${currentUser.uid}`), { state: "offline", lastChanged: rtdbTimestamp() });
-              } catch (_) {}
-            }
-            leaveMeeting();
-            await signOut(auth);
-          };
-          document.getElementById("logout-btn").addEventListener("click", doLogout);
-          document.getElementById("pending-logout-btn").addEventListener("click", doLogout);
-
-          // Auth Observer
-          onAuthStateChanged(auth, async (user) => {
-            if (user) {
-              currentUser = user;
-              try {
-                const delSnap = await getDoc(doc(db, "deletedIds", user.uid));
-                if (delSnap.exists()) {
-                  const errEl = document.getElementById("login-error");
-                  errEl.innerText = "This account has been deleted by the Admin.";
-                  errEl.classList.remove("hidden");
-                  await signOut(auth);
-                  return;
-                }
-
-                if (pendingRegistrationProfile) {
-                  currentUserProfile = pendingRegistrationProfile;
-                  pendingRegistrationProfile = null;
-                  await setDoc(doc(db, "users", user.uid), currentUserProfile);
-                } else {
-                  const userSnap = await getDoc(doc(db, "users", user.uid));
-                  if (!userSnap.exists()) {
-                    const existingUsers = await getDocs(collection(db, "users"));
-                    currentUserProfile = {
-                      name: user.email.split("@")[0],
-                      email: user.email,
-                      role: existingUsers.empty ? "admin" : "member",
-                      designation: existingUsers.empty ? "Admin" : "Member",
-                      country: "Bangladesh",
-                      phone: "",
-                      bio: "",
-                      photoURL: "",
-                      approved: true,
-                      disabled: false
-                    };
-                    await setDoc(doc(db, "users", user.uid), currentUserProfile);
-                  } else {
-                    currentUserProfile = userSnap.data();
-                  }
-                }
-
-                if (currentUserProfile.disabled) {
-                  alert("Your account has been suspended by the Admin.");
-                  await signOut(auth);
-                  return;
-                }
-
-                if (currentUserProfile.approved === false) {
-                  document.getElementById("login-view").classList.add("hidden");
-                  document.getElementById("app-view").classList.add("hidden");
-                  document.getElementById("pending-view").classList.remove("hidden");
-                  lucide.createIcons();
-                  return;
-                }
-
-                document.getElementById("login-view").classList.add("hidden");
-                document.getElementById("pending-view").classList.add("hidden");
-                document.getElementById("app-view").classList.remove("hidden");
-                updateNavUserUI();
-
-                if (currentUserProfile.role === "admin") {
-                  document.getElementById("tab-admin").classList.remove("hidden");
-                  document.getElementById("tab-admin").classList.add("flex");
-                } else {
-                  document.getElementById("tab-admin").classList.add("hidden");
-                  document.getElementById("tab-admin").classList.remove("flex");
-                }
-
-                fillProfileForm();
-                setupPresence(user.uid);
-                listenAllData();
-                lucide.createIcons();
-              } catch (err) {
-                const errEl = document.getElementById("login-error");
-                errEl.innerText = "Database error: " + err.message;
-                errEl.classList.remove("hidden");
-              }
-            } else {
-              currentUser = null;
-              document.getElementById("login-view").classList.remove("hidden");
-              document.getElementById("pending-view").classList.add("hidden");
-              document.getElementById("app-view").classList.add("hidden");
-            }
-          });
-
-          function updateNavUserUI() {
-            document.getElementById("nav-user-name").innerText = currentUserProfile.name;
-            document.getElementById("nav-user-role").innerText = `${currentUserProfile.designation || "Member"} • ${currentUserProfile.country || "Global"}`;
-            document.getElementById("nav-user-avatar").src = avatarUrl(currentUserProfile);
-          }
-
-          function setupPresence(uid) {
-            const userStatusRef = ref(rtdb, `status/${uid}`);
-            const connectedRef = ref(rtdb, ".info/connected");
-
-            onValue(connectedRef, (snap) => {
-              if (snap.val() === true) {
-                onDisconnect(userStatusRef).set({ state: "offline", lastChanged: rtdbTimestamp() });
-                set(userStatusRef, { state: document.hidden ? "away" : "active", lastChanged: rtdbTimestamp() });
-              }
-            });
-
-            document.addEventListener("visibilitychange", () => {
-              if (!currentUser) return;
-              set(userStatusRef, {
-                state: document.hidden ? "away" : "active",
-                lastChanged: rtdbTimestamp()
-              });
-            });
-          }
-
-          let firstUpdateLoad = true;
-          function listenAllData() {
-            // Kick user out immediately if Admin deletes their ID
-            onSnapshot(doc(db, "deletedIds", currentUser.uid), (snap) => {
-              if (snap.exists()) {
-                alert("Your account has been deleted by the Admin.");
-                doLogout();
-              }
-            });
-
-            onValue(ref(rtdb, "status"), (snap) => {
-              presenceMap = snap.val() || {};
-              renderMembers();
-            });
-
-            onSnapshot(collection(db, "users"), (snap) => {
-              allMembers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-              renderMembers();
-              renderPendingApprovals();
-              renderAdminMembersList();
-            });
-
-            const qUpdates = query(collection(db, "updates"), orderBy("createdAt", "desc"));
-            onSnapshot(qUpdates, (snap) => {
-              const newList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-              if (!firstUpdateLoad && newList.length > allUpdates.length) {
-                showToast(`New Update: ${newList[0].title}`, "warn");
-              }
-              firstUpdateLoad = false;
-              allUpdates = newList;
-              renderUpdates();
-            });
-
-            onSnapshot(doc(db, "settings", "meeting"), (snap) => {
-              if (snap.exists()) {
-                const data = snap.data();
-                currentMeetingRoom = data.roomName || "DarberEChandpurishahMainRoom2025";
-                document.getElementById("meeting-room-title").innerText = data.title || "Official Meeting Room";
-                const banner = document.getElementById("live-meeting-banner");
-                if (data.isActive) {
-                  document.getElementById("banner-meeting-title").innerText = `${data.title || "Meeting"} is live now!`;
-                  banner.classList.remove("hidden");
-                } else {
-                  banner.classList.add("hidden");
-                }
-              }
-            });
-          }
-
-          function renderAdminMembersList() {
-            const container = document.getElementById("admin-members-list");
-            if (!container || currentUserProfile?.role !== "admin") return;
-
-            const others = allMembers.filter(m => m.id !== currentUser?.uid);
-            if (others.length === 0) {
-              container.innerHTML = `<p class="text-xs text-slate-400 col-span-full">No other members found.</p>`;
-              return;
-            }
-
-            container.innerHTML = others.map(m => `
-              <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2.5">
-                <div class="flex items-center gap-2.5 min-w-0">
-                  <img src="${avatarUrl(m)}" class="w-9 h-9 rounded-xl object-cover shrink-0" />
-                  <div class="min-w-0">
-                    <p class="text-sm font-bold text-slate-800 truncate">${escapeHtml(m.name)}</p>
-                    <p class="text-[11px] text-slate-500 truncate">${escapeHtml(m.email)}</p>
-                  </div>
-                </div>
-                <button onclick="deleteMember('${m.id}', '${escapeHtml(m.name)}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition shrink-0">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                  <span>Delete</span>
-                </button>
-              </div>
-            `).join("");
-            lucide.createIcons();
-          }
-
-          window.deleteMember = async (uid, name) => {
-            if (!confirm(`Are you sure you want to permanently delete "${name}"? This member will lose all access immediately.`)) return;
-            try {
-              await setDoc(doc(db, "deletedIds", uid), {
-                deletedAt: serverTimestamp(),
-                deletedBy: currentUserProfile?.name || "Admin"
-              });
-              await deleteDoc(doc(db, "users", uid));
-              closeMemberModal();
-              showToast(`Member "${name}" has been deleted.`, "warn");
-            } catch (err) {
-              showToast("Error deleting member: " + err.message, "error");
-            }
-          };
-
-          function renderPendingApprovals() {
-            const pending = allMembers.filter(m => m.approved === false);
-            const badge = document.getElementById("admin-pending-badge");
-            const card = document.getElementById("pending-approvals-card");
-            const list = document.getElementById("pending-approvals-list");
-
-            if (pending.length > 0 && currentUserProfile?.role === "admin") {
-              badge.innerText = pending.length;
-              badge.classList.remove("hidden");
-              card.classList.remove("hidden");
-              list.innerHTML = pending.map(m => `
-                <div class="bg-white/80 p-3.5 rounded-xl border border-amber-200 flex items-center justify-between gap-3">
-                  <div class="min-w-0">
-                    <p class="font-bold text-slate-900 truncate">${escapeHtml(m.name)}</p>
-                    <p class="text-xs text-slate-600 truncate">${escapeHtml(m.email)} • ${escapeHtml(m.country || 'Global')}</p>
-                  </div>
-                  <div class="flex gap-1.5 shrink-0">
-                    <button onclick="approveMember('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">Approve</button>
-                    <button onclick="deleteMember('${m.id}', '${escapeHtml(m.name)}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Delete</button>
-                  </div>
-                </div>
-              `).join("");
-            } else {
-              badge.classList.add("hidden");
-              card.classList.add("hidden");
-            }
-            lucide.createIcons();
-          }
-
-          window.approveMember = async (uid) => {
-            await updateDoc(doc(db, "users", uid), { approved: true });
-            showToast("Member approved!");
-          };
-
-          function statusBadgeHtml(uid) {
-            const st = presenceMap[uid]?.state || "offline";
-            if (st === "active") {
-              return `<span class="inline-flex items-center gap-1 text-emerald-700 bg-emerald-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>Active</span>`;
-            }
-            if (st === "away") {
-              return `<span class="inline-flex items-center gap-1 text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>Away</span>`;
-            }
-            return `<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>Offline</span>`;
-          }
-
-          window.renderMembers = () => {
-            const search = (document.getElementById("member-search").value || "").toLowerCase();
-            const grid = document.getElementById("members-grid");
-            grid.innerHTML = "";
-
-            const filtered = allMembers.filter(m =>
-              m.approved !== false && (
-                (m.name || "").toLowerCase().includes(search) ||
-                (m.country || "").toLowerCase().includes(search) ||
-                (m.designation || "").toLowerCase().includes(search)
-              )
-            );
-
-            filtered.forEach(m => {
-              grid.innerHTML += `
-                <div onclick="openMemberModal('${m.id}')" class="glass p-4 rounded-2xl flex items-start gap-3.5 cursor-pointer hover:scale-[1.01] hover:border-emerald-300 transition ${m.disabled ? 'opacity-50' : ''}">
-                  <img src="${avatarUrl(m)}" class="w-12 h-12 rounded-2xl object-cover border-2 border-white shadow-sm shrink-0" />
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <h4 class="font-bold text-slate-800 truncate">${escapeHtml(m.name)}</h4>
-                      ${statusBadgeHtml(m.id)}
-                    </div>
-                    <p class="text-xs text-emerald-700 font-semibold mt-0.5">${escapeHtml(m.designation || "Member")} ${m.role === 'admin' ? '• Admin' : ''}</p>
-                    <div class="flex items-center justify-between mt-2">
-                      <p class="text-xs text-slate-500 flex items-center gap-1 truncate">
-                        <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
-                        <span>${escapeHtml(m.country || "Global")}</span>
-                      </p>
-                      <span class="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
-                        <span>View Profile</span>
-                        <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              `;
-            });
-            lucide.createIcons();
-          };
-
-          window.openMemberModal = (uid) => {
-            const m = allMembers.find(x => x.id === uid);
-            if (!m) return;
-
-            document.getElementById("modal-mem-photo").src = avatarUrl(m);
-            document.getElementById("modal-mem-name").innerText = m.name || "Member";
-            document.getElementById("modal-mem-status").innerHTML = statusBadgeHtml(m.id);
-            document.getElementById("modal-mem-desig").innerText = `${m.designation || "Member"}${m.role === "admin" ? " • Admin" : ""}`;
-            document.getElementById("modal-mem-bio").innerText = m.bio ? `"${m.bio}"` : "";
-            document.getElementById("modal-mem-country").innerText = m.country || "Location not set";
-
-            const emailEl = document.getElementById("modal-mem-email");
-            emailEl.innerText = m.email || "No email";
-            emailEl.href = m.email ? `mailto:${m.email}` : "#";
-
-            const phoneEl = document.getElementById("modal-mem-phone");
-            phoneEl.innerText = m.phone || "No phone number";
-            phoneEl.href = m.phone ? `tel:${m.phone}` : "#";
-
-            const adminBox = document.getElementById("modal-admin-actions");
-            const suspendBtn = document.getElementById("modal-suspend-btn");
-            const deleteBtn = document.getElementById("modal-delete-btn");
-
-            if (currentUserProfile?.role === "admin" && m.id !== currentUser?.uid) {
-              adminBox.classList.remove("hidden");
-              suspendBtn.innerText = m.disabled ? "Re-enable Member Account" : "Suspend Member Temporarily";
-              suspendBtn.className = m.disabled
-                ? "w-full py-2.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition"
-                : "w-full py-2.5 rounded-xl text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition";
-              suspendBtn.onclick = async () => {
-                await toggleDisableMember(m.id, !m.disabled);
-                closeMemberModal();
-              };
-              deleteBtn.onclick = () => deleteMember(m.id, m.name);
-            } else {
-              adminBox.classList.add("hidden");
-            }
-
-            document.getElementById("member-modal").classList.remove("hidden");
-            lucide.createIcons();
-          };
-
-          window.closeMemberModal = () => {
-            document.getElementById("member-modal").classList.add("hidden");
-          };
-
-          window.renderUpdates = () => {
-            const filter = document.getElementById("filter-update-type").value;
-            const list = document.getElementById("updates-list");
-            list.innerHTML = "";
-
-            const filtered = filter === "all" ? allUpdates : allUpdates.filter(u => u.type === filter);
-            if (filtered.length === 0) {
-              list.innerHTML = `<div class="glass p-6 rounded-2xl text-slate-500 col-span-full text-center">No updates found in this category.</div>`;
-              return;
-            }
-
-            const meta = {
-              notice: { label: "Notice", icon: "megaphone", cls: "bg-emerald-100 text-emerald-800" },
-              event: { label: "Event / Schedule", icon: "calendar", cls: "bg-teal-100 text-teal-800" },
-              document: { label: "Document / PDF", icon: "file-text", cls: "bg-amber-100 text-amber-800" },
-              photo: { label: "Photo", icon: "image", cls: "bg-sky-100 text-sky-800" },
-              link: { label: "Important Link", icon: "link", cls: "bg-indigo-100 text-indigo-800" }
-            };
-
-            filtered.forEach(u => {
-              const m = meta[u.type] || meta.notice;
-              const delBtn = currentUserProfile?.role === "admin"
-                ? `<button onclick="deleteUpdate('${u.id}')" class="text-xs text-red-500 hover:text-red-700 font-medium flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button>` : "";
-              const linkHtml = u.url
-                ? (u.type === "photo"
-                  ? `<img src="${escapeHtml(u.url)}" class="w-full h-44 object-cover rounded-xl mt-3 border border-white/60 shadow-sm" />`
-                  : `<a href="${escapeHtml(u.url)}" target="_blank" class="inline-flex items-center gap-1.5 mt-3 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3.5 py-1.5 rounded-xl font-semibold hover:bg-emerald-100 transition"><span>Open / Download</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>`)
-                : "";
-
-              list.innerHTML += `
-                <div class="glass p-5 rounded-2xl flex flex-col justify-between hover:border-emerald-300 transition">
-                  <div>
-                    <div class="flex items-center justify-between mb-3">
-                      <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${m.cls}">
-                        <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i>
-                        <span>${m.label}</span>
-                      </span>
-                      ${delBtn}
-                    </div>
-                    <h3 class="font-bold text-slate-900 text-base">${escapeHtml(u.title)}</h3>
-                    <p class="text-sm text-slate-600 mt-1.5 whitespace-pre-line leading-relaxed">${escapeHtml(u.description)}</p>
-                    ${linkHtml}
-                  </div>
-                  <p class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-emerald-100/80 flex items-center gap-1">
-                    <i data-lucide="user" class="w-3 h-3"></i>
-                    <span>Posted by ${escapeHtml(u.authorName || "Admin")}</span>
-                  </p>
-                </div>
-              `;
-            });
-            lucide.createIcons();
-          };
-
-          document.getElementById("prof-photo-file").addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-              const img = new Image();
-              img.onload = () => {
-                const canvas = document.createElement("canvas");
-                const maxSize = 280;
-                let w = img.width, h = img.height;
-                if (w > h) {
-                  if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; }
-                } else {
-                  if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; }
-                }
-                canvas.width = w;
-                canvas.height = h;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, w, h);
-                uploadedPhotoBase64 = canvas.toDataURL("image/jpeg", 0.8);
-                document.getElementById("prof-preview-img").src = uploadedPhotoBase64;
-                showToast("Photo ready! Click 'Save Profile Changes' to apply.");
-              };
-              img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-          });
-
-          window.clearProfilePhoto = () => {
-            uploadedPhotoBase64 = "";
-            document.getElementById("prof-photo-file").value = "";
-            document.getElementById("prof-preview-img").src = `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(currentUserProfile?.name || 'M')}`;
-          };
-
-          function fillProfileForm() {
-            document.getElementById("prof-name").value = currentUserProfile.name || "";
-            document.getElementById("prof-designation").value = currentUserProfile.designation || "";
-            document.getElementById("prof-country").value = currentUserProfile.country || "";
-            document.getElementById("prof-phone").value = currentUserProfile.phone || "";
-            document.getElementById("prof-bio").value = currentUserProfile.bio || "";
-            uploadedPhotoBase64 = currentUserProfile.photoURL || "";
-            document.getElementById("prof-preview-img").src = avatarUrl(currentUserProfile);
-          }
-
-          document.getElementById("profile-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const updated = {
-              name: document.getElementById("prof-name").value.trim(),
-              designation: document.getElementById("prof-designation").value.trim(),
-              country: document.getElementById("prof-country").value.trim(),
-              phone: document.getElementById("prof-phone").value.trim(),
-              bio: document.getElementById("prof-bio").value.trim(),
-              photoURL: uploadedPhotoBase64
-            };
-            await updateDoc(doc(db, "users", currentUser.uid), updated);
-            currentUserProfile = { ...currentUserProfile, ...updated };
-            updateNavUserUI();
-            showToast("Profile updated successfully!");
-          });
-
-          document.getElementById("admin-add-member-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const name = document.getElementById("new-mem-name").value.trim();
-            const email = document.getElementById("new-mem-email").value.trim();
-            const pass = document.getElementById("new-mem-pass").value;
-            const designation = document.getElementById("new-mem-desig").value.trim();
-            const country = document.getElementById("new-mem-country").value.trim();
-            const role = document.getElementById("new-mem-role").value;
-
-            try {
-              const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-              await setDoc(doc(db, "users", cred.user.uid), {
-                name, email, designation, country, role, phone: "", bio: "", photoURL: "", approved: true, disabled: false
-              });
-              await signOut(secondaryAuth);
-              e.target.reset();
-              showToast(`New member "${name}" has been added!`);
-            } catch (err) {
-              showToast("Error: " + err.message, "error");
-            }
-          });
-
-          document.getElementById("admin-post-update-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            await addDoc(collection(db, "updates"), {
-              type: document.getElementById("upd-type").value,
-              title: document.getElementById("upd-title").value.trim(),
-              description: document.getElementById("upd-desc").value.trim(),
-              url: document.getElementById("upd-url").value.trim(),
-              authorName: currentUserProfile.name,
-              createdAt: serverTimestamp()
-            });
+          try {
+            await createUserWithEmailAndPassword(auth, email, password);
             e.target.reset();
-            showToast("Update published to everyone!");
+          } catch (err) {
+            pendingRegistrationProfile = null;
+            errEl.innerText = "Registration failed: " + err.message;
+            errEl.classList.remove("hidden");
+          }
+        });
+
+      // Logout buttons
+      const doLogout = async () => {
+        if (currentUser) {
+          await set(ref(rtdb, `status/${currentUser.uid}`), {
+            state: "offline",
+            lastChanged: rtdbTimestamp(),
           });
+        }
+        leaveMeeting();
+        await signOut(auth);
+      };
+      document.getElementById("logout-btn").addEventListener("click", doLogout);
+      document
+        .getElementById("pending-logout-btn")
+        .addEventListener("click", doLogout);
 
-          window.deleteUpdate = async (id) => {
-            if (confirm("Are you sure you want to delete this update?")) {
-              await deleteDoc(doc(db, "updates", id));
-            }
-          };
-
-          window.toggleDisableMember = async (uid, state) => {
-            await updateDoc(doc(db, "users", uid), { disabled: state });
-            showToast(state ? "Member has been suspended" : "Member has been re-enabled");
-          };
-
-          window.toggleGlobalMeeting = async (isActive) => {
-            const title = document.getElementById("admin-meeting-title").value.trim() || "DARBER E CHANDPURISHAH Monthly Meeting";
-            await setDoc(doc(db, "settings", "meeting"), {
-              isActive,
-              title,
-              roomName: "DarberEChandpurishahOfficialRoom",
-              updatedAt: serverTimestamp()
-            });
-            showToast(isActive ? "Live meeting alert enabled!" : "Meeting notice ended");
-          };
-
-          // ================= ONLINE MEETING (JITSI API) =================
-          window.joinMeeting = () => {
-            if (jitsiApi) return;
-            document.getElementById("meeting-placeholder").classList.add("hidden");
-            document.getElementById("jitsi-container").classList.remove("hidden");
-            document.getElementById("join-meeting-btn").classList.add("hidden");
-            document.getElementById("leave-meeting-btn").classList.remove("hidden");
-
-            const domain = "meet.jit.si";
-            const options = {
-              roomName: currentMeetingRoom,
-              width: "100%",
-              height: 520,
-              parentNode: document.querySelector("#jitsi-container"),
-              userInfo: {
-                displayName: `${currentUserProfile.name} (${currentUserProfile.country || 'Global'})`
-              },
-              configOverwrite: {
-                startWithAudioMuted: false,
-                startWithVideoMuted: false,
-                prejoinPageEnabled: false
-              },
-              interfaceConfigOverwrite: {
-                TOOLBAR_BUTTONS: [
-                  "microphone", "camera", "desktop", "fullscreen",
-                  "fodeviceselection", "hangup", "chat", "raisehand",
-                  "tileview", "participants-pane"
-                ]
+      // Auth Observer
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          currentUser = user;
+          try {
+            if (pendingRegistrationProfile) {
+              currentUserProfile = pendingRegistrationProfile;
+              pendingRegistrationProfile = null;
+              await setDoc(doc(db, "users", user.uid), currentUserProfile);
+            } else {
+              const userSnap = await getDoc(doc(db, "users", user.uid));
+              if (!userSnap.exists()) {
+                const existingUsers = await getDocs(collection(db, "users"));
+                currentUserProfile = {
+                  name: user.email.split("@")[0],
+                  email: user.email,
+                  role: existingUsers.empty ? "admin" : "member",
+                  designation: existingUsers.empty ? "Admin" : "Member",
+                  country: "Bangladesh",
+                  phone: "",
+                  bio: "",
+                  photoURL: "",
+                  approved: true,
+                  disabled: false,
+                };
+                await setDoc(doc(db, "users", user.uid), currentUserProfile);
+              } else {
+                currentUserProfile = userSnap.data();
               }
-            };
-
-            jitsiApi = new JitsiMeetExternalAPI(domain, options);
-
-            const updateParticipantList = () => {
-              if (!jitsiApi) return;
-              const list = jitsiApi.getParticipantsInfo();
-              document.getElementById("participant-count").innerText = list.length;
-              const ul = document.getElementById("meeting-participants-list");
-              ul.innerHTML = list.map(p => `
-                <li class="flex items-center gap-2 p-2.5 bg-white/70 rounded-xl border border-emerald-100">
-                  <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                  <span class="truncate font-medium">${escapeHtml(p.displayName || "Member")}</span>
-                </li>
-              `).join("");
-            };
-
-            jitsiApi.addEventListener("videoConferenceJoined", () => {
-              showToast("You have joined the meeting");
-              updateParticipantList();
-            });
-
-            jitsiApi.addEventListener("participantJoined", (p) => {
-              showToast(`${p.displayName || "A member"} joined the meeting`);
-              updateParticipantList();
-            });
-
-            jitsiApi.addEventListener("participantLeft", () => {
-              showToast("A member left the meeting", "warn");
-              updateParticipantList();
-            });
-
-            jitsiApi.addEventListener("readyToClose", () => {
-              leaveMeeting();
-            });
-          };
-
-          window.leaveMeeting = () => {
-            if (jitsiApi) {
-              jitsiApi.dispose();
-              jitsiApi = null;
             }
-            document.getElementById("jitsi-container").innerHTML = "";
-            document.getElementById("jitsi-container").classList.add("hidden");
-            document.getElementById("meeting-placeholder").classList.remove("hidden");
-            document.getElementById("join-meeting-btn").classList.remove("hidden");
-            document.getElementById("leave-meeting-btn").classList.add("hidden");
-            document.getElementById("participant-count").innerText = "0";
-            document.getElementById("meeting-participants-list").innerHTML = `<li class="text-slate-400 text-xs">Participant list will appear once you join</li>`;
+
+            if (currentUserProfile.disabled) {
+              alert("Your account has been suspended by the Admin.");
+              await signOut(auth);
+              return;
+            }
+
+            if (currentUserProfile.approved === false) {
+              document.getElementById("login-view").classList.add("hidden");
+              document.getElementById("app-view").classList.add("hidden");
+              document
+                .getElementById("pending-view")
+                .classList.remove("hidden");
+              lucide.createIcons();
+              return;
+            }
+
+            document.getElementById("login-view").classList.add("hidden");
+            document.getElementById("pending-view").classList.add("hidden");
+            document.getElementById("app-view").classList.remove("hidden");
+            updateNavUserUI();
+
+            if (currentUserProfile.role === "admin") {
+              document.getElementById("tab-admin").classList.remove("hidden");
+              document.getElementById("tab-admin").classList.add("flex");
+            } else {
+              document.getElementById("tab-admin").classList.add("hidden");
+              document.getElementById("tab-admin").classList.remove("flex");
+            }
+
+            fillProfileForm();
+            setupPresence(user.uid);
+            listenAllData();
+            lucide.createIcons();
+          } catch (err) {
+            const errEl = document.getElementById("login-error");
+            errEl.innerText = "Database error: " + err.message;
+            errEl.classList.remove("hidden");
+          }
+        } else {
+          currentUser = null;
+          document.getElementById("login-view").classList.remove("hidden");
+          document.getElementById("pending-view").classList.add("hidden");
+          document.getElementById("app-view").classList.add("hidden");
+        }
+      });
+
+      function updateNavUserUI() {
+        document.getElementById("nav-user-name").innerText =
+          currentUserProfile.name;
+        document.getElementById("nav-user-role").innerText =
+          `${currentUserProfile.designation || "Member"} • ${currentUserProfile.country || "Global"}`;
+        document.getElementById("nav-user-avatar").src =
+          avatarUrl(currentUserProfile);
+      }
+
+      // Real-time Online / Away / Offline Presence
+      function setupPresence(uid) {
+        const userStatusRef = ref(rtdb, `status/${uid}`);
+        const connectedRef = ref(rtdb, ".info/connected");
+
+        onValue(connectedRef, (snap) => {
+          if (snap.val() === true) {
+            onDisconnect(userStatusRef).set({
+              state: "offline",
+              lastChanged: rtdbTimestamp(),
+            });
+            set(userStatusRef, {
+              state: document.hidden ? "away" : "active",
+              lastChanged: rtdbTimestamp(),
+            });
+          }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (!currentUser) return;
+          set(userStatusRef, {
+            state: document.hidden ? "away" : "active",
+            lastChanged: rtdbTimestamp(),
+          });
+        });
+      }
+
+      // Listen Firestore & RTDB
+      let firstUpdateLoad = true;
+      function listenAllData() {
+        onValue(ref(rtdb, "status"), (snap) => {
+          presenceMap = snap.val() || {};
+          renderMembers();
+        });
+
+        onSnapshot(collection(db, "users"), (snap) => {
+          allMembers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          renderMembers();
+          renderPendingApprovals();
+        });
+
+        const qUpdates = query(
+          collection(db, "updates"),
+          orderBy("createdAt", "desc"),
+        );
+        onSnapshot(qUpdates, (snap) => {
+          const newList = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          if (!firstUpdateLoad && newList.length > allUpdates.length) {
+            showToast(`New Update: ${newList[0].title}`, "warn");
+          }
+          firstUpdateLoad = false;
+          allUpdates = newList;
+          renderUpdates();
+        });
+
+        onSnapshot(doc(db, "settings", "meeting"), (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            currentMeetingRoom =
+              data.roomName || "DarberEChandpurishahMainRoom2025";
+            document.getElementById("meeting-room-title").innerText =
+              data.title || "Official Meeting Room";
+            const banner = document.getElementById("live-meeting-banner");
+            if (data.isActive) {
+              document.getElementById("banner-meeting-title").innerText =
+                `${data.title || "Meeting"} is live now!`;
+              banner.classList.remove("hidden");
+            } else {
+              banner.classList.add("hidden");
+            }
+          }
+        });
+      }
+
+      function renderPendingApprovals() {
+        const pending = allMembers.filter((m) => m.approved === false);
+        const badge = document.getElementById("admin-pending-badge");
+        const card = document.getElementById("pending-approvals-card");
+        const list = document.getElementById("pending-approvals-list");
+
+        if (pending.length > 0 && currentUserProfile?.role === "admin") {
+          badge.innerText = pending.length;
+          badge.classList.remove("hidden");
+          card.classList.remove("hidden");
+          list.innerHTML = pending
+            .map(
+              (m) => `
+          <div class="bg-white/80 p-3.5 rounded-xl border border-amber-200 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <p class="font-bold text-slate-900 truncate">${escapeHtml(m.name)}</p>
+              <p class="text-xs text-slate-600 truncate">${escapeHtml(m.email)} • ${escapeHtml(m.country || "Global")}</p>
+            </div>
+            <div class="flex gap-1.5 shrink-0">
+              <button onclick="approveMember('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">Approve</button>
+              <button onclick="rejectMember('${m.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Reject</button>
+            </div>
+          </div>
+        `,
+            )
+            .join("");
+        } else {
+          badge.classList.add("hidden");
+          card.classList.add("hidden");
+        }
+        lucide.createIcons();
+      }
+
+      window.approveMember = async (uid) => {
+        await updateDoc(doc(db, "users", uid), { approved: true });
+        showToast("Member approved!");
+      };
+
+      window.rejectMember = async (uid) => {
+        if (confirm("Reject and remove this registration request?")) {
+          await deleteDoc(doc(db, "users", uid));
+          showToast("Registration rejected", "warn");
+        }
+      };
+
+      function statusBadgeHtml(uid) {
+        const st = presenceMap[uid]?.state || "offline";
+        if (st === "active") {
+          return `<span class="inline-flex items-center gap-1 text-emerald-700 bg-emerald-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>Active</span>`;
+        }
+        if (st === "away") {
+          return `<span class="inline-flex items-center gap-1 text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>Away</span>`;
+        }
+        return `<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>Offline</span>`;
+      }
+
+      // Render Members
+      window.renderMembers = () => {
+        const search = (
+          document.getElementById("member-search").value || ""
+        ).toLowerCase();
+        const grid = document.getElementById("members-grid");
+        grid.innerHTML = "";
+
+        const filtered = allMembers.filter(
+          (m) =>
+            m.approved !== false &&
+            ((m.name || "").toLowerCase().includes(search) ||
+              (m.country || "").toLowerCase().includes(search) ||
+              (m.designation || "").toLowerCase().includes(search)),
+        );
+
+        filtered.forEach((m) => {
+          grid.innerHTML += `
+          <div onclick="openMemberModal('${m.id}')" class="glass p-4 rounded-2xl flex items-start gap-3.5 cursor-pointer hover:scale-[1.01] hover:border-emerald-300 transition ${m.disabled ? "opacity-50" : ""}">
+            <img src="${avatarUrl(m)}" class="w-12 h-12 rounded-2xl object-cover border-2 border-white shadow-sm shrink-0" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <h4 class="font-bold text-slate-800 truncate">${escapeHtml(m.name)}</h4>
+                ${statusBadgeHtml(m.id)}
+              </div>
+              <p class="text-xs text-emerald-700 font-semibold mt-0.5">${escapeHtml(m.designation || "Member")} ${m.role === "admin" ? "• Admin" : ""}</p>
+              <div class="flex items-center justify-between mt-2">
+                <p class="text-xs text-slate-500 flex items-center gap-1 truncate">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
+                  <span>${escapeHtml(m.country || "Global")}</span>
+                </p>
+                <span class="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
+                  <span>View Profile</span>
+                  <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+        });
+        lucide.createIcons();
+      };
+
+      window.openMemberModal = (uid) => {
+        const m = allMembers.find((x) => x.id === uid);
+        if (!m) return;
+
+        document.getElementById("modal-mem-photo").src = avatarUrl(m);
+        document.getElementById("modal-mem-name").innerText =
+          m.name || "Member";
+        document.getElementById("modal-mem-status").innerHTML = statusBadgeHtml(
+          m.id,
+        );
+        document.getElementById("modal-mem-desig").innerText =
+          `${m.designation || "Member"}${m.role === "admin" ? " • Admin" : ""}`;
+        document.getElementById("modal-mem-bio").innerText = m.bio
+          ? `"${m.bio}"`
+          : "";
+        document.getElementById("modal-mem-country").innerText =
+          m.country || "Location not set";
+
+        const emailEl = document.getElementById("modal-mem-email");
+        emailEl.innerText = m.email || "No email";
+        emailEl.href = m.email ? `mailto:${m.email}` : "#";
+
+        const phoneEl = document.getElementById("modal-mem-phone");
+        phoneEl.innerText = m.phone || "No phone number";
+        phoneEl.href = m.phone ? `tel:${m.phone}` : "#";
+
+        const adminBox = document.getElementById("modal-admin-actions");
+        const suspendBtn = document.getElementById("modal-suspend-btn");
+        if (currentUserProfile?.role === "admin" && m.id !== currentUser?.uid) {
+          adminBox.classList.remove("hidden");
+          suspendBtn.innerText = m.disabled
+            ? "Re-enable Member Account"
+            : "Suspend / Remove Member";
+          suspendBtn.className = m.disabled
+            ? "w-full py-2.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition"
+            : "w-full py-2.5 rounded-xl text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition";
+          suspendBtn.onclick = async () => {
+            await toggleDisableMember(m.id, !m.disabled);
+            closeMemberModal();
           };
+        } else {
+          adminBox.classList.add("hidden");
+        }
+
+        document.getElementById("member-modal").classList.remove("hidden");
+        lucide.createIcons();
+      };
+
+      window.closeMemberModal = () => {
+        document.getElementById("member-modal").classList.add("hidden");
+      };
+
+      // Render Updates
+      window.renderUpdates = () => {
+        const filter = document.getElementById("filter-update-type").value;
+        const list = document.getElementById("updates-list");
+        list.innerHTML = "";
+
+        const filtered =
+          filter === "all"
+            ? allUpdates
+            : allUpdates.filter((u) => u.type === filter);
+        if (filtered.length === 0) {
+          list.innerHTML = `<div class="glass p-6 rounded-2xl text-slate-500 col-span-full text-center">No updates found in this category.</div>`;
+          return;
+        }
+
+        const meta = {
+          notice: {
+            label: "Notice",
+            icon: "megaphone",
+            cls: "bg-emerald-100 text-emerald-800",
+          },
+          event: {
+            label: "Event / Schedule",
+            icon: "calendar",
+            cls: "bg-teal-100 text-teal-800",
+          },
+          document: {
+            label: "Document / PDF",
+            icon: "file-text",
+            cls: "bg-amber-100 text-amber-800",
+          },
+          photo: {
+            label: "Photo",
+            icon: "image",
+            cls: "bg-sky-100 text-sky-800",
+          },
+          link: {
+            label: "Important Link",
+            icon: "link",
+            cls: "bg-indigo-100 text-indigo-800",
+          },
+        };
+
+        filtered.forEach((u) => {
+          const m = meta[u.type] || meta.notice;
+          const delBtn =
+            currentUserProfile?.role === "admin"
+              ? `<button onclick="deleteUpdate('${u.id}')" class="text-xs text-red-500 hover:text-red-700 font-medium flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button>`
+              : "";
+          const linkHtml = u.url
+            ? u.type === "photo"
+              ? `<img src="${escapeHtml(u.url)}" class="w-full h-44 object-cover rounded-xl mt-3 border border-white/60 shadow-sm" />`
+              : `<a href="${escapeHtml(u.url)}" target="_blank" class="inline-flex items-center gap-1.5 mt-3 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3.5 py-1.5 rounded-xl font-semibold hover:bg-emerald-100 transition"><span>Open / Download</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>`
+            : "";
+
+          list.innerHTML += `
+          <div class="glass p-5 rounded-2xl flex flex-col justify-between hover:border-emerald-300 transition">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${m.cls}">
+                  <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i>
+                  <span>${m.label}</span>
+                </span>
+                ${delBtn}
+              </div>
+              <h3 class="font-bold text-slate-900 text-base">${escapeHtml(u.title)}</h3>
+              <p class="text-sm text-slate-600 mt-1.5 whitespace-pre-line leading-relaxed">${escapeHtml(u.description)}</p>
+              ${linkHtml}
+            </div>
+            <p class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-emerald-100/80 flex items-center gap-1">
+              <i data-lucide="user" class="w-3 h-3"></i>
+              <span>Posted by ${escapeHtml(u.authorName || "Admin")}</span>
+            </p>
+          </div>
+        `;
+        });
+        lucide.createIcons();
+      };
+
+      // Direct Image Upload & Compression
+      document
+        .getElementById("prof-photo-file")
+        .addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const maxSize = 280;
+              let w = img.width,
+                h = img.height;
+              if (w > h) {
+                if (w > maxSize) {
+                  h = Math.round((h * maxSize) / w);
+                  w = maxSize;
+                }
+              } else {
+                if (h > maxSize) {
+                  w = Math.round((w * maxSize) / h);
+                  h = maxSize;
+                }
+              }
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, w, h);
+              uploadedPhotoBase64 = canvas.toDataURL("image/jpeg", 0.8);
+              document.getElementById("prof-preview-img").src =
+                uploadedPhotoBase64;
+              showToast("Photo ready! Click 'Save Profile Changes' to apply.");
+            };
+            img.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+
+      window.clearProfilePhoto = () => {
+        uploadedPhotoBase64 = "";
+        document.getElementById("prof-photo-file").value = "";
+        document.getElementById("prof-preview-img").src =
+          `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(currentUserProfile?.name || "M")}`;
+      };
+
+      function fillProfileForm() {
+        document.getElementById("prof-name").value =
+          currentUserProfile.name || "";
+        document.getElementById("prof-designation").value =
+          currentUserProfile.designation || "";
+        document.getElementById("prof-country").value =
+          currentUserProfile.country || "";
+        document.getElementById("prof-phone").value =
+          currentUserProfile.phone || "";
+        document.getElementById("prof-bio").value =
+          currentUserProfile.bio || "";
+        uploadedPhotoBase64 = currentUserProfile.photoURL || "";
+        document.getElementById("prof-preview-img").src =
+          avatarUrl(currentUserProfile);
+      }
+
+      document
+        .getElementById("profile-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const updated = {
+            name: document.getElementById("prof-name").value.trim(),
+            designation: document
+              .getElementById("prof-designation")
+              .value.trim(),
+            country: document.getElementById("prof-country").value.trim(),
+            phone: document.getElementById("prof-phone").value.trim(),
+            bio: document.getElementById("prof-bio").value.trim(),
+            photoURL: uploadedPhotoBase64,
+          };
+          await updateDoc(doc(db, "users", currentUser.uid), updated);
+          currentUserProfile = { ...currentUserProfile, ...updated };
+          updateNavUserUI();
+          showToast("Profile updated successfully!");
+        });
+
+      // Admin: Add Member Directly
+      document
+        .getElementById("admin-add-member-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("new-mem-name").value.trim();
+          const email = document.getElementById("new-mem-email").value.trim();
+          const pass = document.getElementById("new-mem-pass").value;
+          const designation = document
+            .getElementById("new-mem-desig")
+            .value.trim();
+          const country = document
+            .getElementById("new-mem-country")
+            .value.trim();
+          const role = document.getElementById("new-mem-role").value;
+
+          try {
+            const cred = await createUserWithEmailAndPassword(
+              secondaryAuth,
+              email,
+              pass,
+            );
+            await setDoc(doc(db, "users", cred.user.uid), {
+              name,
+              email,
+              designation,
+              country,
+              role,
+              phone: "",
+              bio: "",
+              photoURL: "",
+              approved: true,
+              disabled: false,
+            });
+            await signOut(secondaryAuth);
+            e.target.reset();
+            showToast(`New member "${name}" has been added!`);
+          } catch (err) {
+            showToast("Error: " + err.message, "error");
+          }
+        });
+
+      // Admin: Post Update
+      document
+        .getElementById("admin-post-update-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          await addDoc(collection(db, "updates"), {
+            type: document.getElementById("upd-type").value,
+            title: document.getElementById("upd-title").value.trim(),
+            description: document.getElementById("upd-desc").value.trim(),
+            url: document.getElementById("upd-url").value.trim(),
+            authorName: currentUserProfile.name,
+            createdAt: serverTimestamp(),
+          });
+          e.target.reset();
+          showToast("Update published to everyone!");
+        });
+
+      window.deleteUpdate = async (id) => {
+        if (confirm("Are you sure you want to delete this update?")) {
+          await deleteDoc(doc(db, "updates", id));
+        }
+      };
+
+      window.toggleDisableMember = async (uid, state) => {
+        await updateDoc(doc(db, "users", uid), { disabled: state });
+        showToast(
+          state ? "Member has been suspended" : "Member has been re-enabled",
+        );
+      };
+
+      window.toggleGlobalMeeting = async (isActive) => {
+        const title =
+          document.getElementById("admin-meeting-title").value.trim() ||
+          "DARBER E CHANDPURISHAH Monthly Meeting";
+        await setDoc(doc(db, "settings", "meeting"), {
+          isActive,
+          title,
+          roomName: "DarberEChandpurishahOfficialRoom",
+          updatedAt: serverTimestamp(),
+        });
+        showToast(
+          isActive ? "Live meeting alert enabled!" : "Meeting notice ended",
+        );
+      };
+
+      // ================= ONLINE MEETING (JITSI API) =================
+      window.joinMeeting = () => {
+        if (jitsiApi) return;
+        document.getElementById("meeting-placeholder").classList.add("hidden");
+        document.getElementById("jitsi-container").classList.remove("hidden");
+        document.getElementById("join-meeting-btn").classList.add("hidden");
+        document.getElementById("leave-meeting-btn").classList.remove("hidden");
+
+        const domain = "meet.jit.si";
+        const options = {
+          roomName: currentMeetingRoom,
+          width: "100%",
+          height: 520,
+          parentNode: document.querySelector("#jitsi-container"),
+          userInfo: {
+            displayName: `${currentUserProfile.name} (${currentUserProfile.country || "Global"})`,
+          },
+          configOverwrite: {
+            startWithAudioMuted: false,
+            startWithVideoMuted: false,
+            prejoinPageEnabled: false,
+          },
+          interfaceConfigOverwrite: {
+            TOOLBAR_BUTTONS: [
+              "microphone",
+              "camera",
+              "desktop",
+              "fullscreen",
+              "fodeviceselection",
+              "hangup",
+              "chat",
+              "raisehand",
+              "tileview",
+              "participants-pane",
+            ],
+          },
+        };
+
+        jitsiApi = new JitsiMeetExternalAPI(domain, options);
+
+        const updateParticipantList = () => {
+          if (!jitsiApi) return;
+          const list = jitsiApi.getParticipantsInfo();
+          document.getElementById("participant-count").innerText = list.length;
+          const ul = document.getElementById("meeting-participants-list");
+          ul.innerHTML = list
+            .map(
+              (p) => `
+          <li class="flex items-center gap-2 p-2.5 bg-white/70 rounded-xl border border-emerald-100">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+            <span class="truncate font-medium">${escapeHtml(p.displayName || "Member")}</span>
+          </li>
+        `,
+            )
+            .join("");
+        };
+
+        jitsiApi.addEventListener("videoConferenceJoined", () => {
+          showToast("You have joined the meeting");
+          updateParticipantList();
+        });
+
+        jitsiApi.addEventListener("participantJoined", (p) => {
+          showToast(`${p.displayName || "A member"} joined the meeting`);
+          updateParticipantList();
+        });
+
+        jitsiApi.addEventListener("participantLeft", () => {
+          showToast("A member left the meeting", "warn");
+          updateParticipantList();
+        });
+
+        jitsiApi.addEventListener("readyToClose", () => {
+          leaveMeeting();
+        });
+      };
+
+      window.leaveMeeting = () => {
+        if (jitsiApi) {
+          jitsiApi.dispose();
+          jitsiApi = null;
+        }
+        document.getElementById("jitsi-container").innerHTML = "";
+        document.getElementById("jitsi-container").classList.add("hidden");
+        document
+          .getElementById("meeting-placeholder")
+          .classList.remove("hidden");
+        document.getElementById("join-meeting-btn").classList.remove("hidden");
+        document.getElementById("leave-meeting-btn").classList.add("hidden");
+        document.getElementById("participant-count").innerText = "0";
+        document.getElementById("meeting-participants-list").innerHTML =
+          `<li class="text-slate-400 text-xs">Participant list will appear once you join</li>`;
+      };
     </script>
   </body>
 </html>
