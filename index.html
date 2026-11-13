@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DARBER E CHANDPURISHAH - Official App</title>
     <meta name="theme-color" content="#065f46" />
-    <link rel="icon" type="image/png" href="./darber-logo.png" />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Darber App" />
+    <link rel="apple-touch-icon" href="./darber-logo.jpg" />
+    <link rel="icon" type="image/png" href="./darber-logo.jpg" />
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Premium Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Jitsi Meet External API -->
-    <script src="https://meet.jit.si/external_api.js"></script>
+    <!-- LiveKit Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
       body {
@@ -597,7 +601,7 @@
           </div>
         </section>
 
-        <!-- 2. ONLINE MEETING & ATTENDANCE TAB -->
+        <!-- 2. ONLINE MEETING & ATTENDANCE TAB (LIVEKIT) -->
         <section id="section-meeting" class="hidden space-y-5">
           <div
             class="glass p-4 sm:p-5 rounded-2xl flex flex-wrap items-center justify-between gap-3"
@@ -616,7 +620,7 @@
                   Official Meeting Room
                 </h2>
                 <p class="text-xs text-slate-500">
-                  HD Audio, Video, Screen Sharing & Auto Attendance
+                  LiveKit HD Audio, Video, Screen Sharing & Auto Attendance
                 </p>
               </div>
             </div>
@@ -648,12 +652,14 @@
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+            <!-- LiveKit Video Stage -->
             <div
-              class="lg:col-span-3 bg-slate-900/95 rounded-2xl overflow-hidden shadow-xl min-h-[480px] flex items-center justify-center relative border border-white/20"
+              class="lg:col-span-3 bg-slate-950 rounded-2xl overflow-hidden shadow-xl min-h-[480px] flex flex-col justify-between relative border border-white/20"
             >
+              <!-- Placeholder before joining -->
               <div
                 id="meeting-placeholder"
-                class="text-center text-slate-300 p-6"
+                class="flex-1 flex flex-col items-center justify-center text-center text-slate-300 p-6"
               >
                 <div
                   class="w-16 h-16 bg-emerald-500/20 text-emerald-300 rounded-2xl flex items-center justify-center mx-auto mb-3"
@@ -664,12 +670,86 @@
                   Click "Join Meeting" above to enter the room
                 </p>
                 <p class="text-xs text-slate-400 mt-1">
-                  Your attendance will be recorded automatically
+                  Unlimited session length inside the app • Worldwide HD
                 </p>
               </div>
-              <div id="jitsi-container" class="w-full h-[520px] hidden"></div>
+
+              <!-- Active LiveKit Stage -->
+              <div
+                id="lk-meeting-stage"
+                class="hidden flex-1 flex flex-col p-3 gap-3"
+              >
+                <!-- Screen Share Stage -->
+                <div
+                  id="lk-screenshare-stage"
+                  class="hidden bg-black rounded-xl overflow-hidden border border-emerald-500/40 relative"
+                >
+                  <div
+                    class="bg-emerald-900/80 text-white text-xs font-semibold px-3 py-1.5 flex items-center gap-2"
+                  >
+                    <i
+                      data-lucide="monitor"
+                      class="w-3.5 h-3.5 text-emerald-300"
+                    ></i>
+                    <span id="lk-screenshare-label">Screen Share</span>
+                  </div>
+                  <div
+                    id="lk-screenshare-video"
+                    class="w-full max-h-[340px] flex items-center justify-center bg-black"
+                  ></div>
+                </div>
+
+                <!-- Video Tiles Grid -->
+                <div
+                  id="lk-video-grid"
+                  class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 auto-rows-fr"
+                ></div>
+                <div id="lk-audio-container" class="hidden"></div>
+
+                <!-- Meeting Bottom Controls -->
+                <div
+                  class="bg-slate-900/90 border border-white/10 rounded-2xl p-2.5 flex flex-wrap items-center justify-center gap-2.5"
+                >
+                  <button
+                    type="button"
+                    id="btn-toggle-mic"
+                    onclick="toggleMic()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 transition"
+                  >
+                    <i data-lucide="mic" class="w-4 h-4"></i>
+                    <span>Mic On</span>
+                  </button>
+                  <button
+                    type="button"
+                    id="btn-toggle-cam"
+                    onclick="toggleCam()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 transition"
+                  >
+                    <i data-lucide="video" class="w-4 h-4"></i>
+                    <span>Cam On</span>
+                  </button>
+                  <button
+                    type="button"
+                    id="btn-toggle-screen"
+                    onclick="toggleScreenShare()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-slate-700 text-white hover:bg-slate-600 transition"
+                  >
+                    <i data-lucide="monitor-up" class="w-4 h-4"></i>
+                    <span>Share Screen</span>
+                  </button>
+                  <button
+                    type="button"
+                    onclick="leaveMeeting()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-red-600 text-white hover:bg-red-700 transition"
+                  >
+                    <i data-lucide="phone-off" class="w-4 h-4"></i>
+                    <span>Leave</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
+            <!-- Right Sidebar: Live Participants (with Mic/Cam Status) & Attendance -->
             <div class="space-y-4">
               <div class="glass rounded-2xl p-4">
                 <h3
@@ -677,7 +757,7 @@
                 >
                   <span class="flex items-center gap-2">
                     <i data-lucide="users" class="w-4 h-4 text-emerald-600"></i>
-                    <span>Live In Meeting</span>
+                    <span>In Meeting</span>
                   </span>
                   <span
                     id="participant-count"
@@ -687,7 +767,7 @@
                 </h3>
                 <ul
                   id="meeting-participants-list"
-                  class="space-y-2 text-xs text-slate-700 max-h-[200px] overflow-y-auto"
+                  class="space-y-2 text-xs text-slate-700 max-h-[220px] overflow-y-auto"
                 >
                   <li class="text-slate-400">
                     Participant list will appear once you join
@@ -714,7 +794,7 @@
                 </h3>
                 <ul
                   id="today-attendance-list"
-                  class="space-y-2 text-xs text-slate-700 max-h-[220px] overflow-y-auto"
+                  class="space-y-2 text-xs text-slate-700 max-h-[200px] overflow-y-auto"
                 >
                   <li class="text-slate-400">No attendance marked today yet</li>
                 </ul>
@@ -1257,64 +1337,127 @@
       </main>
 
       <!-- ================= FOOTER: OFFICIAL LINKS & CONTACT WITH DEVELOPER ================= -->
-    <footer class="mt-6 border-t border-emerald-200/70 bg-white/65 backdrop-blur-xl">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
-        
-        <!-- Official Social Links -->
-        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-          <div class="flex items-center gap-2">
-            <img src="./darber-logo.png" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='./darber-logo.jpg';}"
-              alt="Logo" class="w-7 h-7 rounded-full object-cover border border-emerald-500 bg-white" />
-            <span class="font-bold text-emerald-950 text-xs sm:text-sm">Official Channels</span>
+      <footer
+        class="mt-6 border-t border-emerald-200/70 bg-white/65 backdrop-blur-xl"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3"
+        >
+          <!-- Official Social Links -->
+          <div
+            class="flex flex-wrap items-center justify-center sm:justify-start gap-3"
+          >
+            <div class="flex items-center gap-2">
+              <img
+                src="./darber-logo.png"
+                onerror="
+                  if (!this.dataset.t) {
+                    this.dataset.t = 1;
+                    this.src = './darber-logo.jpg';
+                  }
+                "
+                alt="Logo"
+                class="w-7 h-7 rounded-full object-cover border border-emerald-500 bg-white"
+              />
+              <span class="font-bold text-emerald-950 text-xs sm:text-sm"
+                >Official Channels</span
+              >
+            </div>
+            <div class="flex items-center gap-2">
+              <a
+                href="https://www.youtube.com/@SufiPathbd"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="YouTube Channel"
+                class="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-600 text-[#FF0000] hover:text-white border border-red-200 flex items-center justify-center transition shadow-sm hover:scale-105"
+              >
+                <svg
+                  class="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.facebook.com/darbarechandpurishahofficial"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Facebook Page"
+                class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-[#1877F2] text-[#1877F2] hover:text-white border border-blue-200 flex items-center justify-center transition shadow-sm hover:scale-105"
+              >
+                <svg
+                  class="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                  />
+                </svg>
+              </a>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <!-- YouTube Icon Button -->
-            <a href="https://www.youtube.com/@SufiPathbd" target="_blank" rel="noopener noreferrer" title="YouTube Channel"
-              class="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-600 text-[#FF0000] hover:text-white border border-red-200 flex items-center justify-center transition shadow-sm hover:scale-105">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-              </svg>
-            </a>
-            <!-- Facebook Icon Button -->
-            <a href="https://www.facebook.com/darbarechandpurishahofficial" target="_blank" rel="noopener noreferrer" title="Facebook Page"
-              class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-[#1877F2] text-[#1877F2] hover:text-white border border-blue-200 flex items-center justify-center transition shadow-sm hover:scale-105">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </a>
+
+          <!-- Contact with Developer -->
+          <div class="glass rounded-2xl px-3.5 py-2 flex items-center gap-3">
+            <p
+              class="text-[11px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5"
+            >
+              <i data-lucide="code-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>Contact with developer</span>
+            </p>
+            <div class="flex items-center gap-2">
+              <a
+                href="mailto:robiulmahmud4681@gmail.com"
+                title="Gmail: robiulmahmud4681@gmail.com"
+                class="w-9 h-9 rounded-xl bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 flex items-center justify-center transition shadow-sm hover:scale-105"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M2 7v11a2 2 0 0 0 2 2h3v-9L2 7z" />
+                  <path fill="#34A853" d="M22 7v11a2 2 0 0 1-2 2h-3v-9l5-4z" />
+                  <path
+                    fill="#EA4335"
+                    d="M7 11l5 3.75L17 11V6l-5 3.75L7 6v5z"
+                  />
+                  <path
+                    fill="#C5221F"
+                    d="M2 7l5 4V6L5.5 4.875A2.2 2.2 0 0 0 2 6.65V7z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M22 7l-5 4V6l1.5-1.125A2.2 2.2 0 0 1 22 6.65V7z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://wa.me/8801322972119"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="WhatsApp: 01322972119"
+                class="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-emerald-200 flex items-center justify-center transition shadow-sm hover:scale-105"
+              >
+                <svg
+                  class="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.766.469 3.484 1.344 5l-1.406 5.156 5.281-1.375c1.469.797 3.109 1.219 4.75 1.219 5.516 0 9.969-4.453 9.969-9.969S17.547 2 12.031 2zm5.813 14.125c-.25.703-1.438 1.344-2 1.422-.516.078-1.172.109-1.891-.125-.438-.141-1-.328-1.719-.641-3.016-1.297-4.984-4.328-5.141-4.531-.141-.203-1.219-1.625-1.219-3.094s.766-2.188 1.047-2.484c.266-.297.594-.375.797-.375h.578c.188 0 .438-.078.688.516.25.609.859 2.094.938 2.25.078.156.125.328.031.531-.094.203-.141.328-.297.5-.156.172-.313.391-.453.516-.156.156-.313.328-.141.625.172.297.781 1.281 1.672 2.078 1.156 1.031 2.125 1.344 2.422 1.5.297.141.469.125.641-.078.172-.203.75-.875.953-1.172.203-.297.406-.25.672-.156.266.094 1.719.813 2.016.953.297.156.5.219.563.344.078.125.078.734-.172 1.438z"
+                  />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
+      </footer>
+    </div>
 
-        <!-- Contact with Developer -->
-        <div class="glass rounded-2xl px-3.5 py-2 flex items-center gap-3">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
-            <i data-lucide="code-2" class="w-3.5 h-3.5 text-emerald-600"></i>
-            <span>Contact with developer</span>
-          </p>
-          <div class="flex items-center gap-2">
-            <!-- Gmail Icon Button -->
-            <a href="mailto:robiulmahmud4681@gmail.com" title="Gmail: robiulmahmud4681@gmail.com"
-              class="w-9 h-9 rounded-xl bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 flex items-center justify-center transition shadow-sm hover:scale-105">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="#4285F4" d="M2 7v11a2 2 0 0 0 2 2h3v-9L2 7z"/>
-                <path fill="#34A853" d="M22 7v11a2 2 0 0 1-2 2h-3v-9l5-4z"/>
-                <path fill="#EA4335" d="M7 11l5 3.75L17 11V6l-5 3.75L7 6v5z"/>
-                <path fill="#C5221F" d="M2 7l5 4V6L5.5 4.875A2.2 2.2 0 0 0 2 6.65V7z"/>
-                <path fill="#FBBC05" d="M22 7l-5 4V6l1.5-1.125A2.2 2.2 0 0 1 22 6.65V7z"/>
-              </svg>
-            </a>
-            <!-- WhatsApp Icon Button -->
-            <a href="https://wa.me/8801322972119" target="_blank" rel="noopener noreferrer" title="WhatsApp: 01322972119"
-              class="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-emerald-200 flex items-center justify-center transition shadow-sm hover:scale-105">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.766.469 3.484 1.344 5l-1.406 5.156 5.281-1.375c1.469.797 3.109 1.219 4.75 1.219 5.516 0 9.969-4.453 9.969-9.969S17.547 2 12.031 2zm5.813 14.125c-.25.703-1.438 1.344-2 1.422-.516.078-1.172.109-1.891-.125-.438-.141-1-.328-1.719-.641-3.016-1.297-4.984-4.328-5.141-4.531-.141-.203-1.219-1.625-1.219-3.094s.766-2.188 1.047-2.484c.266-.297.594-.375.797-.375h.578c.188 0 .438-.078.688.516.25.609.859 2.094.938 2.25.078.156.125.328.031.531-.094.203-.141.328-.297.5-.156.172-.313.391-.453.516-.156.156-.313.328-.141.625.172.297.781 1.281 1.672 2.078 1.156 1.031 2.125 1.344 2.422 1.5.297.141.469.125.641-.078.172-.203.75-.875.953-1.172.203-.297.406-.25.672-.156.266.094 1.719.813 2.016.953.297.156.5.219.563.344.078.125.078.734-.172 1.438z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </footer>
     <!-- ================= MEMBER PROFILE MODAL ================= -->
     <div
       id="member-modal"
@@ -1447,7 +1590,7 @@
         serverTimestamp as rtdbTimestamp,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-      // ⚠️ Paste your Firebase Project Config below
+      // ⚠️ নিচের firebaseConfig-এর জায়গায় আপনার আগের সঠিক Config বসিয়ে দেবেন
       const firebaseConfig = {
         apiKey: "AIzaSyDc6eeu0ZFcXNYxPt4WyigTT3cVTv_X9Mo",
         authDomain: "darber-e-chandpurishah.firebaseapp.com",
@@ -1459,6 +1602,11 @@
         appId: "1:97064040653:web:6e4fc2aee354262f7d9184",
         measurementId: "G-V558RP0KWT",
       };
+
+      // LiveKit & Cloudflare Worker Endpoints (Configured!)
+      const LIVEKIT_URL = "wss://darber-app-01mq3mxm.livekit.cloud";
+      const LIVEKIT_TOKEN_API =
+        "https://darbertoken.robiulmahmud4681.workers.dev";
 
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
@@ -1475,8 +1623,8 @@
       let allUpdates = [];
       let allMessages = [];
       let allAttendance = [];
-      let jitsiApi = null;
-      let currentMeetingRoom = "DarberEChandpurishahMainRoom2025";
+      let lkRoom = null;
+      let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
       let currentMeetingTitle = "Official Meeting Room";
       let uploadedPhotoBase64 = "";
       let uploadedUpdateFile = null;
@@ -1878,7 +2026,7 @@
           if (snap.exists()) {
             const data = snap.data();
             currentMeetingRoom =
-              data.roomName || "DarberEChandpurishahMainRoom2025";
+              data.roomName || "DarberEChandpurishahOfficialRoom";
             currentMeetingTitle = data.title || "Official Meeting Room";
             document.getElementById("meeting-room-title").innerText =
               currentMeetingTitle;
@@ -2638,90 +2786,333 @@
         );
       };
 
-      window.joinMeeting = () => {
-        if (jitsiApi) return;
-        markMyAttendance(false);
-        document.getElementById("meeting-placeholder").classList.add("hidden");
-        document.getElementById("jitsi-container").classList.remove("hidden");
-        document.getElementById("join-meeting-btn").classList.add("hidden");
-        document.getElementById("leave-meeting-btn").classList.remove("hidden");
+      // ================= ONLINE MEETING (LIVEKIT SDK) =================
+      function getSafeId(identity) {
+        return String(identity || "user").replace(/[^a-zA-Z0-9_-]/g, "_");
+      }
 
-        const domain = "meet.jit.si";
-        const options = {
-          roomName: currentMeetingRoom,
-          width: "100%",
-          height: 520,
-          parentNode: document.querySelector("#jitsi-container"),
-          userInfo: {
-            displayName: `${currentUserProfile.name} (${currentUserProfile.country || "Global"})`,
-          },
-          configOverwrite: {
-            startWithAudioMuted: false,
-            startWithVideoMuted: false,
-            prejoinPageEnabled: false,
-          },
-          interfaceConfigOverwrite: {
-            TOOLBAR_BUTTONS: [
-              "microphone",
-              "camera",
-              "desktop",
-              "fullscreen",
-              "fodeviceselection",
-              "hangup",
-              "chat",
-              "raisehand",
-              "tileview",
-              "participants-pane",
-            ],
-          },
-        };
+      function updateMeetingControlsUI() {
+        if (!lkRoom) return;
+        const lp = lkRoom.localParticipant;
+        const micOn = lp.isMicrophoneEnabled;
+        const camOn = lp.isCameraEnabled;
+        const scrOn = lp.isScreenShareEnabled;
 
-        jitsiApi = new JitsiMeetExternalAPI(domain, options);
+        const micBtn = document.getElementById("btn-toggle-mic");
+        micBtn.className = micOn
+          ? "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 transition"
+          : "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-red-600 text-white hover:bg-red-700 transition";
+        micBtn.innerHTML = `<i data-lucide="${micOn ? "mic" : "mic-off"}" class="w-4 h-4"></i><span>${micOn ? "Mic On" : "Mic Off"}</span>`;
 
-        const updateParticipantList = () => {
-          if (!jitsiApi) return;
-          const list = jitsiApi.getParticipantsInfo();
-          document.getElementById("participant-count").innerText = list.length;
-          const ul = document.getElementById("meeting-participants-list");
-          ul.innerHTML = list
-            .map(
-              (p) => `
-          <li class="flex items-center gap-2 p-2 bg-white/70 rounded-xl border border-emerald-100">
-            <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-            <span class="truncate font-medium">${escapeHtml(p.displayName || "Member")}</span>
+        const camBtn = document.getElementById("btn-toggle-cam");
+        camBtn.className = camOn
+          ? "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 transition"
+          : "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-red-600 text-white hover:bg-red-700 transition";
+        camBtn.innerHTML = `<i data-lucide="${camOn ? "video" : "video-off"}" class="w-4 h-4"></i><span>${camOn ? "Cam On" : "Cam Off"}</span>`;
+
+        const scrBtn = document.getElementById("btn-toggle-screen");
+        scrBtn.className = scrOn
+          ? "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-amber-600 text-white hover:bg-amber-700 transition"
+          : "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 bg-slate-700 text-white hover:bg-slate-600 transition";
+        scrBtn.innerHTML = `<i data-lucide="monitor-up" class="w-4 h-4"></i><span>${scrOn ? "Stop Share" : "Share Screen"}</span>`;
+
+        lucide.createIcons();
+      }
+
+      function syncLiveKitUI(activeSpeakers = []) {
+        if (!lkRoom) return;
+        const LK = window.LivekitClient || window.LiveKitClient;
+        const participants = [
+          lkRoom.localParticipant,
+          ...Array.from(lkRoom.remoteParticipants.values()),
+        ];
+        const speakerIds = new Set(activeSpeakers.map((s) => s.identity));
+
+        // 1. Update Participant Sidebar (with real-time Mic & Cam status!)
+        document.getElementById("participant-count").innerText =
+          participants.length;
+        const ul = document.getElementById("meeting-participants-list");
+        ul.innerHTML = participants
+          .map((p) => {
+            const isMe = p === lkRoom.localParticipant;
+            const micOn = p.isMicrophoneEnabled;
+            const camOn = p.isCameraEnabled;
+            return `
+          <li class="flex items-center justify-between gap-2 p-2 bg-white/75 rounded-xl border border-emerald-100">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2 h-2 bg-emerald-500 rounded-full shrink-0"></span>
+              <span class="truncate font-semibold text-slate-800">${escapeHtml(p.name || p.identity)}${isMe ? " (You)" : ""}</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <i data-lucide="${micOn ? "mic" : "mic-off"}" class="w-3.5 h-3.5 ${micOn ? "text-emerald-600" : "text-red-500"}"></i>
+              <i data-lucide="${camOn ? "video" : "video-off"}" class="w-3.5 h-3.5 ${camOn ? "text-emerald-600" : "text-slate-400"}"></i>
+            </div>
           </li>
-        `,
+        `;
+          })
+          .join("");
+
+        // 2. Sync Screen Share Stage
+        const scrStage = document.getElementById("lk-screenshare-stage");
+        const scrVideoBox = document.getElementById("lk-screenshare-video");
+        let activeScreenPub = null;
+        let screenOwnerName = "";
+
+        for (const p of participants) {
+          const pub = p.getTrackPublication(LK.Track.Source.ScreenShare);
+          if (pub && pub.track && !pub.isMuted) {
+            activeScreenPub = pub;
+            screenOwnerName = p.name || p.identity;
+            break;
+          }
+        }
+
+        if (activeScreenPub) {
+          scrStage.classList.remove("hidden");
+          document.getElementById("lk-screenshare-label").innerText =
+            `Screen shared by ${screenOwnerName}`;
+          if (scrVideoBox.dataset.trackSid !== activeScreenPub.track.sid) {
+            scrVideoBox.innerHTML = "";
+            const el = activeScreenPub.track.attach();
+            el.className = "w-full max-h-[340px] object-contain";
+            el.playsInline = true;
+            el.autoplay = true;
+            scrVideoBox.appendChild(el);
+            scrVideoBox.dataset.trackSid = activeScreenPub.track.sid;
+          }
+        } else {
+          scrStage.classList.add("hidden");
+          scrVideoBox.innerHTML = "";
+          delete scrVideoBox.dataset.trackSid;
+        }
+
+        // 3. Sync Video Tiles
+        const grid = document.getElementById("lk-video-grid");
+        const activeTileIds = new Set();
+
+        participants.forEach((p) => {
+          const safeId = getSafeId(p.identity);
+          const tileId = `lk-tile-${safeId}`;
+          activeTileIds.add(tileId);
+          const isMe = p === lkRoom.localParticipant;
+          const isSpeaking = speakerIds.has(p.identity);
+
+          let tile = document.getElementById(tileId);
+          if (!tile) {
+            tile = document.createElement("div");
+            tile.id = tileId;
+            tile.innerHTML = `
+            <div id="lk-video-wrap-${safeId}" class="w-full h-full flex items-center justify-center"></div>
+            <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-none">
+              <span class="bg-slate-950/75 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-lg truncate max-w-[75%]">
+                ${escapeHtml(p.name || p.identity)}${isMe ? " (You)" : ""}
+              </span>
+              <span id="lk-tile-mic-${safeId}" class="bg-slate-950/75 p-1.5 rounded-lg"></span>
+            </div>
+          `;
+            grid.appendChild(tile);
+          }
+
+          tile.className = `relative bg-slate-900 rounded-xl overflow-hidden min-h-[210px] border-2 transition ${isSpeaking ? "border-emerald-400 shadow-lg shadow-emerald-500/20" : "border-white/10"}`;
+
+          const micBadge = document.getElementById(`lk-tile-mic-${safeId}`);
+          const micOn = p.isMicrophoneEnabled;
+          micBadge.innerHTML = `<i data-lucide="${micOn ? "mic" : "mic-off"}" class="w-3.5 h-3.5 ${micOn ? "text-emerald-400" : "text-red-400"}"></i>`;
+
+          const wrap = document.getElementById(`lk-video-wrap-${safeId}`);
+          const camPub = p.getTrackPublication(LK.Track.Source.Camera);
+
+          if (camPub && camPub.track && !camPub.isMuted && p.isCameraEnabled) {
+            if (wrap.dataset.trackSid !== camPub.track.sid) {
+              wrap.innerHTML = "";
+              const v = camPub.track.attach();
+              v.className = `w-full h-full object-cover ${isMe ? "scale-x-[-1]" : ""}`;
+              v.playsInline = true;
+              v.autoplay = true;
+              if (isMe) v.muted = true;
+              wrap.appendChild(v);
+              wrap.dataset.trackSid = camPub.track.sid;
+            }
+          } else {
+            if (wrap.dataset.trackSid !== "off") {
+              wrap.innerHTML = `
+              <div class="flex flex-col items-center justify-center text-slate-400 p-4">
+                <div class="w-16 h-16 rounded-full bg-emerald-800/60 border border-emerald-500/40 text-emerald-200 flex items-center justify-center text-xl font-bold mb-2">
+                  ${escapeHtml((p.name || "M").slice(0, 2).toUpperCase())}
+                </div>
+                <span class="text-[11px] text-slate-400">Camera Off</span>
+              </div>
+            `;
+              wrap.dataset.trackSid = "off";
+            }
+          }
+        });
+
+        // Remove tiles of participants who left
+        Array.from(grid.children).forEach((child) => {
+          if (!activeTileIds.has(child.id)) child.remove();
+        });
+
+        updateMeetingControlsUI();
+      }
+
+      window.joinMeeting = async () => {
+        if (lkRoom) return;
+        const LK = window.LivekitClient || window.LiveKitClient;
+        if (!LK) {
+          showToast(
+            "LiveKit SDK failed to load. Check internet connection.",
+            "error",
+          );
+          return;
+        }
+
+        const joinBtn = document.getElementById("join-meeting-btn");
+        joinBtn.disabled = true;
+        joinBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Connecting...</span>`;
+        lucide.createIcons();
+
+        try {
+          const res = await fetch(LIVEKIT_TOKEN_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              roomName: currentMeetingRoom,
+              identity: currentUser.uid,
+              participantName: `${currentUserProfile.name} (${currentUserProfile.country || "Global"})`,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok || !data.token)
+            throw new Error(data.error || "Could not get meeting token");
+
+          lkRoom = new LK.Room({
+            adaptiveStream: true,
+            dynacast: true,
+            videoCaptureDefaults: {
+              resolution: LK.VideoPresets.h720.resolution,
+            },
+          });
+
+          lkRoom
+            .on(LK.RoomEvent.ParticipantConnected, (p) => {
+              showToast(`${p.name || "A member"} joined the meeting`);
+              syncLiveKitUI();
+            })
+            .on(LK.RoomEvent.ParticipantDisconnected, (p) => {
+              showToast(`${p.name || "A member"} left the meeting`, "warn");
+              syncLiveKitUI();
+            })
+            .on(LK.RoomEvent.TrackSubscribed, (track) => {
+              if (track.kind === LK.Track.Kind.Audio) {
+                const audioEl = track.attach();
+                document
+                  .getElementById("lk-audio-container")
+                  .appendChild(audioEl);
+              }
+              syncLiveKitUI();
+            })
+            .on(LK.RoomEvent.TrackUnsubscribed, (track) => {
+              track.detach().forEach((el) => el.remove());
+              syncLiveKitUI();
+            })
+            .on(LK.RoomEvent.LocalTrackPublished, () => syncLiveKitUI())
+            .on(LK.RoomEvent.LocalTrackUnpublished, () => syncLiveKitUI())
+            .on(LK.RoomEvent.TrackMuted, () => syncLiveKitUI())
+            .on(LK.RoomEvent.TrackUnmuted, () => syncLiveKitUI())
+            .on(LK.RoomEvent.ActiveSpeakersChanged, (speakers) =>
+              syncLiveKitUI(speakers),
             )
-            .join("");
-        };
+            .on(LK.RoomEvent.Disconnected, () => leaveMeeting());
 
-        jitsiApi.addEventListener("videoConferenceJoined", () => {
-          showToast("You have joined the meeting & attendance marked");
-          updateParticipantList();
-        });
+          await lkRoom.connect(LIVEKIT_URL, data.token);
 
-        jitsiApi.addEventListener("participantJoined", (p) => {
-          showToast(`${p.displayName || "A member"} joined the meeting`);
-          updateParticipantList();
-        });
+          // Safely enable Mic & Cam (works even if user has no webcam)
+          try {
+            await lkRoom.localParticipant.setMicrophoneEnabled(true);
+          } catch (_) {
+            showToast("Microphone unavailable or blocked", "warn");
+          }
+          try {
+            await lkRoom.localParticipant.setCameraEnabled(true);
+          } catch (_) {
+            showToast("Joined without camera", "warn");
+          }
 
-        jitsiApi.addEventListener("participantLeft", () => {
-          showToast("A member left the meeting", "warn");
-          updateParticipantList();
-        });
+          markMyAttendance(false);
+          document
+            .getElementById("meeting-placeholder")
+            .classList.add("hidden");
+          document
+            .getElementById("lk-meeting-stage")
+            .classList.remove("hidden");
+          document.getElementById("join-meeting-btn").classList.add("hidden");
+          document
+            .getElementById("leave-meeting-btn")
+            .classList.remove("hidden");
 
-        jitsiApi.addEventListener("readyToClose", () => {
-          leaveMeeting();
-        });
+          syncLiveKitUI();
+          showToast("Joined LiveKit meeting & attendance marked!");
+        } catch (err) {
+          showToast("Meeting error: " + err.message, "error");
+          if (lkRoom) {
+            lkRoom.disconnect();
+            lkRoom = null;
+          }
+        } finally {
+          joinBtn.disabled = false;
+          joinBtn.innerHTML = `<i data-lucide="phone-call" class="w-4 h-4"></i><span>Join Meeting</span>`;
+          lucide.createIcons();
+        }
+      };
+
+      window.toggleMic = async () => {
+        if (!lkRoom) return;
+        try {
+          await lkRoom.localParticipant.setMicrophoneEnabled(
+            !lkRoom.localParticipant.isMicrophoneEnabled,
+          );
+          syncLiveKitUI();
+        } catch (err) {
+          showToast("Mic error: " + err.message, "error");
+        }
+      };
+
+      window.toggleCam = async () => {
+        if (!lkRoom) return;
+        try {
+          await lkRoom.localParticipant.setCameraEnabled(
+            !lkRoom.localParticipant.isCameraEnabled,
+          );
+          syncLiveKitUI();
+        } catch (err) {
+          showToast("Camera error: " + err.message, "error");
+        }
+      };
+
+      window.toggleScreenShare = async () => {
+        if (!lkRoom) return;
+        try {
+          await lkRoom.localParticipant.setScreenShareEnabled(
+            !lkRoom.localParticipant.isScreenShareEnabled,
+          );
+          syncLiveKitUI();
+        } catch (err) {
+          showToast("Screen share cancelled or blocked", "warn");
+        }
       };
 
       window.leaveMeeting = () => {
-        if (jitsiApi) {
-          jitsiApi.dispose();
-          jitsiApi = null;
+        if (lkRoom) {
+          const roomToClose = lkRoom;
+          lkRoom = null;
+          roomToClose.disconnect();
         }
-        document.getElementById("jitsi-container").innerHTML = "";
-        document.getElementById("jitsi-container").classList.add("hidden");
+        document.getElementById("lk-video-grid").innerHTML = "";
+        document.getElementById("lk-screenshare-video").innerHTML = "";
+        document.getElementById("lk-screenshare-stage").classList.add("hidden");
+        document.getElementById("lk-audio-container").innerHTML = "";
+        document.getElementById("lk-meeting-stage").classList.add("hidden");
         document
           .getElementById("meeting-placeholder")
           .classList.remove("hidden");
@@ -2731,6 +3122,13 @@
         document.getElementById("meeting-participants-list").innerHTML =
           `<li class="text-slate-400 text-xs">Participant list will appear once you join</li>`;
       };
+    </script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        });
+      }
     </script>
   </body>
 </html>

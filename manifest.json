@@ -1,0 +1,25 @@
+{
+  "name": "DARBER E CHANDPURISHAH",
+  "short_name": "Darber App",
+  "description": "DARBER E CHANDPURISHAH Official Member Portal & Online Meeting",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#064e3b",
+  "theme_color": "#065f46",
+  "icons": [
+    {
+      "src": "./darber-logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "./darber-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
