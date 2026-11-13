@@ -66,10 +66,35 @@
       class="fixed top-4 right-4 z-50 space-y-2 max-w-sm"
     ></div>
 
+    <!-- ================= AUTH LOADING / SPLASH VIEW ================= -->
+    <div
+      id="auth-loading-view"
+      class="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900 text-white"
+    >
+      <img
+        src="./darber-logo.png"
+        onerror="
+          if (!this.dataset.t) {
+            this.dataset.t = 1;
+            this.src = './darber-logo.jpg';
+          }
+        "
+        alt="DARBER E CHANDPURISHAH"
+        class="w-20 h-20 rounded-full object-cover mb-4 shadow-xl border-2 border-emerald-400 bg-white p-0.5 animate-pulse"
+      />
+      <h2 class="text-lg font-bold tracking-tight">DARBER E CHANDPURISHAH</h2>
+      <div class="mt-3 flex items-center gap-2 text-xs text-emerald-200">
+        <span
+          class="w-4 h-4 border-2 border-emerald-300 border-t-transparent rounded-full animate-spin"
+        ></span>
+        <span>Checking session...</span>
+      </div>
+    </div>
+
     <!-- ================= LOGIN / REGISTER VIEW ================= -->
     <div
       id="login-view"
-      class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900 relative overflow-hidden"
+      class="hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900 relative overflow-hidden"
     >
       <div
         class="absolute w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl -top-20 -left-20"
@@ -573,7 +598,7 @@
               </div>
               <div>
                 <h2 class="text-lg sm:text-xl font-bold text-emerald-950">
-                  Institute Updates & Resources
+                  Updates & Resources
                 </h2>
                 <p class="text-xs text-slate-500">
                   Real-time notices, schedules, PDFs & media
@@ -1831,6 +1856,9 @@
         .addEventListener("click", doLogout);
 
       onAuthStateChanged(auth, async (user) => {
+        const hideLoading = () =>
+          document.getElementById("auth-loading-view")?.classList.add("hidden");
+
         if (user) {
           currentUser = user;
           try {
@@ -1876,6 +1904,7 @@
             }
 
             if (currentUserProfile.approved === false) {
+              hideLoading();
               document.getElementById("login-view").classList.add("hidden");
               document.getElementById("app-view").classList.add("hidden");
               document
@@ -1885,6 +1914,7 @@
               return;
             }
 
+            hideLoading();
             document.getElementById("login-view").classList.add("hidden");
             document.getElementById("pending-view").classList.add("hidden");
             document.getElementById("app-view").classList.remove("hidden");
@@ -1903,12 +1933,15 @@
             listenAllData();
             lucide.createIcons();
           } catch (err) {
+            hideLoading();
+            document.getElementById("login-view").classList.remove("hidden");
             const errEl = document.getElementById("login-error");
             errEl.innerText = "Database error: " + err.message;
             errEl.classList.remove("hidden");
           }
         } else {
           currentUser = null;
+          hideLoading();
           document.getElementById("login-view").classList.remove("hidden");
           document.getElementById("pending-view").classList.add("hidden");
           document.getElementById("app-view").classList.add("hidden");
