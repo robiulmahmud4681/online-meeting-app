@@ -23,29 +23,26 @@
         background-attachment: fixed;
       }
       .glass {
-        background: rgba(255, 255, 255, 0.72);
+        background: rgba(255, 255, 255, 0.74);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.85);
         box-shadow: 0 8px 32px rgba(6, 95, 70, 0.08);
       }
       .glass-emerald {
         background: linear-gradient(
           135deg,
-          rgba(6, 78, 59, 0.92),
-          rgba(4, 120, 87, 0.88)
+          rgba(6, 78, 59, 0.94),
+          rgba(4, 120, 87, 0.9)
         );
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
       }
-      .tab-btn {
-        transition: all 0.2s ease;
-      }
-      .tab-active {
+      .menu-item-active {
         background: linear-gradient(135deg, #059669, #047857);
         color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+        box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
       }
     </style>
   </head>
@@ -313,34 +310,58 @@
 
     <!-- ================= MAIN APP VIEW ================= -->
     <div id="app-view" class="hidden min-h-screen flex flex-col">
-      <!-- Top Glass Navbar -->
-      <header class="glass-emerald text-white shadow-lg sticky top-0 z-30">
+      <!-- Top Glass Navbar with Compact 3-Line Menu -->
+      <header class="glass-emerald text-white shadow-lg sticky top-0 z-40">
         <div
-          class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between"
+          class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <!-- 3-Line Hamburger Button -->
+            <button
+              type="button"
+              onclick="toggleNavMenu()"
+              id="hamburger-btn"
+              class="relative bg-white/15 hover:bg-white/25 border border-white/25 p-2.5 rounded-xl transition flex items-center justify-center shrink-0"
+              aria-label="Open Navigation Menu"
+            >
+              <i data-lucide="menu" class="w-5 h-5"></i>
+              <span
+                id="hamburger-dot"
+                class="hidden absolute -top-1 -right-1 w-3 h-3 bg-amber-400 border-2 border-emerald-900 rounded-full"
+              ></span>
+            </button>
+
             <div
-              class="w-10 h-10 bg-white/15 border border-white/25 rounded-xl flex items-center justify-center font-extrabold tracking-tight shadow-inner"
+              class="w-10 h-10 bg-white/15 border border-white/25 rounded-xl hidden sm:flex items-center justify-center font-extrabold tracking-tight shadow-inner shrink-0"
             >
               DC
             </div>
-            <div>
+            <div class="min-w-0">
               <h1
-                class="font-bold text-base sm:text-lg leading-tight tracking-tight"
+                class="font-bold text-sm sm:text-lg leading-tight tracking-tight truncate"
               >
                 DARBER E CHANDPURISHAH
               </h1>
-              <p class="text-xs text-emerald-100/90 flex items-center gap-1.5">
+              <p
+                class="text-[11px] text-emerald-100/90 flex items-center gap-1.5 truncate"
+              >
                 <span
-                  class="inline-block w-2 h-2 bg-emerald-300 rounded-full animate-pulse"
+                  class="inline-block w-2 h-2 bg-emerald-300 rounded-full animate-pulse shrink-0"
                 ></span>
-                Cloud Connected • Worldwide
+                <span id="current-page-label" class="font-semibold text-white"
+                  >Updates & Notice</span
+                >
+                <span class="hidden sm:inline text-emerald-200/80"
+                  >• Worldwide Cloud</span
+                >
               </p>
             </div>
           </div>
-          <div class="flex items-center gap-3">
+
+          <div class="flex items-center gap-2.5 shrink-0">
             <div
-              class="hidden sm:flex items-center gap-2.5 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full"
+              onclick="switchTab('profile')"
+              class="cursor-pointer hidden sm:flex items-center gap-2.5 bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-1.5 rounded-full transition"
             >
               <img
                 id="nav-user-avatar"
@@ -365,62 +386,129 @@
             </button>
           </div>
         </div>
+      </header>
 
-        <!-- Navigation Pills Bar -->
-        <nav
-          class="bg-white/85 backdrop-blur-md text-slate-600 border-b border-emerald-100 overflow-x-auto"
+      <!-- Vertical Collapsible Navigation Drawer -->
+      <div
+        id="nav-menu-backdrop"
+        onclick="closeNavMenu()"
+        class="hidden fixed inset-0 bg-emerald-950/40 backdrop-blur-sm z-40"
+      ></div>
+      <nav
+        id="nav-menu-drawer"
+        class="hidden fixed top-0 left-0 h-screen w-72 max-w-[85vw] bg-white/95 backdrop-blur-2xl text-slate-700 shadow-2xl border-r border-emerald-100 z-50 flex flex-col"
+      >
+        <div
+          class="glass-emerald text-white px-5 py-4 flex items-center justify-between"
         >
-          <div
-            class="max-w-7xl mx-auto px-4 py-2 flex gap-2 whitespace-nowrap text-sm"
+          <div class="flex items-center gap-2.5">
+            <div
+              class="w-9 h-9 bg-white/15 border border-white/25 rounded-xl flex items-center justify-center font-extrabold text-sm"
+            >
+              DC
+            </div>
+            <div>
+              <p class="font-bold text-sm leading-tight">Menu</p>
+              <p class="text-[10px] text-emerald-100/80">
+                DARBER E CHANDPURISHAH
+              </p>
+            </div>
+          </div>
+          <button
+            onclick="closeNavMenu()"
+            class="bg-white/15 hover:bg-white/25 p-1.5 rounded-lg transition"
           >
-            <button
-              onclick="switchTab('updates')"
-              id="tab-updates"
-              class="tab-btn px-4 py-2 rounded-xl font-medium flex items-center gap-2 tab-active"
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div class="p-3 space-y-1.5 flex-1 overflow-y-auto text-sm">
+          <button
+            onclick="switchTab('updates')"
+            id="tab-updates"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition menu-item-active"
+          >
+            <i data-lucide="megaphone" class="w-4 h-4"></i>
+            <span>Updates & Notice</span>
+          </button>
+          <button
+            onclick="switchTab('meeting')"
+            id="tab-meeting"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="video" class="w-4 h-4"></i>
+            <span>Online Meeting</span>
+          </button>
+          <button
+            onclick="switchTab('chat')"
+            id="tab-chat"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center justify-between hover:bg-emerald-50 transition"
+          >
+            <span class="flex items-center gap-3">
+              <i data-lucide="message-square" class="w-4 h-4"></i>
+              <span>Group Chat</span>
+            </span>
+            <span
+              id="chat-unread-badge"
+              class="hidden bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold"
+              >New</span
             >
-              <i data-lucide="megaphone" class="w-4 h-4"></i>
-              <span>Updates & Notice</span>
-            </button>
-            <button
-              onclick="switchTab('meeting')"
-              id="tab-meeting"
-              class="tab-btn px-4 py-2 rounded-xl font-medium flex items-center gap-2 hover:bg-emerald-50"
-            >
-              <i data-lucide="video" class="w-4 h-4"></i>
-              <span>Online Meeting</span>
-            </button>
-            <button
-              onclick="switchTab('members')"
-              id="tab-members"
-              class="tab-btn px-4 py-2 rounded-xl font-medium flex items-center gap-2 hover:bg-emerald-50"
-            >
-              <i data-lucide="users" class="w-4 h-4"></i>
-              <span>Members & Status</span>
-            </button>
-            <button
-              onclick="switchTab('profile')"
-              id="tab-profile"
-              class="tab-btn px-4 py-2 rounded-xl font-medium flex items-center gap-2 hover:bg-emerald-50"
-            >
-              <i data-lucide="user-circle" class="w-4 h-4"></i>
-              <span>My Profile</span>
-            </button>
-            <button
-              onclick="switchTab('admin')"
-              id="tab-admin"
-              class="tab-btn px-4 py-2 rounded-xl font-semibold hidden items-center gap-2 text-amber-700 hover:bg-amber-50"
-            >
+          </button>
+          <button
+            onclick="switchTab('members')"
+            id="tab-members"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>Members & Status</span>
+          </button>
+          <button
+            onclick="switchTab('history')"
+            id="tab-history"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition text-left"
+          >
+            <i data-lucide="book-open" class="w-4 h-4 shrink-0"></i>
+            <span class="leading-tight">History of Darber E Chandpurishah</span>
+          </button>
+          <button
+            onclick="switchTab('csf')"
+            id="tab-csf"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            <span>CSF</span>
+          </button>
+          <button
+            onclick="switchTab('profile')"
+            id="tab-profile"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="user-circle" class="w-4 h-4"></i>
+            <span>My Profile</span>
+          </button>
+          <button
+            onclick="switchTab('admin')"
+            id="tab-admin"
+            class="w-full px-4 py-3 rounded-xl font-semibold hidden items-center justify-between text-amber-700 hover:bg-amber-50 transition"
+          >
+            <span class="flex items-center gap-3">
               <i data-lucide="shield-check" class="w-4 h-4"></i>
               <span>Admin Panel</span>
-              <span
-                id="admin-pending-badge"
-                class="hidden bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold"
-                >0</span
-              >
-            </button>
-          </div>
-        </nav>
-      </header>
+            </span>
+            <span
+              id="admin-pending-badge"
+              class="hidden bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold"
+              >0</span
+            >
+          </button>
+        </div>
+
+        <div
+          class="p-4 border-t border-emerald-100 text-[11px] text-slate-400 text-center"
+        >
+          Cloud Connected • Worldwide 🌍
+        </div>
+      </nav>
 
       <!-- Live Meeting Alert Banner -->
       <div
@@ -455,7 +543,7 @@
                   Institute Updates & Resources
                 </h2>
                 <p class="text-xs text-slate-500">
-                  Real-time notices, schedules, documents & media
+                  Real-time notices, schedules, PDFs & media
                 </p>
               </div>
             </div>
@@ -480,7 +568,7 @@
           </div>
         </section>
 
-        <!-- 2. ONLINE MEETING TAB -->
+        <!-- 2. ONLINE MEETING & ATTENDANCE TAB -->
         <section id="section-meeting" class="hidden space-y-5">
           <div
             class="glass p-4 sm:p-5 rounded-2xl flex flex-wrap items-center justify-between gap-3"
@@ -499,11 +587,18 @@
                   Official Meeting Room
                 </h2>
                 <p class="text-xs text-slate-500">
-                  HD Audio, Video, Chat & Screen Sharing Supported
+                  HD Audio, Video, Screen Sharing & Auto Attendance
                 </p>
               </div>
             </div>
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
+              <button
+                onclick="markMyAttendance(true)"
+                class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+              >
+                <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                <span>Mark Attendance</span>
+              </button>
               <button
                 id="join-meeting-btn"
                 onclick="joinMeeting()"
@@ -540,39 +635,127 @@
                   Click "Join Meeting" above to enter the room
                 </p>
                 <p class="text-xs text-slate-400 mt-1">
-                  Members can join from any country worldwide
+                  Your attendance will be recorded automatically
                 </p>
               </div>
               <div id="jitsi-container" class="w-full h-[520px] hidden"></div>
             </div>
 
-            <div class="glass rounded-2xl p-4">
-              <h3
-                class="font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 mb-3 flex items-center justify-between"
-              >
-                <span class="flex items-center gap-2">
-                  <i data-lucide="users" class="w-4 h-4 text-emerald-600"></i>
-                  <span>In Meeting</span>
-                </span>
-                <span
-                  id="participant-count"
-                  class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold"
-                  >0</span
+            <div class="space-y-4">
+              <div class="glass rounded-2xl p-4">
+                <h3
+                  class="font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 mb-3 flex items-center justify-between text-sm"
                 >
-              </h3>
-              <ul
-                id="meeting-participants-list"
-                class="space-y-2 text-sm text-slate-700 max-h-[440px] overflow-y-auto"
-              >
-                <li class="text-slate-400 text-xs">
-                  Participant list will appear once you join
-                </li>
-              </ul>
+                  <span class="flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4 text-emerald-600"></i>
+                    <span>Live In Meeting</span>
+                  </span>
+                  <span
+                    id="participant-count"
+                    class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold"
+                    >0</span
+                  >
+                </h3>
+                <ul
+                  id="meeting-participants-list"
+                  class="space-y-2 text-xs text-slate-700 max-h-[200px] overflow-y-auto"
+                >
+                  <li class="text-slate-400">
+                    Participant list will appear once you join
+                  </li>
+                </ul>
+              </div>
+
+              <div class="glass rounded-2xl p-4">
+                <h3
+                  class="font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 mb-3 flex items-center justify-between text-sm"
+                >
+                  <span class="flex items-center gap-2">
+                    <i
+                      data-lucide="clipboard-check"
+                      class="w-4 h-4 text-emerald-600"
+                    ></i>
+                    <span>Today's Attendance</span>
+                  </span>
+                  <span
+                    id="today-attendance-count"
+                    class="bg-teal-100 text-teal-800 text-xs px-2.5 py-0.5 rounded-full font-bold"
+                    >0</span
+                  >
+                </h3>
+                <ul
+                  id="today-attendance-list"
+                  class="space-y-2 text-xs text-slate-700 max-h-[220px] overflow-y-auto"
+                >
+                  <li class="text-slate-400">No attendance marked today yet</li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- 3. MEMBERS & ONLINE STATUS TAB -->
+        <!-- 3. IN-APP GROUP CHAT TAB -->
+        <section id="section-chat" class="hidden max-w-4xl mx-auto">
+          <div
+            class="glass rounded-3xl overflow-hidden flex flex-col h-[75vh] min-h-[480px]"
+          >
+            <div
+              class="p-4 sm:p-5 border-b border-emerald-100 bg-white/60 flex items-center justify-between"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
+                >
+                  <i data-lucide="message-square" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold text-emerald-950">
+                    Member Group Chat
+                  </h2>
+                  <p class="text-xs text-slate-500">
+                    Real-time discussion across all members worldwide
+                  </p>
+                </div>
+              </div>
+              <span
+                class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-semibold"
+                >Live</span
+              >
+            </div>
+
+            <div
+              id="chat-messages"
+              class="flex-1 p-4 sm:p-5 overflow-y-auto space-y-3 bg-emerald-50/30"
+            >
+              <p class="text-center text-xs text-slate-400">
+                Loading messages...
+              </p>
+            </div>
+
+            <form
+              id="chat-form"
+              onsubmit="return false;"
+              class="p-3 sm:p-4 bg-white/80 border-t border-emerald-100 flex gap-2.5 items-center"
+            >
+              <input
+                type="text"
+                id="chat-input"
+                required
+                placeholder="Type a message to everyone..."
+                class="flex-1 px-4 py-2.5 bg-white border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <button
+                type="submit"
+                class="bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-1.5 shadow transition"
+              >
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Send</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- 4. MEMBERS & ONLINE STATUS TAB -->
         <section id="section-members" class="hidden space-y-5">
           <div
             class="glass p-4 sm:p-5 rounded-2xl flex flex-wrap items-center justify-between gap-3"
@@ -612,7 +795,53 @@
           ></div>
         </section>
 
-        <!-- 4. MY PROFILE TAB -->
+        <!-- 5. HISTORY OF DARBER E CHANDPURISHAH TAB (PLACEHOLDER) -->
+        <section id="section-history" class="hidden max-w-3xl mx-auto">
+          <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
+            <div
+              class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto"
+            >
+              <i data-lucide="book-open" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-emerald-950">
+              History of Darber E Chandpurishah
+            </h2>
+            <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              This section will contain the complete history, heritage, and
+              important milestones of <strong>DARBER E CHANDPURISHAH</strong>.
+            </p>
+            <div
+              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
+            >
+              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+              <span>Details coming soon</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. CSF TAB (PLACEHOLDER) -->
+        <section id="section-csf" class="hidden max-w-3xl mx-auto">
+          <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
+            <div
+              class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto"
+            >
+              <i data-lucide="layers" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-emerald-950">CSF</h2>
+            <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              This section is dedicated to <strong>CSF</strong> updates,
+              information, and activities.
+            </p>
+            <div
+              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
+            >
+              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+              <span>Details coming soon</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. MY PROFILE TAB -->
         <section id="section-profile" class="hidden max-w-xl mx-auto">
           <div class="glass p-6 sm:p-8 rounded-3xl space-y-5">
             <div
@@ -744,7 +973,7 @@
           </div>
         </section>
 
-        <!-- 5. ADMIN PANEL TAB -->
+        <!-- 8. ADMIN PANEL TAB -->
         <section id="section-admin" class="hidden space-y-6">
           <!-- Pending Approvals Card -->
           <div
@@ -826,13 +1055,13 @@
               </form>
             </div>
 
-            <!-- Post Notice / Event / Document / Photo / Link -->
+            <!-- Post Notice / Event / Document (with Direct PDF/Image Upload) -->
             <div class="glass p-6 rounded-2xl space-y-4">
               <h3
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
               >
                 <i data-lucide="send" class="w-5 h-5 text-amber-600"></i>
-                <span>Post New Notice / Update</span>
+                <span>Post Notice / Upload PDF or Photo</span>
               </h3>
               <form id="admin-post-update-form" class="space-y-3">
                 <select
@@ -841,8 +1070,8 @@
                 >
                   <option value="notice">Important Notice</option>
                   <option value="event">Event / Meeting Schedule</option>
-                  <option value="document">Document / PDF Link</option>
-                  <option value="photo">Photo Link</option>
+                  <option value="document">Document / PDF</option>
+                  <option value="photo">Photo</option>
                   <option value="link">Important Link</option>
                 </select>
                 <input
@@ -854,15 +1083,38 @@
                 />
                 <textarea
                   id="upd-desc"
-                  rows="3"
+                  rows="2"
                   required
                   placeholder="Write details (e.g. Monthly meeting will be held tomorrow at 8 PM)..."
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 ></textarea>
+
+                <!-- Direct PDF / Image File Upload -->
+                <div
+                  class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-1.5"
+                >
+                  <label
+                    class="text-xs font-semibold text-emerald-900 flex items-center gap-1.5"
+                  >
+                    <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                    <span>Upload PDF or Image File (Max 700 KB for PDF)</span>
+                  </label>
+                  <input
+                    type="file"
+                    id="upd-file"
+                    accept="application/pdf,image/*"
+                    class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800"
+                  />
+                  <p
+                    id="upd-file-status"
+                    class="text-[11px] text-emerald-700 hidden"
+                  ></p>
+                </div>
+
                 <input
                   type="url"
                   id="upd-url"
-                  placeholder="PDF / Image / Web Link (optional)"
+                  placeholder="Or paste external PDF / Drive / Web Link (optional)"
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
@@ -905,6 +1157,42 @@
                   <span>End Meeting Notice</span>
                 </button>
               </div>
+            </div>
+
+            <!-- Meeting Attendance Report -->
+            <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
+              <div
+                class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
+              >
+                <h3
+                  class="text-lg font-bold text-emerald-950 flex items-center gap-2"
+                >
+                  <i
+                    data-lucide="clipboard-list"
+                    class="w-5 h-5 text-emerald-600"
+                  ></i>
+                  <span>Meeting Attendance Records</span>
+                </h3>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="date"
+                    id="attendance-date-filter"
+                    onchange="renderAdminAttendance()"
+                    class="px-3 py-1.5 bg-white border border-emerald-200 rounded-xl text-xs font-medium"
+                  />
+                  <button
+                    onclick="exportAttendanceCSV()"
+                    class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                  >
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Export CSV</span>
+                  </button>
+                </div>
+              </div>
+              <div
+                id="admin-attendance-list"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-64 overflow-y-auto"
+              ></div>
             </div>
 
             <!-- Manage / Delete Members -->
@@ -1044,6 +1332,7 @@
         addDoc,
         query,
         orderBy,
+        limitToLast,
         onSnapshot,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -1082,12 +1371,34 @@
       let allMembers = [];
       let presenceMap = {};
       let allUpdates = [];
+      let allMessages = [];
+      let allAttendance = [];
       let jitsiApi = null;
       let currentMeetingRoom = "DarberEChandpurishahMainRoom2025";
+      let currentMeetingTitle = "Official Meeting Room";
       let uploadedPhotoBase64 = "";
+      let uploadedUpdateFile = null; // { dataUrl, fileName, isImage }
       let pendingRegistrationProfile = null;
+      let activeTab = "updates";
+
+      const tabNames = {
+        updates: "Updates & Notice",
+        meeting: "Online Meeting",
+        chat: "Group Chat",
+        members: "Members & Status",
+        history: "History of Darber E Chandpurishah",
+        csf: "CSF",
+        profile: "My Profile",
+        admin: "Admin Panel",
+      };
 
       lucide.createIcons();
+
+      function todayDateStr() {
+        const d = new Date();
+        return d.toISOString().slice(0, 10);
+      }
+      document.getElementById("attendance-date-filter").value = todayDateStr();
 
       function escapeHtml(str = "") {
         return String(str)
@@ -1119,6 +1430,24 @@
         setTimeout(() => el.remove(), 4500);
       };
 
+      // 3-Line Menu Drawer Toggle
+      window.toggleNavMenu = () => {
+        const drawer = document.getElementById("nav-menu-drawer");
+        const backdrop = document.getElementById("nav-menu-backdrop");
+        const isHidden = drawer.classList.contains("hidden");
+        if (isHidden) {
+          drawer.classList.remove("hidden");
+          backdrop.classList.remove("hidden");
+        } else {
+          closeNavMenu();
+        }
+      };
+
+      window.closeNavMenu = () => {
+        document.getElementById("nav-menu-drawer").classList.add("hidden");
+        document.getElementById("nav-menu-backdrop").classList.add("hidden");
+      };
+
       window.toggleAuthMode = (mode) => {
         const loginForm = document.getElementById("login-form");
         const regForm = document.getElementById("register-form");
@@ -1145,16 +1474,42 @@
       };
 
       window.switchTab = (tabName) => {
-        ["updates", "meeting", "members", "profile", "admin"].forEach((t) => {
+        activeTab = tabName;
+        Object.keys(tabNames).forEach((t) => {
           document.getElementById(`section-${t}`).classList.add("hidden");
-          document.getElementById(`tab-${t}`).classList.remove("tab-active");
+          document
+            .getElementById(`tab-${t}`)
+            .classList.remove("menu-item-active");
         });
         document
           .getElementById(`section-${tabName}`)
           .classList.remove("hidden");
-        document.getElementById(`tab-${tabName}`).classList.add("tab-active");
+        document
+          .getElementById(`tab-${tabName}`)
+          .classList.add("menu-item-active");
+        document.getElementById("current-page-label").innerText =
+          tabNames[tabName];
+
+        if (tabName === "chat") {
+          document.getElementById("chat-unread-badge").classList.add("hidden");
+          updateHamburgerDot();
+          scrollToChatBottom();
+        }
+        closeNavMenu();
         lucide.createIcons();
       };
+
+      function updateHamburgerDot() {
+        const hasUnreadChat = !document
+          .getElementById("chat-unread-badge")
+          .classList.contains("hidden");
+        const hasPendingAdmin = !document
+          .getElementById("admin-pending-badge")
+          .classList.contains("hidden");
+        const dot = document.getElementById("hamburger-dot");
+        if (hasUnreadChat || hasPendingAdmin) dot.classList.remove("hidden");
+        else dot.classList.add("hidden");
+      }
 
       // Login Form
       document
@@ -1213,7 +1568,7 @@
           }
         });
 
-      // Logout buttons
+      // Logout
       const doLogout = async () => {
         if (currentUser) {
           try {
@@ -1353,8 +1708,8 @@
       }
 
       let firstUpdateLoad = true;
+      let firstChatLoad = true;
       function listenAllData() {
-        // Kick user out immediately if Admin deletes their ID
         onSnapshot(doc(db, "deletedIds", currentUser.uid), (snap) => {
           if (snap.exists()) {
             alert("Your account has been deleted by the Admin.");
@@ -1388,17 +1743,56 @@
           renderUpdates();
         });
 
+        // Group Chat Listener
+        const qChat = query(
+          collection(db, "messages"),
+          orderBy("createdAt", "asc"),
+          limitToLast(100),
+        );
+        onSnapshot(qChat, (snap) => {
+          const newMsgs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          if (
+            !firstChatLoad &&
+            newMsgs.length > allMessages.length &&
+            activeTab !== "chat"
+          ) {
+            const last = newMsgs[newMsgs.length - 1];
+            if (last.uid !== currentUser.uid) {
+              document
+                .getElementById("chat-unread-badge")
+                .classList.remove("hidden");
+              updateHamburgerDot();
+              showToast(`${last.name}: ${last.text.slice(0, 45)}`);
+            }
+          }
+          firstChatLoad = false;
+          allMessages = newMsgs;
+          renderChatMessages();
+        });
+
+        // Attendance Listener
+        const qAtt = query(
+          collection(db, "attendance"),
+          orderBy("joinedAt", "desc"),
+        );
+        onSnapshot(qAtt, (snap) => {
+          allAttendance = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          renderTodayAttendance();
+          renderAdminAttendance();
+        });
+
         onSnapshot(doc(db, "settings", "meeting"), (snap) => {
           if (snap.exists()) {
             const data = snap.data();
             currentMeetingRoom =
               data.roomName || "DarberEChandpurishahMainRoom2025";
+            currentMeetingTitle = data.title || "Official Meeting Room";
             document.getElementById("meeting-room-title").innerText =
-              data.title || "Official Meeting Room";
+              currentMeetingTitle;
             const banner = document.getElementById("live-meeting-banner");
             if (data.isActive) {
               document.getElementById("banner-meeting-title").innerText =
-                `${data.title || "Meeting"} is live now!`;
+                `${currentMeetingTitle} is live now!`;
               banner.classList.remove("hidden");
             } else {
               banner.classList.add("hidden");
@@ -1407,6 +1801,208 @@
         });
       }
 
+      // ================= GROUP CHAT =================
+      function scrollToChatBottom() {
+        const box = document.getElementById("chat-messages");
+        if (box) box.scrollTop = box.scrollHeight;
+      }
+
+      function renderChatMessages() {
+        const box = document.getElementById("chat-messages");
+        if (allMessages.length === 0) {
+          box.innerHTML = `<p class="text-center text-xs text-slate-400 my-8">No messages yet. Say Assalamu Alaikum to start the conversation!</p>`;
+          return;
+        }
+
+        box.innerHTML = allMessages
+          .map((m) => {
+            const isMine = m.uid === currentUser?.uid;
+            const delBtn =
+              currentUserProfile?.role === "admin"
+                ? `<button onclick="deleteChatMessage('${m.id}')" class="text-[10px] opacity-60 hover:opacity-100 ml-2 underline">Delete</button>`
+                : "";
+            const timeStr = m.timeLabel || "";
+
+            if (isMine) {
+              return `
+            <div class="flex justify-end">
+              <div class="max-w-[80%] sm:max-w-[65%] bg-gradient-to-br from-emerald-700 to-emerald-600 text-white px-4 py-2.5 rounded-2xl rounded-br-sm shadow">
+                <p class="text-sm whitespace-pre-wrap break-words">${escapeHtml(m.text)}</p>
+                <div class="text-[10px] text-emerald-100/80 mt-1 text-right">${escapeHtml(timeStr)} ${delBtn}</div>
+              </div>
+            </div>
+          `;
+            }
+            return `
+          <div class="flex items-end gap-2">
+            <img src="${m.photoURL || "https://ui-avatars.com/api/?background=065f46&color=fff&name=" + encodeURIComponent(m.name || "M")}" class="w-8 h-8 rounded-full object-cover border border-white shadow-sm shrink-0" />
+            <div class="max-w-[80%] sm:max-w-[65%] bg-white/90 border border-emerald-100 text-slate-800 px-4 py-2.5 rounded-2xl rounded-bl-sm shadow-sm">
+              <p class="text-[11px] font-bold text-emerald-700">${escapeHtml(m.name)} <span class="font-normal text-slate-400">• ${escapeHtml(m.country || "Global")}</span></p>
+              <p class="text-sm whitespace-pre-wrap break-words mt-0.5">${escapeHtml(m.text)}</p>
+              <div class="text-[10px] text-slate-400 mt-1">${escapeHtml(timeStr)} ${delBtn}</div>
+            </div>
+          </div>
+        `;
+          })
+          .join("");
+
+        scrollToChatBottom();
+      }
+
+      document
+        .getElementById("chat-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const input = document.getElementById("chat-input");
+          const text = input.value.trim();
+          if (!text || !currentUserProfile) return;
+          input.value = "";
+          const timeLabel = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          await addDoc(collection(db, "messages"), {
+            uid: currentUser.uid,
+            name: currentUserProfile.name,
+            country: currentUserProfile.country || "Global",
+            photoURL: currentUserProfile.photoURL || "",
+            text,
+            timeLabel,
+            createdAt: serverTimestamp(),
+          });
+        });
+
+      window.deleteChatMessage = async (id) => {
+        if (confirm("Delete this message?")) {
+          await deleteDoc(doc(db, "messages", id));
+        }
+      };
+
+      // ================= MEETING ATTENDANCE =================
+      window.markMyAttendance = async (showAlert = true) => {
+        if (!currentUser || !currentUserProfile) return;
+        const date = todayDateStr();
+        const docId = `${date}_${currentUser.uid}`;
+        const timeLabel = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        await setDoc(doc(db, "attendance", docId), {
+          uid: currentUser.uid,
+          name: currentUserProfile.name,
+          designation: currentUserProfile.designation || "Member",
+          country: currentUserProfile.country || "Global",
+          meetingTitle: currentMeetingTitle,
+          date,
+          timeLabel,
+          joinedAt: serverTimestamp(),
+        });
+        if (showAlert) showToast("Attendance marked for today's meeting!");
+      };
+
+      function renderTodayAttendance() {
+        const today = todayDateStr();
+        const list = allAttendance.filter((a) => a.date === today);
+        document.getElementById("today-attendance-count").innerText =
+          list.length;
+        const ul = document.getElementById("today-attendance-list");
+        if (list.length === 0) {
+          ul.innerHTML = `<li class="text-slate-400">No attendance marked today yet</li>`;
+          return;
+        }
+        ul.innerHTML = list
+          .map(
+            (a) => `
+        <li class="flex items-center justify-between gap-2 p-2 bg-white/70 rounded-xl border border-emerald-100">
+          <div class="min-w-0">
+            <p class="font-semibold text-slate-800 truncate">${escapeHtml(a.name)}</p>
+            <p class="text-[10px] text-slate-500 truncate">${escapeHtml(a.country)}</p>
+          </div>
+          <span class="text-[10px] text-emerald-700 font-semibold shrink-0">${escapeHtml(a.timeLabel || "")}</span>
+        </li>
+      `,
+          )
+          .join("");
+      }
+
+      window.renderAdminAttendance = () => {
+        const container = document.getElementById("admin-attendance-list");
+        if (!container || currentUserProfile?.role !== "admin") return;
+        const selectedDate = document.getElementById(
+          "attendance-date-filter",
+        ).value;
+        const filtered = selectedDate
+          ? allAttendance.filter((a) => a.date === selectedDate)
+          : allAttendance;
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<p class="text-xs text-slate-400 col-span-full">No attendance records for this date.</p>`;
+          return;
+        }
+
+        container.innerHTML = filtered
+          .map(
+            (a) => `
+        <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <p class="text-sm font-bold text-slate-800 truncate">${escapeHtml(a.name)}</p>
+            <p class="text-[11px] text-slate-500 truncate">${escapeHtml(a.designation)} • ${escapeHtml(a.country)}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-xs font-semibold text-emerald-700">${escapeHtml(a.timeLabel || "")}</p>
+            <p class="text-[10px] text-slate-400">${escapeHtml(a.date)}</p>
+          </div>
+        </div>
+      `,
+          )
+          .join("");
+      };
+
+      window.exportAttendanceCSV = () => {
+        const selectedDate = document.getElementById(
+          "attendance-date-filter",
+        ).value;
+        const rows = selectedDate
+          ? allAttendance.filter((a) => a.date === selectedDate)
+          : allAttendance;
+        if (rows.length === 0) {
+          showToast("No attendance data to export", "warn");
+          return;
+        }
+        const csvLines = [
+          [
+            "Date",
+            "Time",
+            "Name",
+            "Designation",
+            "Country",
+            "Meeting Title",
+          ].join(","),
+          ...rows.map((r) =>
+            [
+              r.date,
+              r.timeLabel,
+              r.name,
+              r.designation,
+              r.country,
+              r.meetingTitle,
+            ]
+              .map((v) => `"${String(v || "").replace(/"/g, '""')}"`)
+              .join(","),
+          ),
+        ];
+        const blob = new Blob([csvLines.join("\n")], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `attendance_${selectedDate || "all"}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      // ================= ADMIN: MEMBERS & PENDING =================
       function renderAdminMembersList() {
         const container = document.getElementById("admin-members-list");
         if (!container || currentUserProfile?.role !== "admin") return;
@@ -1489,6 +2085,7 @@
           badge.classList.add("hidden");
           card.classList.add("hidden");
         }
+        updateHamburgerDot();
         lucide.createIcons();
       }
 
@@ -1605,6 +2202,81 @@
         document.getElementById("member-modal").classList.add("hidden");
       };
 
+      // ================= UPDATES & DIRECT PDF UPLOAD =================
+      document.getElementById("upd-file").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const statusEl = document.getElementById("upd-file-status");
+        if (!file) {
+          uploadedUpdateFile = null;
+          statusEl.classList.add("hidden");
+          return;
+        }
+
+        if (file.type === "application/pdf") {
+          if (file.size > 700 * 1024) {
+            showToast(
+              "PDF is over 700 KB! Please compress it or paste a Google Drive link below.",
+              "error",
+            );
+            e.target.value = "";
+            uploadedUpdateFile = null;
+            statusEl.classList.add("hidden");
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            uploadedUpdateFile = {
+              dataUrl: ev.target.result,
+              fileName: file.name,
+              isImage: false,
+            };
+            statusEl.innerText = `PDF ready: ${file.name} (${Math.round(file.size / 1024)} KB)`;
+            statusEl.classList.remove("hidden");
+          };
+          reader.readAsDataURL(file);
+        } else if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const maxDim = 900;
+              let w = img.width,
+                h = img.height;
+              if (w > h && w > maxDim) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else if (h >= w && h > maxDim) {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+              canvas.width = w;
+              canvas.height = h;
+              canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+              const dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+              uploadedUpdateFile = {
+                dataUrl,
+                fileName: file.name,
+                isImage: true,
+              };
+              statusEl.innerText = `Image ready: ${file.name}`;
+              statusEl.classList.remove("hidden");
+            };
+            img.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      window.openUploadedFile = async (id) => {
+        const u = allUpdates.find((x) => x.id === id);
+        if (!u?.fileData) return;
+        const res = await fetch(u.fileData);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, "_blank");
+      };
+
       window.renderUpdates = () => {
         const filter = document.getElementById("filter-update-type").value;
         const list = document.getElementById("updates-list");
@@ -1653,11 +2325,31 @@
             currentUserProfile?.role === "admin"
               ? `<button onclick="deleteUpdate('${u.id}')" class="text-xs text-red-500 hover:text-red-700 font-medium flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Delete</button>`
               : "";
-          const linkHtml = u.url
-            ? u.type === "photo"
-              ? `<img src="${escapeHtml(u.url)}" class="w-full h-44 object-cover rounded-xl mt-3 border border-white/60 shadow-sm" />`
-              : `<a href="${escapeHtml(u.url)}" target="_blank" class="inline-flex items-center gap-1.5 mt-3 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3.5 py-1.5 rounded-xl font-semibold hover:bg-emerald-100 transition"><span>Open / Download</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>`
-            : "";
+
+          let mediaHtml = "";
+          if (u.fileData) {
+            if (u.isImageFile) {
+              mediaHtml += `<img src="${u.fileData}" class="w-full h-44 object-cover rounded-xl mt-3 border border-white/60 shadow-sm cursor-pointer" onclick="openUploadedFile('${u.id}')" />`;
+            } else {
+              mediaHtml += `
+              <div class="flex flex-wrap gap-2 mt-3">
+                <button onclick="openUploadedFile('${u.id}')" class="inline-flex items-center gap-1.5 text-xs bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1.5 rounded-xl font-semibold hover:bg-amber-100 transition">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  <span>View PDF</span>
+                </button>
+                <a href="${u.fileData}" download="${escapeHtml(u.fileName || "document.pdf")}" class="inline-flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl font-semibold hover:bg-emerald-100 transition">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download</span>
+                </a>
+              </div>`;
+            }
+          }
+          if (u.url) {
+            mediaHtml +=
+              u.type === "photo" && !u.fileData
+                ? `<img src="${escapeHtml(u.url)}" class="w-full h-44 object-cover rounded-xl mt-3 border border-white/60 shadow-sm" />`
+                : `<a href="${escapeHtml(u.url)}" target="_blank" class="inline-flex items-center gap-1.5 mt-3 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3.5 py-1.5 rounded-xl font-semibold hover:bg-emerald-100 transition"><span>Open Link</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>`;
+          }
 
           list.innerHTML += `
           <div class="glass p-5 rounded-2xl flex flex-col justify-between hover:border-emerald-300 transition">
@@ -1671,7 +2363,7 @@
               </div>
               <h3 class="font-bold text-slate-900 text-base">${escapeHtml(u.title)}</h3>
               <p class="text-sm text-slate-600 mt-1.5 whitespace-pre-line leading-relaxed">${escapeHtml(u.description)}</p>
-              ${linkHtml}
+              ${mediaHtml}
             </div>
             <p class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-emerald-100/80 flex items-center gap-1">
               <i data-lucide="user" class="w-3 h-3"></i>
@@ -1709,8 +2401,7 @@
               }
               canvas.width = w;
               canvas.height = h;
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0, w, h);
+              canvas.getContext("2d").drawImage(img, 0, 0, w, h);
               uploadedPhotoBase64 = canvas.toDataURL("image/jpeg", 0.8);
               document.getElementById("prof-preview-img").src =
                 uploadedPhotoBase64;
@@ -1809,16 +2500,25 @@
         .getElementById("admin-post-update-form")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          await addDoc(collection(db, "updates"), {
-            type: document.getElementById("upd-type").value,
-            title: document.getElementById("upd-title").value.trim(),
-            description: document.getElementById("upd-desc").value.trim(),
-            url: document.getElementById("upd-url").value.trim(),
-            authorName: currentUserProfile.name,
-            createdAt: serverTimestamp(),
-          });
-          e.target.reset();
-          showToast("Update published to everyone!");
+          try {
+            await addDoc(collection(db, "updates"), {
+              type: document.getElementById("upd-type").value,
+              title: document.getElementById("upd-title").value.trim(),
+              description: document.getElementById("upd-desc").value.trim(),
+              url: document.getElementById("upd-url").value.trim(),
+              fileData: uploadedUpdateFile?.dataUrl || "",
+              fileName: uploadedUpdateFile?.fileName || "",
+              isImageFile: uploadedUpdateFile?.isImage || false,
+              authorName: currentUserProfile.name,
+              createdAt: serverTimestamp(),
+            });
+            e.target.reset();
+            uploadedUpdateFile = null;
+            document.getElementById("upd-file-status").classList.add("hidden");
+            showToast("Update published to everyone!");
+          } catch (err) {
+            showToast("Failed to publish: " + err.message, "error");
+          }
         });
 
       window.deleteUpdate = async (id) => {
@@ -1852,6 +2552,7 @@
       // ================= ONLINE MEETING (JITSI API) =================
       window.joinMeeting = () => {
         if (jitsiApi) return;
+        markMyAttendance(false);
         document.getElementById("meeting-placeholder").classList.add("hidden");
         document.getElementById("jitsi-container").classList.remove("hidden");
         document.getElementById("join-meeting-btn").classList.add("hidden");
@@ -1897,7 +2598,7 @@
           ul.innerHTML = list
             .map(
               (p) => `
-          <li class="flex items-center gap-2 p-2.5 bg-white/70 rounded-xl border border-emerald-100">
+          <li class="flex items-center gap-2 p-2 bg-white/70 rounded-xl border border-emerald-100">
             <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
             <span class="truncate font-medium">${escapeHtml(p.displayName || "Member")}</span>
           </li>
@@ -1907,7 +2608,7 @@
         };
 
         jitsiApi.addEventListener("videoConferenceJoined", () => {
-          showToast("You have joined the meeting");
+          showToast("You have joined the meeting & attendance marked");
           updateParticipantList();
         });
 
