@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DARBER E CHANDPURISHAH - Official App</title>
     <meta name="theme-color" content="#065f46" />
+    <link rel="icon" type="image/png" href="./darber-logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Premium Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -77,11 +78,17 @@
         class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-7 sm:p-8 relative z-10"
       >
         <div class="text-center mb-6">
-          <div
-            class="w-16 h-16 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl font-extrabold shadow-lg shadow-emerald-700/30"
-          >
-            DC
-          </div>
+          <img
+            src="./darber-logo.png"
+            onerror="
+              if (!this.dataset.t) {
+                this.dataset.t = 1;
+                this.src = './darber-logo.jpg';
+              }
+            "
+            alt="DARBER E CHANDPURISHAH"
+            class="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg border-2 border-emerald-600 bg-white p-0.5"
+          />
           <h1 class="text-2xl font-extrabold text-emerald-950 tracking-tight">
             DARBER E CHANDPURISHAH
           </h1>
@@ -331,11 +338,17 @@
               ></span>
             </button>
 
-            <div
-              class="w-10 h-10 bg-white/15 border border-white/25 rounded-xl hidden sm:flex items-center justify-center font-extrabold tracking-tight shadow-inner shrink-0"
-            >
-              DC
-            </div>
+            <img
+              src="./darber-logo.png"
+              onerror="
+                if (!this.dataset.t) {
+                  this.dataset.t = 1;
+                  this.src = './darber-logo.jpg';
+                }
+              "
+              alt="DARBER E CHANDPURISHAH"
+              class="w-10 h-10 rounded-full object-cover border-2 border-white/70 bg-white shadow-sm shrink-0"
+            />
             <div class="min-w-0">
               <h1
                 class="font-bold text-sm sm:text-lg leading-tight tracking-tight truncate"
@@ -402,11 +415,17 @@
           class="glass-emerald text-white px-5 py-4 flex items-center justify-between"
         >
           <div class="flex items-center gap-2.5">
-            <div
-              class="w-9 h-9 bg-white/15 border border-white/25 rounded-xl flex items-center justify-center font-extrabold text-sm"
-            >
-              DC
-            </div>
+            <img
+              src="./darber-logo.png"
+              onerror="
+                if (!this.dataset.t) {
+                  this.dataset.t = 1;
+                  this.src = './darber-logo.jpg';
+                }
+              "
+              alt="Logo"
+              class="w-10 h-10 rounded-full object-cover border border-white/60 bg-white shrink-0"
+            />
             <div>
               <p class="font-bold text-sm leading-tight">Menu</p>
               <p class="text-[10px] text-emerald-100/80">
@@ -475,7 +494,17 @@
             id="tab-csf"
             class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
           >
-            <i data-lucide="layers" class="w-4 h-4"></i>
+            <img
+              src="./csf-logo.png"
+              onerror="
+                if (!this.dataset.t) {
+                  this.dataset.t = 1;
+                  this.src = './csf-logo.jpg';
+                }
+              "
+              alt="CSF"
+              class="w-5 h-5 rounded-full object-cover border border-emerald-200 shrink-0"
+            />
             <span>CSF</span>
           </button>
           <button
@@ -795,20 +824,27 @@
           ></div>
         </section>
 
-        <!-- 5. HISTORY OF DARBER E CHANDPURISHAH TAB (PLACEHOLDER) -->
+        <!-- 5. HISTORY OF DARBER E CHANDPURISHAH TAB -->
         <section id="section-history" class="hidden max-w-3xl mx-auto">
           <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
-            <div
-              class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto"
-            >
-              <i data-lucide="book-open" class="w-8 h-8"></i>
-            </div>
+            <img
+              src="./darber-logo.png"
+              onerror="
+                if (!this.dataset.t) {
+                  this.dataset.t = 1;
+                  this.src = './darber-logo.jpg';
+                }
+              "
+              alt="DARBER E CHANDPURISHAH"
+              class="w-24 h-24 rounded-full object-cover mx-auto shadow-lg border-2 border-emerald-600 bg-white p-0.5"
+            />
             <h2 class="text-2xl font-extrabold text-emerald-950">
               History of Darber E Chandpurishah
             </h2>
             <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
               This section will contain the complete history, heritage, and
-              important milestones of <strong>DARBER E CHANDPURISHAH</strong>.
+              important milestones of
+              <strong>DARBER E CHANDPURISHAH (EST. 1860)</strong>.
             </p>
             <div
               class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
@@ -819,18 +855,27 @@
           </div>
         </section>
 
-        <!-- 6. CSF TAB (PLACEHOLDER) -->
+        <!-- 6. CSF TAB -->
         <section id="section-csf" class="hidden max-w-3xl mx-auto">
           <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
-            <div
-              class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto"
-            >
-              <i data-lucide="layers" class="w-8 h-8"></i>
-            </div>
-            <h2 class="text-2xl font-extrabold text-emerald-950">CSF</h2>
+            <img
+              src="./csf-logo.png"
+              onerror="
+                if (!this.dataset.t) {
+                  this.dataset.t = 1;
+                  this.src = './csf-logo.jpg';
+                }
+              "
+              alt="CHANDPURISHA SPECIAL FORCE (CSF)"
+              class="w-28 h-28 rounded-full object-cover mx-auto shadow-xl border-2 border-emerald-600 bg-black p-0.5"
+            />
+            <h2 class="text-2xl font-extrabold text-emerald-950">
+              CHANDPURISHA SPECIAL FORCE (CSF)
+            </h2>
             <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              This section is dedicated to <strong>CSF</strong> updates,
-              information, and activities.
+              This section is dedicated to
+              <strong>CSF (Chandpurisha Special Force)</strong> updates,
+              mission, and activities.
             </p>
             <div
               class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
@@ -1089,7 +1134,6 @@
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 ></textarea>
 
-                <!-- Direct PDF / Image File Upload -->
                 <div
                   class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-1.5"
                 >
@@ -1211,8 +1255,66 @@
           </div>
         </section>
       </main>
-    </div>
 
+      <!-- ================= FOOTER: OFFICIAL LINKS & CONTACT WITH DEVELOPER ================= -->
+    <footer class="mt-6 border-t border-emerald-200/70 bg-white/65 backdrop-blur-xl">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        
+        <!-- Official Social Links -->
+        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+          <div class="flex items-center gap-2">
+            <img src="./darber-logo.png" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='./darber-logo.jpg';}"
+              alt="Logo" class="w-7 h-7 rounded-full object-cover border border-emerald-500 bg-white" />
+            <span class="font-bold text-emerald-950 text-xs sm:text-sm">Official Channels</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- YouTube Icon Button -->
+            <a href="https://www.youtube.com/@SufiPathbd" target="_blank" rel="noopener noreferrer" title="YouTube Channel"
+              class="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-600 text-[#FF0000] hover:text-white border border-red-200 flex items-center justify-center transition shadow-sm hover:scale-105">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+            <!-- Facebook Icon Button -->
+            <a href="https://www.facebook.com/darbarechandpurishahofficial" target="_blank" rel="noopener noreferrer" title="Facebook Page"
+              class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-[#1877F2] text-[#1877F2] hover:text-white border border-blue-200 flex items-center justify-center transition shadow-sm hover:scale-105">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Contact with Developer -->
+        <div class="glass rounded-2xl px-3.5 py-2 flex items-center gap-3">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+            <i data-lucide="code-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Contact with developer</span>
+          </p>
+          <div class="flex items-center gap-2">
+            <!-- Gmail Icon Button -->
+            <a href="mailto:robiulmahmud4681@gmail.com" title="Gmail: robiulmahmud4681@gmail.com"
+              class="w-9 h-9 rounded-xl bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 flex items-center justify-center transition shadow-sm hover:scale-105">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M2 7v11a2 2 0 0 0 2 2h3v-9L2 7z"/>
+                <path fill="#34A853" d="M22 7v11a2 2 0 0 1-2 2h-3v-9l5-4z"/>
+                <path fill="#EA4335" d="M7 11l5 3.75L17 11V6l-5 3.75L7 6v5z"/>
+                <path fill="#C5221F" d="M2 7l5 4V6L5.5 4.875A2.2 2.2 0 0 0 2 6.65V7z"/>
+                <path fill="#FBBC05" d="M22 7l-5 4V6l1.5-1.125A2.2 2.2 0 0 1 22 6.65V7z"/>
+              </svg>
+            </a>
+            <!-- WhatsApp Icon Button -->
+            <a href="https://wa.me/8801322972119" target="_blank" rel="noopener noreferrer" title="WhatsApp: 01322972119"
+              class="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-emerald-200 flex items-center justify-center transition shadow-sm hover:scale-105">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.766.469 3.484 1.344 5l-1.406 5.156 5.281-1.375c1.469.797 3.109 1.219 4.75 1.219 5.516 0 9.969-4.453 9.969-9.969S17.547 2 12.031 2zm5.813 14.125c-.25.703-1.438 1.344-2 1.422-.516.078-1.172.109-1.891-.125-.438-.141-1-.328-1.719-.641-3.016-1.297-4.984-4.328-5.141-4.531-.141-.203-1.219-1.625-1.219-3.094s.766-2.188 1.047-2.484c.266-.297.594-.375.797-.375h.578c.188 0 .438-.078.688.516.25.609.859 2.094.938 2.25.078.156.125.328.031.531-.094.203-.141.328-.297.5-.156.172-.313.391-.453.516-.156.156-.313.328-.141.625.172.297.781 1.281 1.672 2.078 1.156 1.031 2.125 1.344 2.422 1.5.297.141.469.125.641-.078.172-.203.75-.875.953-1.172.203-.297.406-.25.672-.156.266.094 1.719.813 2.016.953.297.156.5.219.563.344.078.125.078.734-.172 1.438z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </footer>
     <!-- ================= MEMBER PROFILE MODAL ================= -->
     <div
       id="member-modal"
@@ -1377,7 +1479,7 @@
       let currentMeetingRoom = "DarberEChandpurishahMainRoom2025";
       let currentMeetingTitle = "Official Meeting Room";
       let uploadedPhotoBase64 = "";
-      let uploadedUpdateFile = null; // { dataUrl, fileName, isImage }
+      let uploadedUpdateFile = null;
       let pendingRegistrationProfile = null;
       let activeTab = "updates";
 
@@ -1395,8 +1497,7 @@
       lucide.createIcons();
 
       function todayDateStr() {
-        const d = new Date();
-        return d.toISOString().slice(0, 10);
+        return new Date().toISOString().slice(0, 10);
       }
       document.getElementById("attendance-date-filter").value = todayDateStr();
 
@@ -1430,12 +1531,10 @@
         setTimeout(() => el.remove(), 4500);
       };
 
-      // 3-Line Menu Drawer Toggle
       window.toggleNavMenu = () => {
         const drawer = document.getElementById("nav-menu-drawer");
         const backdrop = document.getElementById("nav-menu-backdrop");
-        const isHidden = drawer.classList.contains("hidden");
-        if (isHidden) {
+        if (drawer.classList.contains("hidden")) {
           drawer.classList.remove("hidden");
           backdrop.classList.remove("hidden");
         } else {
@@ -1511,7 +1610,6 @@
         else dot.classList.add("hidden");
       }
 
-      // Login Form
       document
         .getElementById("login-form")
         .addEventListener("submit", async (e) => {
@@ -1529,7 +1627,6 @@
           }
         });
 
-      // Self-Register Form
       document
         .getElementById("register-form")
         .addEventListener("submit", async (e) => {
@@ -1568,7 +1665,6 @@
           }
         });
 
-      // Logout
       const doLogout = async () => {
         if (currentUser) {
           try {
@@ -1586,7 +1682,6 @@
         .getElementById("pending-logout-btn")
         .addEventListener("click", doLogout);
 
-      // Auth Observer
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           currentUser = user;
@@ -1743,7 +1838,6 @@
           renderUpdates();
         });
 
-        // Group Chat Listener
         const qChat = query(
           collection(db, "messages"),
           orderBy("createdAt", "asc"),
@@ -1770,7 +1864,6 @@
           renderChatMessages();
         });
 
-        // Attendance Listener
         const qAtt = query(
           collection(db, "attendance"),
           orderBy("joinedAt", "desc"),
@@ -1801,7 +1894,6 @@
         });
       }
 
-      // ================= GROUP CHAT =================
       function scrollToChatBottom() {
         const box = document.getElementById("chat-messages");
         if (box) box.scrollTop = box.scrollHeight;
@@ -1878,7 +1970,6 @@
         }
       };
 
-      // ================= MEETING ATTENDANCE =================
       window.markMyAttendance = async (showAlert = true) => {
         if (!currentUser || !currentUserProfile) return;
         const date = todayDateStr();
@@ -2002,7 +2093,6 @@
         URL.revokeObjectURL(url);
       };
 
-      // ================= ADMIN: MEMBERS & PENDING =================
       function renderAdminMembersList() {
         const container = document.getElementById("admin-members-list");
         if (!container || currentUserProfile?.role !== "admin") return;
@@ -2202,7 +2292,6 @@
         document.getElementById("member-modal").classList.add("hidden");
       };
 
-      // ================= UPDATES & DIRECT PDF UPLOAD =================
       document.getElementById("upd-file").addEventListener("change", (e) => {
         const file = e.target.files[0];
         const statusEl = document.getElementById("upd-file-status");
@@ -2549,7 +2638,6 @@
         );
       };
 
-      // ================= ONLINE MEETING (JITSI API) =================
       window.joinMeeting = () => {
         if (jitsiApi) return;
         markMyAttendance(false);
