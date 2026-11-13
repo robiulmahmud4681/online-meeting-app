@@ -11,9 +11,7 @@
     <link rel="apple-touch-icon" href="./darber-logo.jpg" />
     <link rel="icon" type="image/png" href="./darber-logo.jpg" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Premium Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- LiveKit Client SDK -->
     <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
@@ -52,15 +50,12 @@
     </style>
   </head>
   <body class="text-slate-800 min-h-screen relative overflow-x-hidden">
-    <!-- Decorative Soft Background Orbs -->
     <div
       class="fixed -top-24 -left-24 w-96 h-96 bg-emerald-300/30 rounded-full blur-3xl pointer-events-none -z-10"
     ></div>
     <div
       class="fixed top-1/2 -right-24 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl pointer-events-none -z-10"
     ></div>
-
-    <!-- Toast Notification Container -->
     <div
       id="toast-container"
       class="fixed top-4 right-4 z-50 space-y-2 max-w-sm"
@@ -126,7 +121,6 @@
           </p>
         </div>
 
-        <!-- Sign In / Register Switch -->
         <div
           class="grid grid-cols-2 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100 mb-5"
         >
@@ -148,7 +142,6 @@
           </button>
         </div>
 
-        <!-- LOGIN FORM -->
         <form id="login-form" onsubmit="return false;" class="space-y-4">
           <div>
             <label
@@ -198,7 +191,6 @@
           </button>
         </form>
 
-        <!-- REGISTER FORM -->
         <form
           id="register-form"
           onsubmit="return false;"
@@ -346,13 +338,11 @@
 
     <!-- ================= MAIN APP VIEW ================= -->
     <div id="app-view" class="hidden min-h-screen flex flex-col">
-      <!-- Top Glass Navbar with Compact 3-Line Menu -->
       <header class="glass-emerald text-white shadow-lg sticky top-0 z-40">
         <div
           class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3"
         >
           <div class="flex items-center gap-3 min-w-0">
-            <!-- 3-Line Hamburger Button -->
             <button
               type="button"
               onclick="toggleNavMenu()"
@@ -403,14 +393,15 @@
           <div class="flex items-center gap-2.5 shrink-0">
             <div
               onclick="switchTab('profile')"
-              class="cursor-pointer hidden sm:flex items-center gap-2.5 bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-1.5 rounded-full transition"
+              title="My Profile"
+              class="cursor-pointer flex items-center gap-2.5 bg-white/10 hover:bg-white/20 border border-white/15 p-1.5 sm:px-3 sm:py-1.5 rounded-full transition"
             >
               <img
                 id="nav-user-avatar"
                 src="https://ui-avatars.com/api/?background=10b981&color=fff&name=M"
                 class="w-7 h-7 rounded-full object-cover border border-white/40"
               />
-              <div class="text-left leading-tight">
+              <div class="hidden sm:block text-left leading-tight">
                 <p id="nav-user-name" class="text-xs font-semibold">
                   Loading...
                 </p>
@@ -419,18 +410,10 @@
                 </p>
               </div>
             </div>
-            <button
-              id="logout-btn"
-              class="bg-white/10 hover:bg-red-500/90 border border-white/20 text-xs sm:text-sm px-3 py-2 rounded-xl font-medium transition flex items-center gap-1.5"
-            >
-              <i data-lucide="log-out" class="w-4 h-4"></i>
-              <span class="hidden sm:inline">Logout</span>
-            </button>
           </div>
         </div>
       </header>
 
-      <!-- Vertical Collapsible Navigation Drawer -->
       <div
         id="nav-menu-backdrop"
         onclick="closeNavMenu()"
@@ -568,7 +551,6 @@
         </div>
       </nav>
 
-      <!-- Live Meeting Alert Banner -->
       <div
         id="live-meeting-banner"
         class="hidden bg-amber-100/90 backdrop-blur-md border-b border-amber-300 text-amber-950 px-4 py-2.5 text-center text-sm font-medium flex items-center justify-center gap-2"
@@ -583,7 +565,6 @@
         </button>
       </div>
 
-      <!-- Main Content -->
       <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1">
         <!-- 1. UPDATES & RESOURCES TAB -->
         <section id="section-updates" class="space-y-6">
@@ -626,7 +607,7 @@
           </div>
         </section>
 
-        <!-- 2. ONLINE MEETING & ATTENDANCE TAB (LIVEKIT) -->
+        <!-- 2. ONLINE MEETING & ATTENDANCE TAB -->
         <section id="section-meeting" class="hidden space-y-5">
           <div
             class="glass p-4 sm:p-5 rounded-2xl flex flex-wrap items-center justify-between gap-3"
@@ -677,11 +658,9 @@
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
-            <!-- LiveKit Video Stage -->
             <div
               class="lg:col-span-3 bg-slate-950 rounded-2xl overflow-hidden shadow-xl min-h-[480px] flex flex-col justify-between relative border border-white/20"
             >
-              <!-- Placeholder before joining -->
               <div
                 id="meeting-placeholder"
                 class="flex-1 flex flex-col items-center justify-center text-center text-slate-300 p-6"
@@ -699,12 +678,10 @@
                 </p>
               </div>
 
-              <!-- Active LiveKit Stage -->
               <div
                 id="lk-meeting-stage"
                 class="hidden flex-1 flex flex-col p-3 gap-3"
               >
-                <!-- Screen Share Stage -->
                 <div
                   id="lk-screenshare-stage"
                   class="hidden bg-black rounded-xl overflow-hidden border border-emerald-500/40 relative"
@@ -724,14 +701,12 @@
                   ></div>
                 </div>
 
-                <!-- Video Tiles Grid -->
                 <div
                   id="lk-video-grid"
                   class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 auto-rows-fr"
                 ></div>
                 <div id="lk-audio-container" class="hidden"></div>
 
-                <!-- Meeting Bottom Controls -->
                 <div
                   class="bg-slate-900/90 border border-white/10 rounded-2xl p-2.5 flex flex-wrap items-center justify-center gap-2.5"
                 >
@@ -774,7 +749,6 @@
               </div>
             </div>
 
-            <!-- Right Sidebar: Live Participants (with Mic/Cam Status) & Attendance -->
             <div class="space-y-4">
               <div class="glass rounded-2xl p-4">
                 <h3
@@ -929,7 +903,7 @@
           ></div>
         </section>
 
-        <!-- 5. HISTORY OF DARBER E CHANDPURISHAH TAB -->
+        <!-- 5. HISTORY TAB -->
         <section id="section-history" class="hidden max-w-3xl mx-auto">
           <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
             <img
@@ -1120,12 +1094,23 @@
                 <span>Save Profile Changes</span>
               </button>
             </form>
+
+            <!-- Logout Button inside My Profile -->
+            <div class="pt-4 border-t border-emerald-100">
+              <button
+                type="button"
+                id="logout-btn"
+                class="w-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition"
+              >
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </section>
 
         <!-- 8. ADMIN PANEL TAB -->
         <section id="section-admin" class="hidden space-y-6">
-          <!-- Pending Approvals Card -->
           <div
             id="pending-approvals-card"
             class="hidden glass p-6 rounded-2xl border-2 border-amber-300/80 space-y-4"
@@ -1143,7 +1128,6 @@
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Add New Member -->
             <div class="glass p-6 rounded-2xl space-y-4">
               <h3
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
@@ -1205,7 +1189,6 @@
               </form>
             </div>
 
-            <!-- Post Notice / Event / Document (with Direct PDF/Image Upload) -->
             <div class="glass p-6 rounded-2xl space-y-4">
               <h3
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
@@ -1276,7 +1259,6 @@
               </form>
             </div>
 
-            <!-- Meeting Control -->
             <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
               <h3
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
@@ -1308,7 +1290,6 @@
               </div>
             </div>
 
-            <!-- Meeting Attendance Report -->
             <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
               <div
                 class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
@@ -1344,7 +1325,6 @@
               ></div>
             </div>
 
-            <!-- Manage / Delete Members -->
             <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
               <h3
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
@@ -1361,14 +1341,13 @@
         </section>
       </main>
 
-      <!-- ================= FOOTER: OFFICIAL LINKS & CONTACT WITH DEVELOPER ================= -->
+      <!-- ================= FOOTER ================= -->
       <footer
         class="mt-6 border-t border-emerald-200/70 bg-white/65 backdrop-blur-xl"
       >
         <div
           class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3"
         >
-          <!-- Official Social Links -->
           <div
             class="flex flex-wrap items-center justify-center sm:justify-start gap-3"
           >
@@ -1428,7 +1407,6 @@
             </div>
           </div>
 
-          <!-- Contact with Developer -->
           <div class="glass rounded-2xl px-3.5 py-2 flex items-center gap-3">
             <p
               class="text-[11px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5"
@@ -1502,7 +1480,7 @@
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
-        <div class="px-6 pb-6 -mt-12 text-center">
+        <div class="px-6 pb-6 -mt-12 text-center relative z-10">
           <img
             id="modal-mem-photo"
             src=""
@@ -1615,7 +1593,6 @@
         serverTimestamp as rtdbTimestamp,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-      // ⚠️ নিচের firebaseConfig-এর জায়গায় আপনার আগের সঠিক Config বসিয়ে দেবেন
       const firebaseConfig = {
         apiKey: "AIzaSyDc6eeu0ZFcXNYxPt4WyigTT3cVTv_X9Mo",
         authDomain: "darber-e-chandpurishah.firebaseapp.com",
@@ -1628,7 +1605,6 @@
         measurementId: "G-V558RP0KWT",
       };
 
-      // LiveKit & Cloudflare Worker Endpoints (Configured!)
       const LIVEKIT_URL = "wss://darber-app-01mq3mxm.livekit.cloud";
       const LIVEKIT_TOKEN_API =
         "https://darbertoken.robiulmahmud4681.workers.dev";
@@ -2819,7 +2795,6 @@
         );
       };
 
-      // ================= ONLINE MEETING (LIVEKIT SDK) =================
       function getSafeId(identity) {
         return String(identity || "user").replace(/[^a-zA-Z0-9_-]/g, "_");
       }
@@ -2861,7 +2836,6 @@
         ];
         const speakerIds = new Set(activeSpeakers.map((s) => s.identity));
 
-        // 1. Update Participant Sidebar (with real-time Mic & Cam status!)
         document.getElementById("participant-count").innerText =
           participants.length;
         const ul = document.getElementById("meeting-participants-list");
@@ -2885,7 +2859,6 @@
           })
           .join("");
 
-        // 2. Sync Screen Share Stage
         const scrStage = document.getElementById("lk-screenshare-stage");
         const scrVideoBox = document.getElementById("lk-screenshare-video");
         let activeScreenPub = null;
@@ -2919,7 +2892,6 @@
           delete scrVideoBox.dataset.trackSid;
         }
 
-        // 3. Sync Video Tiles
         const grid = document.getElementById("lk-video-grid");
         const activeTileIds = new Set();
 
@@ -2981,7 +2953,6 @@
           }
         });
 
-        // Remove tiles of participants who left
         Array.from(grid.children).forEach((child) => {
           if (!activeTileIds.has(child.id)) child.remove();
         });
@@ -3060,7 +3031,6 @@
 
           await lkRoom.connect(LIVEKIT_URL, data.token);
 
-          // Safely enable Mic & Cam (works even if user has no webcam)
           try {
             await lkRoom.localParticipant.setMicrophoneEnabled(true);
           } catch (_) {
