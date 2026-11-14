@@ -13,6 +13,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
       body {
@@ -58,7 +60,7 @@
     ></div>
     <div
       id="toast-container"
-      class="fixed top-4 right-4 z-50 space-y-2 max-w-sm"
+      class="fixed top-4 right-4 z-[60] space-y-2 max-w-sm"
     ></div>
 
     <!-- ================= AUTH LOADING / SPLASH VIEW ================= -->
@@ -89,17 +91,18 @@
     <!-- ================= LOGIN / REGISTER VIEW ================= -->
     <div
       id="login-view"
-      class="hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900 relative overflow-hidden"
+      class="hidden min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900 relative overflow-hidden"
     >
       <div
-        class="absolute w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl -top-20 -left-20"
+        class="absolute w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl -top-20 -left-20 pointer-events-none"
       ></div>
       <div
-        class="absolute w-96 h-96 bg-teal-300/15 rounded-full blur-3xl -bottom-20 -right-20"
+        class="absolute w-96 h-96 bg-teal-300/15 rounded-full blur-3xl -bottom-20 -right-20 pointer-events-none"
       ></div>
 
       <div
-        class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-7 sm:p-8 relative z-10"
+        id="auth-card"
+        class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative z-10 transition-all duration-300"
       >
         <div class="text-center mb-6">
           <img
@@ -117,7 +120,7 @@
             DARBER E CHANDPURISHAH
           </h1>
           <p class="text-sm text-slate-500 mt-1">
-            Global Member Portal & Online Meeting
+            Global Member Portal &amp; Online Meeting
           </p>
         </div>
 
@@ -142,6 +145,7 @@
           </button>
         </div>
 
+        <!-- LOGIN FORM -->
         <form id="login-form" onsubmit="return false;" class="space-y-4">
           <div>
             <label
@@ -158,15 +162,24 @@
                 id="login-email"
                 required
                 placeholder="member@example.com"
-                class="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                class="w-full pl-10 pr-4 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
             </div>
           </div>
           <div>
-            <label
-              class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5"
-              >Password</label
-            >
+            <div class="flex items-center justify-between mb-1.5">
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600"
+                >Password</label
+              >
+              <button
+                type="button"
+                onclick="handleForgotPassword()"
+                class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </div>
             <div class="relative">
               <i
                 data-lucide="lock"
@@ -177,8 +190,18 @@
                 id="login-password"
                 required
                 placeholder="••••••••"
-                class="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                class="w-full pl-10 pr-10 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
+              <button
+                type="button"
+                onclick="
+                  togglePasswordVisibility('login-password', 'login-eye-icon')
+                "
+                class="absolute right-3 top-3 text-slate-400 hover:text-emerald-700"
+                aria-label="Toggle password visibility"
+              >
+                <i id="login-eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
           <button
@@ -191,90 +214,224 @@
           </button>
         </form>
 
+        <!-- REGISTER FORM -->
         <form
           id="register-form"
           onsubmit="return false;"
-          class="space-y-3 hidden"
+          class="space-y-3.5 hidden"
         >
-          <div>
-            <label
-              class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-              >Full Name</label
-            >
-            <input
-              type="text"
-              id="reg-name"
-              required
-              placeholder="Your full name"
-              class="w-full px-3.5 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-            />
-          </div>
-          <div class="grid grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="sm:col-span-2">
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Full Name *</label
+              >
+              <input
+                type="text"
+                id="reg-name"
+                required
+                placeholder="Your full name"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
             <div>
               <label
                 class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >Country</label
+                >Age *</label
+              >
+              <input
+                type="number"
+                id="reg-age"
+                required
+                min="1"
+                max="120"
+                placeholder="e.g. 24"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Phone Number *</label
+              >
+              <input
+                type="tel"
+                id="reg-phone"
+                required
+                placeholder="+8801..."
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Country *</label
               >
               <input
                 type="text"
                 id="reg-country"
                 required
                 placeholder="Bangladesh / UK"
-                class="w-full px-3.5 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Father's Name *</label
+              >
+              <input
+                type="text"
+                id="reg-father"
+                required
+                placeholder="Father's full name"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
             </div>
             <div>
               <label
                 class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >Phone</label
+                >Mother's Name *</label
               >
               <input
                 type="text"
-                id="reg-phone"
-                placeholder="+880..."
-                class="w-full px-3.5 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                id="reg-mother"
+                required
+                placeholder="Mother's full name"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
             </div>
           </div>
-          <div>
-            <label
-              class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-              >Designation (Optional)</label
-            >
-            <input
-              type="text"
-              id="reg-desig"
-              placeholder="e.g. Member / Volunteer"
-              class="w-full px-3.5 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-            />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Parents' Phone Number *</label
+              >
+              <input
+                type="tel"
+                id="reg-parents-phone"
+                required
+                placeholder="+8801..."
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Designation (Optional)</label
+              >
+              <input
+                type="text"
+                id="reg-desig"
+                placeholder="e.g. Member / Volunteer"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
           </div>
+
           <div>
             <label
               class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-              >Email Address</label
+              >Present Address *</label
             >
-            <input
-              type="email"
-              id="reg-email"
+            <textarea
+              id="reg-present-addr"
+              rows="2"
               required
-              placeholder="member@example.com"
-              class="w-full px-3.5 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-            />
+              oninput="syncPermanentAddr()"
+              placeholder="House, Road, Village/Area, Thana, District"
+              class="w-full px-3.5 py-2 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+            ></textarea>
           </div>
+
           <div>
-            <label
-              class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-              >Password (Min 6 chars)</label
-            >
-            <input
-              type="password"
-              id="reg-pass"
+            <div class="flex items-center justify-between mb-1">
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600"
+                >Permanent Address *</label
+              >
+              <label
+                class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 cursor-pointer select-none"
+              >
+                <input
+                  type="checkbox"
+                  id="reg-same-addr"
+                  onchange="toggleSameAddress()"
+                  class="rounded border-emerald-300 text-emerald-700 focus:ring-emerald-500"
+                />
+                <span>Same as Present Address</span>
+              </label>
+            </div>
+            <textarea
+              id="reg-perm-addr"
+              rows="2"
               required
-              minlength="6"
-              placeholder="••••••••"
-              class="w-full px-3.5 py-2.5 bg-white/80 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-            />
+              placeholder="Permanent Village/Area, Post Office, Thana, District"
+              class="w-full px-3.5 py-2 bg-white/85 disabled:bg-slate-100 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+            ></textarea>
           </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Email Address *</label
+              >
+              <input
+                type="email"
+                id="reg-email"
+                required
+                placeholder="member@example.com"
+                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+                >Password (Min 6 chars) *</label
+              >
+              <div class="relative">
+                <input
+                  type="password"
+                  id="reg-pass"
+                  required
+                  minlength="6"
+                  placeholder="••••••••"
+                  class="w-full pl-3.5 pr-10 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                />
+                <button
+                  type="button"
+                  onclick="togglePasswordVisibility('reg-pass', 'reg-eye-icon')"
+                  class="absolute right-3 top-3 text-slate-400 hover:text-emerald-700"
+                  aria-label="Toggle password visibility"
+                >
+                  <i id="reg-eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-emerald-50/90 border border-emerald-200 rounded-xl px-3.5 py-2.5 text-xs text-emerald-900 flex items-center gap-2"
+          >
+            <i
+              data-lucide="mail-check"
+              class="w-4 h-4 text-emerald-700 shrink-0"
+            ></i>
+            <span
+              >An email verification link will be sent to your email address
+              right after registration.</span
+            >
+          </div>
+
           <button
             type="submit"
             id="reg-btn"
@@ -290,11 +447,74 @@
           class="text-red-600 text-sm mt-3 text-center hidden bg-red-50 py-2 px-3 rounded-lg border border-red-200"
         ></p>
         <p
+          id="login-info"
+          class="text-emerald-800 text-sm mt-3 text-center hidden bg-emerald-50 py-2 px-3 rounded-lg border border-emerald-200"
+        ></p>
+        <p
           class="text-xs text-slate-400 text-center mt-5 flex items-center justify-center gap-1.5"
         >
           <i data-lucide="globe" class="w-3.5 h-3.5 text-emerald-600"></i>
           <span>DARBER E CHANDPURISHAH • Worldwide Cloud Access</span>
         </p>
+      </div>
+    </div>
+
+    <!-- ================= EMAIL VERIFICATION VIEW ================= -->
+    <div
+      id="verify-view"
+      class="hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-900"
+    >
+      <div
+        class="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl w-full max-w-md p-7 sm:p-8 text-center space-y-4"
+      >
+        <div
+          class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto shadow-inner"
+        >
+          <i data-lucide="mail-check" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-xl font-extrabold text-white">
+          Verify Your Email Address
+        </h2>
+        <p class="text-sm text-emerald-100 leading-relaxed">
+          Account email:
+          <strong
+            id="verify-user-email"
+            class="text-white font-bold break-all"
+          ></strong>
+        </p>
+
+        <div id="verify-status-box"></div>
+
+        <div class="space-y-2.5 pt-1">
+          <button
+            type="button"
+            id="verify-check-btn"
+            onclick="checkEmailVerified(false)"
+            class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 disabled:opacity-60 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2 transition"
+          >
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            <span>I Have Verified My Email</span>
+          </button>
+
+          <button
+            type="button"
+            id="verify-resend-btn"
+            onclick="resendVerificationEmail()"
+            class="w-full bg-emerald-50 hover:bg-emerald-100 disabled:opacity-60 text-emerald-800 border border-emerald-200 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition"
+          >
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Resend Verification Email</span>
+          </button>
+
+          <button
+            type="button"
+            id="verify-logout-btn"
+            class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition"
+          >
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Back to Sign In</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -311,11 +531,20 @@
         >
           <i data-lucide="clock" class="w-8 h-8"></i>
         </div>
+        <div
+          class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold"
+        >
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+          <span
+            >Email Verified (<span id="pending-verified-email"></span>)</span
+          >
+        </div>
         <h2 class="text-xl font-extrabold text-emerald-950">
           Waiting for Admin Approval
         </h2>
         <p class="text-sm text-slate-600 leading-relaxed">
-          Your account has been registered! For security, an Admin of
+          Your email is verified and your membership details have been
+          submitted! For security, an Admin of
           <strong>DARBER E CHANDPURISHAH</strong> must approve your membership
           before you can access the portal.
         </p>
@@ -381,7 +610,7 @@
                   class="inline-block w-2 h-2 bg-emerald-300 rounded-full animate-pulse shrink-0"
                 ></span>
                 <span id="current-page-label" class="font-semibold text-white"
-                  >Updates & Notice</span
+                  >Updates &amp; Notice</span
                 >
                 <span class="hidden sm:inline text-emerald-200/80"
                   >• Worldwide Cloud</span
@@ -391,6 +620,109 @@
           </div>
 
           <div class="flex items-center gap-2.5 shrink-0">
+            <!-- NOTIFICATION BELL & DROPDOWN -->
+            <div class="relative" id="notif-wrapper">
+              <button
+                type="button"
+                id="notif-bell-btn"
+                onclick="toggleNotifDropdown()"
+                class="relative bg-white/15 hover:bg-white/25 border border-white/25 p-2.5 rounded-xl transition flex items-center justify-center shrink-0"
+                aria-label="Notifications"
+                title="Notifications"
+              >
+                <span id="notif-bell-icon-wrap">
+                  <i data-lucide="bell" class="w-4 h-4 text-white"></i>
+                </span>
+                <span
+                  id="notif-badge"
+                  class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full border-2 border-emerald-900 flex items-center justify-center leading-none"
+                ></span>
+              </button>
+
+              <div
+                id="notif-dropdown"
+                class="hidden absolute right-0 mt-2.5 w-80 sm:w-96 bg-white/95 backdrop-blur-2xl text-slate-800 rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden z-50"
+              >
+                <div
+                  class="px-4 py-3 bg-emerald-900 text-white flex items-center justify-between gap-2"
+                >
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="bell" class="w-4 h-4 text-emerald-300"></i>
+                    <span class="font-bold text-sm">Notifications</span>
+                    <span
+                      id="notif-header-badge"
+                      class="hidden bg-amber-400 text-emerald-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full"
+                    ></span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      id="notif-sound-btn"
+                      onclick="toggleNotifSound()"
+                      title="Toggle Sound"
+                      class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition"
+                    >
+                      <i
+                        data-lucide="volume-2"
+                        class="w-3.5 h-3.5 text-emerald-200"
+                      ></i>
+                    </button>
+                    <button
+                      type="button"
+                      id="notif-mark-all-btn"
+                      onclick="markAllNotificationsRead()"
+                      class="hidden text-[11px] font-semibold bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
+                    >
+                      <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                      <span>Mark all read</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  id="notif-perm-banner"
+                  class="hidden px-4 py-2.5 bg-amber-50 border-b border-amber-200 flex items-center justify-between gap-2"
+                >
+                  <p class="text-[11px] text-amber-900 font-medium">
+                    Enable browser alerts to get notified even when the tab is
+                    in background.
+                  </p>
+                  <button
+                    type="button"
+                    id="notif-allow-btn"
+                    onclick="requestNotifPermission()"
+                    class="shrink-0 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition"
+                  >
+                    Allow
+                  </button>
+                </div>
+
+                <div
+                  id="notif-denied-banner"
+                  class="hidden px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center gap-2 text-[11px] text-slate-500"
+                >
+                  <i
+                    data-lucide="bell-off"
+                    class="w-3.5 h-3.5 text-slate-400 shrink-0"
+                  ></i>
+                  <span
+                    >Device alerts blocked in browser settings (in-app alerts
+                    remain active).</span
+                  >
+                </div>
+
+                <div
+                  id="notif-list"
+                  class="max-h-80 overflow-y-auto divide-y divide-emerald-50"
+                >
+                  <div class="py-10 px-4 text-center text-xs text-slate-400">
+                    No notifications yet. All new updates, meetings, and alerts
+                    will appear here.
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div
               onclick="switchTab('profile')"
               title="My Profile"
@@ -460,7 +792,7 @@
             class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition menu-item-active"
           >
             <i data-lucide="megaphone" class="w-4 h-4"></i>
-            <span>Updates & Notice</span>
+            <span>Updates &amp; Notice</span>
           </button>
           <button
             onclick="switchTab('meeting')"
@@ -491,7 +823,7 @@
             class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
           >
             <i data-lucide="users" class="w-4 h-4"></i>
-            <span>Members & Status</span>
+            <span>Members &amp; Status</span>
           </button>
           <button
             onclick="switchTab('history')"
@@ -547,7 +879,7 @@
         <div
           class="p-4 border-t border-emerald-100 text-[11px] text-slate-400 text-center"
         >
-          Cloud Connected • Worldwide 🌍
+          Cloud Connected • Worldwide
         </div>
       </nav>
 
@@ -579,10 +911,10 @@
               </div>
               <div>
                 <h2 class="text-lg sm:text-xl font-bold text-emerald-950">
-                  Updates & Resources
+                  Updates &amp; Resources
                 </h2>
                 <p class="text-xs text-slate-500">
-                  Real-time notices, schedules, PDFs & media
+                  Real-time notices, schedules, PDFs &amp; media
                 </p>
               </div>
             </div>
@@ -593,7 +925,7 @@
             >
               <option value="all">View All Updates</option>
               <option value="notice">Notice / Announcement</option>
-              <option value="event">Events & Meeting Schedule</option>
+              <option value="event">Events &amp; Meeting Schedule</option>
               <option value="document">Documents / PDF</option>
               <option value="photo">Photos</option>
               <option value="link">Important Links</option>
@@ -623,10 +955,10 @@
                   class="text-lg font-bold text-emerald-950"
                   id="meeting-room-title"
                 >
-                  Official Meeting Room
+                  CSF Meeting Room
                 </h2>
                 <p class="text-xs text-slate-500">
-                  LiveKit HD Audio, Video, Screen Sharing & Auto Attendance
+                  LiveKit HD Audio, Video, Screen Sharing &amp; Auto Attendance
                 </p>
               </div>
             </div>
@@ -800,6 +1132,88 @@
               </div>
             </div>
           </div>
+
+          <!-- ATTENDANCE SHEET -->
+          <div class="glass rounded-2xl p-4 sm:p-6 space-y-4">
+            <div
+              class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-3"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"
+                >
+                  <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="text-base sm:text-lg font-bold text-emerald-950">
+                    Class / Meeting Attendance Sheet
+                  </h3>
+                  <p id="sheet-meeting-info" class="text-xs text-slate-500">
+                    Live list of members present in today's session
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  id="sheet-present-badge"
+                  class="bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs px-3 py-1.5 rounded-xl font-bold"
+                  >Present: 0</span
+                >
+                <input
+                  type="date"
+                  id="meeting-sheet-date"
+                  onchange="renderMeetingAttendanceSheet()"
+                  class="px-3 py-1.5 bg-white/90 border border-emerald-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button
+                  type="button"
+                  id="btn-save-attendance-pdf"
+                  onclick="exportAttendancePDF('meeting')"
+                  class="hidden bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white text-xs px-3.5 py-2 rounded-xl font-semibold shadow-sm flex items-center gap-1.5 transition"
+                >
+                  <i data-lucide="file-down" class="w-4 h-4"></i>
+                  <span>Save Sheet as PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="overflow-x-auto rounded-xl border border-emerald-100 bg-white/70"
+            >
+              <table
+                class="w-full text-left border-collapse text-xs sm:text-sm"
+              >
+                <thead>
+                  <tr
+                    class="bg-emerald-900/95 text-white text-[11px] sm:text-xs uppercase tracking-wider"
+                  >
+                    <th class="py-3 px-3 sm:px-4 font-semibold">#</th>
+                    <th class="py-3 px-3 sm:px-4 font-semibold">Member Name</th>
+                    <th class="py-3 px-3 sm:px-4 font-semibold">Designation</th>
+                    <th class="py-3 px-3 sm:px-4 font-semibold">Country</th>
+                    <th class="py-3 px-3 sm:px-4 font-semibold">Check-in</th>
+                    <th class="py-3 px-3 sm:px-4 font-semibold text-right">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="meeting-attendance-sheet-body"
+                  class="divide-y divide-emerald-100"
+                >
+                  <tr>
+                    <td
+                      colspan="6"
+                      class="py-6 text-center text-slate-400 text-xs"
+                    >
+                      No one has marked attendance for this date yet.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <!-- 3. IN-APP GROUP CHAT TAB -->
@@ -876,7 +1290,7 @@
               </div>
               <div>
                 <h2 class="text-xl font-bold text-emerald-950">
-                  Member Directory & Live Status
+                  Member Directory &amp; Live Status
                 </h2>
                 <p class="text-xs text-slate-500">
                   Click any member card to view their full profile
@@ -969,18 +1383,98 @@
         <section id="section-profile" class="hidden max-w-xl mx-auto">
           <div class="glass p-6 sm:p-8 rounded-3xl space-y-5">
             <div
-              class="flex items-center gap-3 border-b border-emerald-100 pb-4"
+              class="flex items-center justify-between gap-3 border-b border-emerald-100 pb-4 flex-wrap"
             >
-              <div
-                class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
-              >
-                <i data-lucide="user-cog" class="w-5 h-5"></i>
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
+                >
+                  <i data-lucide="user-cog" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-emerald-950">My Profile</h2>
+                  <p class="text-xs text-slate-500">
+                    Update your photo, personal info &amp; check attendance rate
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 class="text-xl font-bold text-emerald-950">My Profile</h2>
-                <p class="text-xs text-slate-500">
-                  Update your photo and personal information
-                </p>
+              <span
+                id="prof-verified-badge"
+                class="hidden inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-bold"
+              >
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                <span>Email Verified</span>
+              </span>
+            </div>
+
+            <!-- MONTHLY ATTENDANCE RATE CARD -->
+            <div
+              class="bg-gradient-to-br from-emerald-900 to-teal-800 text-white p-5 rounded-2xl shadow-lg space-y-3"
+            >
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center"
+                  >
+                    <i
+                      data-lucide="bar-chart-3"
+                      class="w-4 h-4 text-emerald-200"
+                    ></i>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold uppercase tracking-wider text-emerald-200"
+                    >
+                      Monthly Attendance Rate
+                    </p>
+                    <p
+                      id="prof-att-status-msg"
+                      class="text-[11px] text-emerald-100/80"
+                    >
+                      Calculating...
+                    </p>
+                  </div>
+                </div>
+                <input
+                  type="month"
+                  id="prof-att-month"
+                  onchange="renderMyAttendanceRate()"
+                  class="bg-white/15 border border-white/25 text-white text-xs font-semibold px-2.5 py-1.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-300"
+                />
+              </div>
+
+              <div class="flex items-end justify-between gap-3 pt-1">
+                <div>
+                  <span
+                    id="prof-att-rate-text"
+                    class="text-3xl sm:text-4xl font-extrabold tracking-tight"
+                    >0%</span
+                  >
+                </div>
+                <div class="flex gap-3 text-center text-[11px]">
+                  <div class="bg-white/10 px-3 py-1.5 rounded-xl">
+                    <p class="text-emerald-200/80">Attended</p>
+                    <p id="prof-att-attended" class="font-bold text-sm">0</p>
+                  </div>
+                  <div class="bg-white/10 px-3 py-1.5 rounded-xl">
+                    <p class="text-emerald-200/80">Total Held</p>
+                    <p id="prof-att-total" class="font-bold text-sm">0</p>
+                  </div>
+                  <div class="bg-white/10 px-3 py-1.5 rounded-xl">
+                    <p class="text-emerald-200/80">Missed</p>
+                    <p id="prof-att-missed" class="font-bold text-sm">0</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="w-full h-2.5 bg-white/15 rounded-full overflow-hidden"
+              >
+                <div
+                  id="prof-att-bar"
+                  class="h-full bg-emerald-300 rounded-full transition-all duration-500"
+                  style="width: 0%"
+                ></div>
               </div>
             </div>
 
@@ -1024,18 +1518,35 @@
             </div>
 
             <form id="profile-form" class="space-y-3.5">
-              <div>
-                <label
-                  class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                  >Full Name</label
-                >
-                <input
-                  type="text"
-                  id="prof-name"
-                  required
-                  class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                />
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-2">
+                  <label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >Full Name</label
+                  >
+                  <input
+                    type="text"
+                    id="prof-name"
+                    required
+                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >Age</label
+                  >
+                  <input
+                    type="number"
+                    id="prof-age"
+                    min="1"
+                    max="120"
+                    placeholder="Age"
+                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
               </div>
+
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label
@@ -1062,18 +1573,100 @@
                   />
                 </div>
               </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >Phone Number</label
+                  >
+                  <input
+                    type="tel"
+                    id="prof-phone"
+                    placeholder="+880..."
+                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >Parents' Phone Number</label
+                  >
+                  <input
+                    type="tel"
+                    id="prof-parents-phone"
+                    placeholder="+880..."
+                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >Father's Name</label
+                  >
+                  <input
+                    type="text"
+                    id="prof-father"
+                    placeholder="Father's name"
+                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >Mother's Name</label
+                  >
+                  <input
+                    type="text"
+                    id="prof-mother"
+                    placeholder="Mother's name"
+                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label
                   class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                  >Phone Number</label
+                  >Present Address</label
+                >
+                <textarea
+                  id="prof-present-addr"
+                  rows="2"
+                  placeholder="Your present address"
+                  class="w-full mt-1 px-3.5 py-2 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                ></textarea>
+              </div>
+
+              <div>
+                <label
+                  class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                  >Permanent Address</label
+                >
+                <textarea
+                  id="prof-perm-addr"
+                  rows="2"
+                  placeholder="Your permanent address"
+                  class="w-full mt-1 px-3.5 py-2 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                ></textarea>
+              </div>
+
+              <div>
+                <label
+                  class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                  >Email Address (Verified Account)</label
                 >
                 <input
-                  type="text"
-                  id="prof-phone"
-                  placeholder="+880..."
-                  class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  type="email"
+                  id="prof-email-readonly"
+                  disabled
+                  class="w-full mt-1 px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed"
                 />
               </div>
+
               <div>
                 <label
                   class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
@@ -1086,6 +1679,7 @@
                   class="w-full mt-1 px-3.5 py-2 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 ></textarea>
               </div>
+
               <button
                 type="submit"
                 class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2 transition"
@@ -1095,7 +1689,6 @@
               </button>
             </form>
 
-            <!-- Logout Button inside My Profile -->
             <div class="pt-4 border-t border-emerald-100">
               <button
                 type="button"
@@ -1290,6 +1883,53 @@
               </div>
             </div>
 
+            <!-- SEND INSTANT BROADCAST NOTIFICATION -->
+            <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
+              <h3
+                class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
+              >
+                <i data-lucide="bell-ring" class="w-5 h-5 text-emerald-600"></i>
+                <span
+                  >Send Instant Notification (To All Admins &amp; Members)</span
+                >
+              </h3>
+              <form id="admin-broadcast-form" class="space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    type="text"
+                    id="notif-title"
+                    required
+                    placeholder="Notification Title (e.g. Urgent Meeting Tonight)"
+                    class="md:col-span-2 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <select
+                    id="notif-target-tab"
+                    class="px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="updates">Open Updates &amp; Notice</option>
+                    <option value="meeting">Open Online Meeting</option>
+                    <option value="chat">Open Group Chat</option>
+                    <option value="members">Open Members &amp; Status</option>
+                  </select>
+                </div>
+                <textarea
+                  id="notif-body"
+                  rows="2"
+                  required
+                  placeholder="Write alert message for all admins and members..."
+                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                ></textarea>
+                <button
+                  type="submit"
+                  id="notif-send-btn"
+                  class="bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                >
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span>Send Notification to Everyone</span>
+                </button>
+              </form>
+            </div>
+
             <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
               <div
                 class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
@@ -1303,13 +1943,20 @@
                   ></i>
                   <span>Meeting Attendance Records</span>
                 </h3>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                   <input
                     type="date"
                     id="attendance-date-filter"
                     onchange="renderAdminAttendance()"
                     class="px-3 py-1.5 bg-white border border-emerald-200 rounded-xl text-xs font-medium"
                   />
+                  <button
+                    onclick="exportAttendancePDF('admin')"
+                    class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                  >
+                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                    <span>Save PDF</span>
+                  </button>
                   <button
                     onclick="exportAttendanceCSV()"
                     class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
@@ -1330,7 +1977,7 @@
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
               >
                 <i data-lucide="user-x" class="w-5 h-5 text-red-600"></i>
-                <span>Manage & Delete Members</span>
+                <span>Manage &amp; Delete Members</span>
               </h3>
               <div
                 id="admin-members-list"
@@ -1464,11 +2111,11 @@
     <!-- ================= MEMBER PROFILE MODAL ================= -->
     <div
       id="member-modal"
-      class="hidden fixed inset-0 z-50 bg-emerald-950/50 backdrop-blur-sm flex items-center justify-center p-4"
+      class="hidden fixed inset-0 z-50 bg-emerald-950/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
       onclick="if (event.target === this) closeMemberModal();"
     >
       <div
-        class="bg-white/90 backdrop-blur-2xl border border-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative"
+        class="bg-white/95 backdrop-blur-2xl border border-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative my-4"
       >
         <div
           class="h-24 bg-gradient-to-r from-emerald-800 to-teal-700 relative"
@@ -1486,7 +2133,7 @@
             src=""
             class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg mx-auto bg-white relative z-10"
           />
-          <div class="mt-3 flex items-center justify-center gap-2">
+          <div class="mt-3 flex items-center justify-center gap-2 flex-wrap">
             <h3
               id="modal-mem-name"
               class="text-xl font-extrabold text-slate-900"
@@ -1501,17 +2148,53 @@
           >
             Designation
           </p>
+          <div
+            id="modal-mem-verified"
+            class="hidden mt-1.5 inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
+          >
+            <i data-lucide="check-circle-2" class="w-3 h-3"></i>
+            <span>Verified Email</span>
+          </div>
           <p id="modal-mem-bio" class="text-xs text-slate-500 mt-2 italic"></p>
 
           <div
-            class="mt-5 space-y-2.5 text-left bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-sm"
+            class="mt-5 space-y-2.5 text-left bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-sm max-h-72 overflow-y-auto"
           >
+            <div
+              class="flex items-center justify-between gap-2 pb-2 border-b border-emerald-200/70"
+            >
+              <span
+                class="flex items-center gap-2 text-emerald-900 font-semibold text-xs"
+              >
+                <i
+                  data-lucide="bar-chart-3"
+                  class="w-4 h-4 text-emerald-600 shrink-0"
+                ></i>
+                <span>This Month's Attendance</span>
+              </span>
+              <span
+                id="modal-mem-att-rate"
+                class="bg-emerald-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full"
+                >0%</span
+              >
+            </div>
+            <div id="modal-mem-age-row" class="hidden flex items-center gap-3">
+              <i
+                data-lucide="calendar"
+                class="w-4 h-4 text-emerald-600 shrink-0"
+              ></i>
+              <span class="text-slate-700 text-xs sm:text-sm"
+                ><strong>Age:</strong> <span id="modal-mem-age"></span
+              ></span>
+            </div>
             <div class="flex items-center gap-3">
               <i
                 data-lucide="map-pin"
                 class="w-4 h-4 text-emerald-600 shrink-0"
               ></i>
-              <span id="modal-mem-country" class="text-slate-700 font-medium"
+              <span
+                id="modal-mem-country"
+                class="text-slate-700 font-medium text-xs sm:text-sm"
                 >Country</span
               >
             </div>
@@ -1523,7 +2206,7 @@
               <a
                 id="modal-mem-email"
                 href="#"
-                class="text-emerald-800 hover:underline truncate"
+                class="text-emerald-800 hover:underline truncate text-xs sm:text-sm"
                 >email@example.com</a
               >
             </div>
@@ -1535,9 +2218,84 @@
               <a
                 id="modal-mem-phone"
                 href="#"
-                class="text-slate-700 font-medium"
+                class="text-slate-700 font-medium text-xs sm:text-sm"
                 >Not provided</a
               >
+            </div>
+
+            <div
+              id="modal-private-box"
+              class="hidden pt-2 mt-2 border-t border-emerald-200/70 space-y-2 text-xs"
+            >
+              <div
+                id="modal-mem-father-row"
+                class="hidden flex items-start gap-2.5"
+              >
+                <i
+                  data-lucide="user"
+                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
+                ></i>
+                <span class="text-slate-700"
+                  ><strong>Father's Name:</strong>
+                  <span id="modal-mem-father"></span
+                ></span>
+              </div>
+              <div
+                id="modal-mem-mother-row"
+                class="hidden flex items-start gap-2.5"
+              >
+                <i
+                  data-lucide="user"
+                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
+                ></i>
+                <span class="text-slate-700"
+                  ><strong>Mother's Name:</strong>
+                  <span id="modal-mem-mother"></span
+                ></span>
+              </div>
+              <div
+                id="modal-mem-parents-phone-row"
+                class="hidden flex items-start gap-2.5"
+              >
+                <i
+                  data-lucide="users"
+                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
+                ></i>
+                <span class="text-slate-700"
+                  ><strong>Parents' Phone:</strong>
+                  <a
+                    id="modal-mem-parents-phone"
+                    href="#"
+                    class="text-emerald-800 hover:underline"
+                  ></a
+                ></span>
+              </div>
+              <div
+                id="modal-mem-present-row"
+                class="hidden flex items-start gap-2.5"
+              >
+                <i
+                  data-lucide="home"
+                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
+                ></i>
+                <span class="text-slate-700"
+                  ><strong>Present Address:</strong>
+                  <span id="modal-mem-present"></span
+                ></span>
+              </div>
+              <div
+                id="modal-mem-perm-row"
+                class="hidden flex items-start gap-2.5"
+              >
+                <i
+                  data-lucide="home"
+                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
+                ></i>
+                <span class="text-slate-700"
+                  ><strong>Permanent Address:</strong>
+                  <span id="modal-mem-perm"></span
+                ></span>
+              </div>
             </div>
           </div>
 
@@ -1567,6 +2325,9 @@
         signOut,
         onAuthStateChanged,
         createUserWithEmailAndPassword,
+        sendEmailVerification,
+        sendPasswordResetEmail,
+        reload,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
       import {
         getFirestore,
@@ -1580,7 +2341,9 @@
         addDoc,
         query,
         orderBy,
+        limit,
         limitToLast,
+        arrayUnion,
         onSnapshot,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -1611,6 +2374,7 @@
 
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
+      auth.languageCode = "en";
       const db = getFirestore(app);
       const rtdb = getDatabase(app);
 
@@ -1624,6 +2388,7 @@
       let allUpdates = [];
       let allMessages = [];
       let allAttendance = [];
+      let allNotifications = [];
       let lkRoom = null;
       let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
       let currentMeetingTitle = "Official Meeting Room";
@@ -1631,6 +2396,20 @@
       let uploadedUpdateFile = null;
       let pendingRegistrationProfile = null;
       let activeTab = "updates";
+      let verifyCooldown = 0;
+      let verifyCooldownTimer = null;
+      let verifyPollInterval = null;
+      let notifOpen = false;
+      let notifSoundEnabled = true;
+      try {
+        notifSoundEnabled =
+          localStorage.getItem("darber_notif_sound") !== "false";
+      } catch (_) {}
+
+      let firstUpdateLoad = true;
+      let firstChatLoad = true;
+      let firstNotifLoad = true;
+      const seenNotifIds = new Set();
 
       const tabNames = {
         updates: "Updates & Notice",
@@ -1648,7 +2427,12 @@
       function todayDateStr() {
         return new Date().toISOString().slice(0, 10);
       }
+      function currentMonthStr() {
+        return new Date().toISOString().slice(0, 7);
+      }
       document.getElementById("attendance-date-filter").value = todayDateStr();
+      document.getElementById("meeting-sheet-date").value = todayDateStr();
+      document.getElementById("prof-att-month").value = currentMonthStr();
 
       function escapeHtml(str = "") {
         return String(str)
@@ -1665,6 +2449,339 @@
           `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(m?.name || "M")}`
         );
       }
+
+      // ================= NOTIFICATION HELPERS =================
+      function playNotificationChime() {
+        if (!notifSoundEnabled) return;
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          const ctx = new AudioCtx();
+          const now = ctx.currentTime;
+          const playTone = (freq, start, dur) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, start);
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(0.12, start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(start);
+            osc.stop(start + dur);
+          };
+          playTone(784, now, 0.16);
+          playTone(1046.5, now + 0.12, 0.24);
+        } catch (_) {}
+      }
+
+      async function showBrowserNotification(
+        title,
+        body,
+        targetTab = "updates",
+      ) {
+        if (typeof window === "undefined" || !("Notification" in window))
+          return;
+        if (Notification.permission !== "granted") return;
+        try {
+          if ("serviceWorker" in navigator) {
+            const reg = await navigator.serviceWorker.getRegistration();
+            if (reg && typeof reg.showNotification === "function") {
+              await reg.showNotification(title, {
+                body,
+                icon: "./darber-logo.png",
+                badge: "./darber-logo.png",
+                tag: `darber_${Date.now()}`,
+              });
+              return;
+            }
+          }
+          const n = new Notification(title, {
+            body,
+            icon: "./darber-logo.png",
+          });
+          n.onclick = () => {
+            window.focus();
+            if (targetTab) switchTab(targetTab);
+            n.close();
+          };
+        } catch (_) {}
+      }
+
+      async function createAppNotification({
+        type,
+        title,
+        body,
+        targetRole = "all",
+        targetTab = "updates",
+        createdByUid = "",
+        authorName = "",
+        readBy = [],
+      }) {
+        try {
+          await addDoc(collection(db, "notifications"), {
+            type,
+            title,
+            body,
+            targetRole,
+            targetTab,
+            createdByUid,
+            authorName,
+            readBy,
+            createdAt: serverTimestamp(),
+          });
+        } catch (_) {}
+      }
+
+      function formatNotifTime(createdAt) {
+        try {
+          const date =
+            typeof createdAt?.toDate === "function"
+              ? createdAt.toDate()
+              : typeof createdAt?.seconds === "number"
+                ? new Date(createdAt.seconds * 1000)
+                : null;
+          if (!date) return "Just now";
+          const mins = Math.floor((Date.now() - date.getTime()) / 60000);
+          if (mins < 1) return "Just now";
+          if (mins < 60) return `${mins}m ago`;
+          const hours = Math.floor(mins / 60);
+          if (hours < 24) return `${hours}h ago`;
+          return date.toLocaleDateString();
+        } catch (_) {
+          return "Just now";
+        }
+      }
+
+      function getVisibleNotifications() {
+        const isAdmin = currentUserProfile?.role === "admin";
+        return allNotifications.filter(
+          (n) =>
+            n.targetRole === "all" || (n.targetRole === "admin" && isAdmin),
+        );
+      }
+
+      function updateNotifPermUI() {
+        const permBanner = document.getElementById("notif-perm-banner");
+        const deniedBanner = document.getElementById("notif-denied-banner");
+        if (!("Notification" in window)) {
+          permBanner.classList.add("hidden");
+          deniedBanner.classList.add("hidden");
+          return;
+        }
+        if (Notification.permission === "default") {
+          permBanner.classList.remove("hidden");
+          deniedBanner.classList.add("hidden");
+        } else if (Notification.permission === "denied") {
+          permBanner.classList.add("hidden");
+          deniedBanner.classList.remove("hidden");
+        } else {
+          permBanner.classList.add("hidden");
+          deniedBanner.classList.add("hidden");
+        }
+      }
+
+      function updateNotifSoundUI() {
+        const btn = document.getElementById("notif-sound-btn");
+        if (!btn) return;
+        btn.title = notifSoundEnabled ? "Mute sound" : "Enable sound";
+        btn.innerHTML = notifSoundEnabled
+          ? `<i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-200"></i>`
+          : `<i data-lucide="volume-x" class="w-3.5 h-3.5 text-slate-300"></i>`;
+        lucide.createIcons();
+      }
+
+      function renderNotifications() {
+        const list = getVisibleNotifications();
+        const uid = currentUser?.uid || "";
+        const unreadCount = list.filter(
+          (n) => !(n.readBy || []).includes(uid),
+        ).length;
+
+        const badge = document.getElementById("notif-badge");
+        const headerBadge = document.getElementById("notif-header-badge");
+        const markAllBtn = document.getElementById("notif-mark-all-btn");
+        const iconWrap = document.getElementById("notif-bell-icon-wrap");
+
+        if (unreadCount > 0) {
+          badge.innerText = unreadCount > 9 ? "9+" : String(unreadCount);
+          badge.classList.remove("hidden");
+          headerBadge.innerText = `${unreadCount} new`;
+          headerBadge.classList.remove("hidden");
+          markAllBtn.classList.remove("hidden");
+          iconWrap.innerHTML = `<i data-lucide="bell-ring" class="w-4 h-4 text-amber-300 animate-pulse"></i>`;
+        } else {
+          badge.classList.add("hidden");
+          headerBadge.classList.add("hidden");
+          markAllBtn.classList.add("hidden");
+          iconWrap.innerHTML = `<i data-lucide="bell" class="w-4 h-4 text-white"></i>`;
+        }
+
+        const container = document.getElementById("notif-list");
+        if (list.length === 0) {
+          container.innerHTML = `<div class="py-10 px-4 text-center text-xs text-slate-400">No notifications yet. All new updates, meetings, and alerts will appear here.</div>`;
+        } else {
+          container.innerHTML = list
+            .map((n) => {
+              const isUnread = !(n.readBy || []).includes(uid);
+              let iconHtml = `<div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"><i data-lucide="megaphone" class="w-4 h-4"></i></div>`;
+              if (n.type === "meeting") {
+                iconHtml = `<div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><i data-lucide="video" class="w-4 h-4"></i></div>`;
+              } else if (n.type === "member_pending") {
+                iconHtml = `<div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0"><i data-lucide="user-check" class="w-4 h-4"></i></div>`;
+              }
+              return `
+                <button type="button" onclick="openNotificationItem('${n.id}', '${escapeHtml(n.targetTab || "updates")}')" class="w-full text-left px-4 py-3 hover:bg-emerald-50/70 transition flex items-start gap-3 ${isUnread ? "bg-emerald-50/50" : "bg-white"}">
+                  ${iconHtml}
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-xs leading-snug ${isUnread ? "font-extrabold text-emerald-950" : "font-semibold text-slate-700"}">${escapeHtml(n.title)}</p>
+                      ${isUnread ? '<span class="w-2 h-2 bg-emerald-600 rounded-full shrink-0 mt-1"></span>' : ""}
+                    </div>
+                    <p class="text-[11px] text-slate-600 line-clamp-2 mt-0.5">${escapeHtml(n.body)}</p>
+                    <p class="text-[10px] text-slate-400 mt-1">${n.authorName ? escapeHtml(n.authorName) + " • " : ""}${formatNotifTime(n.createdAt)}</p>
+                  </div>
+                </button>
+              `;
+            })
+            .join("");
+        }
+
+        updateNotifPermUI();
+        updateNotifSoundUI();
+        lucide.createIcons();
+      }
+
+      window.toggleNotifDropdown = () => {
+        notifOpen = !notifOpen;
+        const dd = document.getElementById("notif-dropdown");
+        if (notifOpen) {
+          dd.classList.remove("hidden");
+          updateNotifPermUI();
+          updateNotifSoundUI();
+        } else {
+          dd.classList.add("hidden");
+        }
+      };
+
+      document.addEventListener("mousedown", (e) => {
+        const wrapper = document.getElementById("notif-wrapper");
+        if (notifOpen && wrapper && !wrapper.contains(e.target)) {
+          notifOpen = false;
+          document.getElementById("notif-dropdown").classList.add("hidden");
+        }
+      });
+
+      window.toggleNotifSound = () => {
+        notifSoundEnabled = !notifSoundEnabled;
+        try {
+          localStorage.setItem("darber_notif_sound", String(notifSoundEnabled));
+        } catch (_) {}
+        updateNotifSoundUI();
+        showToast(
+          notifSoundEnabled
+            ? "Notification sound enabled"
+            : "Notification sound muted",
+        );
+      };
+
+      window.requestNotifPermission = async () => {
+        if (!("Notification" in window)) return;
+        try {
+          const res = await Notification.requestPermission();
+          updateNotifPermUI();
+          if (res === "granted") {
+            showToast("Browser & device notifications enabled!");
+            playNotificationChime();
+          } else if (res === "denied") {
+            showToast(
+              "Notifications blocked by browser. Please allow them in site settings.",
+              "warn",
+            );
+          }
+        } catch (_) {}
+      };
+
+      window.openNotificationItem = async (notifId, targetTab) => {
+        if (currentUser) {
+          try {
+            await updateDoc(doc(db, "notifications", notifId), {
+              readBy: arrayUnion(currentUser.uid),
+            });
+          } catch (_) {}
+        }
+        notifOpen = false;
+        document.getElementById("notif-dropdown").classList.add("hidden");
+        if (targetTab && tabNames[targetTab]) {
+          switchTab(targetTab);
+        }
+      };
+
+      window.markAllNotificationsRead = async () => {
+        if (!currentUser) return;
+        const uid = currentUser.uid;
+        const unread = getVisibleNotifications().filter(
+          (n) => !(n.readBy || []).includes(uid),
+        );
+        await Promise.all(
+          unread.map((n) =>
+            updateDoc(doc(db, "notifications", n.id), {
+              readBy: arrayUnion(uid),
+            }).catch(() => undefined),
+          ),
+        );
+      };
+
+      // ================= ATTENDANCE CALC =================
+      function calcMonthlyAttendance(uid, monthPrefix) {
+        const monthRecords = allAttendance.filter(
+          (a) => a.date && a.date.startsWith(monthPrefix),
+        );
+        const totalHeld = new Set(monthRecords.map((a) => a.date)).size;
+        const attended = new Set(
+          monthRecords.filter((a) => a.uid === uid).map((a) => a.date),
+        ).size;
+        const missed = Math.max(0, totalHeld - attended);
+        const rate =
+          totalHeld > 0 ? Math.round((attended / totalHeld) * 100) : 0;
+        return { attended, totalHeld, missed, rate };
+      }
+
+      window.renderMyAttendanceRate = () => {
+        if (!currentUser) return;
+        const monthInput = document.getElementById("prof-att-month");
+        const monthPrefix = monthInput.value || currentMonthStr();
+        const { attended, totalHeld, missed, rate } = calcMonthlyAttendance(
+          currentUser.uid,
+          monthPrefix,
+        );
+
+        document.getElementById("prof-att-rate-text").innerText = `${rate}%`;
+        document.getElementById("prof-att-attended").innerText = attended;
+        document.getElementById("prof-att-total").innerText = totalHeld;
+        document.getElementById("prof-att-missed").innerText = missed;
+
+        const bar = document.getElementById("prof-att-bar");
+        bar.style.width = `${rate}%`;
+        bar.className =
+          rate >= 75
+            ? "h-full bg-emerald-300 rounded-full transition-all duration-500"
+            : rate >= 50
+              ? "h-full bg-amber-300 rounded-full transition-all duration-500"
+              : "h-full bg-red-400 rounded-full transition-all duration-500";
+
+        const statusMsg = document.getElementById("prof-att-status-msg");
+        if (totalHeld === 0) {
+          statusMsg.innerText = "No meetings recorded for this month yet";
+        } else if (rate >= 75) {
+          statusMsg.innerText = "Excellent attendance this month!";
+        } else if (rate >= 50) {
+          statusMsg.innerText = "Good, keep improving your attendance";
+        } else {
+          statusMsg.innerText = "Low attendance — try to join regularly";
+        }
+      };
 
       window.showToast = (msg, type = "info") => {
         const container = document.getElementById("toast-container");
@@ -1696,16 +2813,47 @@
         document.getElementById("nav-menu-backdrop").classList.add("hidden");
       };
 
+      window.togglePasswordVisibility = (inputId, iconId) => {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input || !icon) return;
+        const isPass = input.type === "password";
+        input.type = isPass ? "text" : "password";
+        icon.setAttribute("data-lucide", isPass ? "eye-off" : "eye");
+        lucide.createIcons();
+      };
+
+      window.syncPermanentAddr = () => {
+        const same = document.getElementById("reg-same-addr").checked;
+        if (same) {
+          document.getElementById("reg-perm-addr").value =
+            document.getElementById("reg-present-addr").value;
+        }
+      };
+
+      window.toggleSameAddress = () => {
+        const same = document.getElementById("reg-same-addr").checked;
+        const permEl = document.getElementById("reg-perm-addr");
+        permEl.disabled = same;
+        if (same) {
+          permEl.value = document.getElementById("reg-present-addr").value;
+        }
+      };
+
       window.toggleAuthMode = (mode) => {
         const loginForm = document.getElementById("login-form");
         const regForm = document.getElementById("register-form");
         const tabLogin = document.getElementById("auth-tab-login");
         const tabReg = document.getElementById("auth-tab-register");
+        const card = document.getElementById("auth-card");
         document.getElementById("login-error").classList.add("hidden");
+        document.getElementById("login-info").classList.add("hidden");
 
         if (mode === "register") {
           loginForm.classList.add("hidden");
           regForm.classList.remove("hidden");
+          card.classList.remove("max-w-md");
+          card.classList.add("max-w-xl");
           tabReg.className =
             "py-2 rounded-xl text-sm font-bold bg-emerald-700 text-white shadow transition";
           tabLogin.className =
@@ -1713,6 +2861,8 @@
         } else {
           regForm.classList.add("hidden");
           loginForm.classList.remove("hidden");
+          card.classList.remove("max-w-xl");
+          card.classList.add("max-w-md");
           tabLogin.className =
             "py-2 rounded-xl text-sm font-bold bg-emerald-700 text-white shadow transition";
           tabReg.className =
@@ -1722,6 +2872,8 @@
       };
 
       window.switchTab = (tabName) => {
+        if (!tabNames[tabName]) return;
+        if (tabName === "admin" && currentUserProfile?.role !== "admin") return;
         activeTab = tabName;
         Object.keys(tabNames).forEach((t) => {
           document.getElementById(`section-${t}`).classList.add("hidden");
@@ -1743,6 +2895,9 @@
           updateHamburgerDot();
           scrollToChatBottom();
         }
+        if (tabName === "profile") {
+          renderMyAttendanceRate();
+        }
         closeNavMenu();
         lucide.createIcons();
       };
@@ -1759,6 +2914,160 @@
         else dot.classList.add("hidden");
       }
 
+      function setVerifyStatus(state, msg = "") {
+        const box = document.getElementById("verify-status-box");
+        if (!box) return;
+        if (state === "sending") {
+          box.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 text-xs text-emerald-800 flex items-center justify-center gap-2"><i data-lucide="refresh-cw" class="w-4 h-4 animate-spin shrink-0"></i><span>Sending verification email...</span></div>`;
+        } else if (state === "sent") {
+          const timeStr = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+          box.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 text-xs text-emerald-900 space-y-1 text-left"><p class="font-bold flex items-center gap-1.5 text-emerald-800"><i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i><span>Verification email sent at ${escapeHtml(timeStr)}!</span></p><p class="text-slate-600 leading-relaxed">Please check <strong>Inbox</strong>, <strong>Spam / Junk</strong>, and <strong>Promotions / Updates</strong>. Search for <code class="bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-[11px] font-semibold">darber-e-chandpurishah</code> if you don't see it immediately.</p></div>`;
+        } else if (state === "error") {
+          box.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-2xl p-3 text-xs text-red-700 text-left space-y-1"><p class="font-bold">Could not send verification email:</p><p>${escapeHtml(msg)}</p></div>`;
+        } else {
+          box.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-xs text-amber-900 text-left">Your email is not verified yet. Click <strong>Resend Verification Email</strong> below, then open the link from your Inbox or Spam folder.</div>`;
+        }
+        lucide.createIcons();
+      }
+
+      async function sendVerificationLink(user, isAuto = false) {
+        setVerifyStatus("sending");
+        try {
+          await sendEmailVerification(user);
+          setVerifyStatus("sent");
+          if (!isAuto) {
+            showToast(
+              "Verification email sent! Please check your Inbox and Spam folder.",
+            );
+          }
+        } catch (err) {
+          const msg =
+            err?.code === "auth/too-many-requests"
+              ? "Too many verification emails requested. Please check your Inbox/Spam for the earlier email or wait 1–2 minutes before trying again."
+              : err?.message || "Failed to send verification email.";
+          setVerifyStatus("error", msg);
+          if (!isAuto) showToast(msg, "error");
+        }
+      }
+
+      function startVerifyPolling() {
+        stopVerifyPolling();
+        verifyPollInterval = setInterval(() => {
+          if (currentUser && !currentUser.emailVerified) {
+            window.checkEmailVerified(true);
+          }
+        }, 5000);
+      }
+
+      function stopVerifyPolling() {
+        if (verifyPollInterval) {
+          clearInterval(verifyPollInterval);
+          verifyPollInterval = null;
+        }
+      }
+
+      window.addEventListener("focus", () => {
+        if (
+          currentUser &&
+          !document.getElementById("verify-view").classList.contains("hidden")
+        ) {
+          window.checkEmailVerified(true);
+        }
+      });
+
+      window.checkEmailVerified = async (silent = false) => {
+        const user = auth.currentUser;
+        if (!user) return;
+        const btn = document.getElementById("verify-check-btn");
+        if (!silent && btn) btn.disabled = true;
+        try {
+          await reload(user);
+          if (user.emailVerified) {
+            stopVerifyPolling();
+            await updateDoc(doc(db, "users", user.uid), {
+              emailVerified: true,
+            });
+            if (currentUserProfile?.approved === false) {
+              await createAppNotification({
+                type: "member_pending",
+                title: "Member Email Verified",
+                body: `${currentUserProfile?.name || user.email} verified their email and is waiting for admin approval.`,
+                targetRole: "admin",
+                targetTab: "admin",
+                createdByUid: user.uid,
+                authorName: currentUserProfile?.name || user.email || "Member",
+              });
+            }
+            showToast("Email verified successfully!");
+            location.reload();
+          } else if (!silent) {
+            showToast(
+              "Email not verified yet. Please click the verification link in your inbox or spam folder.",
+              "warn",
+            );
+          }
+        } catch (err) {
+          if (!silent) {
+            showToast("Verification check failed: " + err.message, "error");
+          }
+        } finally {
+          if (!silent && btn) btn.disabled = false;
+        }
+      };
+
+      window.resendVerificationEmail = async () => {
+        const user = auth.currentUser;
+        if (!user || verifyCooldown > 0) return;
+        await sendVerificationLink(user, false);
+        verifyCooldown = 60;
+        const btn = document.getElementById("verify-resend-btn");
+        const updateBtn = () => {
+          if (!btn) return;
+          if (verifyCooldown > 0) {
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Resend Email (${verifyCooldown}s)</span>`;
+            lucide.createIcons();
+          } else {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Resend Verification Email</span>`;
+            lucide.createIcons();
+            clearInterval(verifyCooldownTimer);
+          }
+        };
+        updateBtn();
+        clearInterval(verifyCooldownTimer);
+        verifyCooldownTimer = setInterval(() => {
+          verifyCooldown--;
+          updateBtn();
+        }, 1000);
+      };
+
+      window.handleForgotPassword = async () => {
+        const email = document.getElementById("login-email").value.trim();
+        const errEl = document.getElementById("login-error");
+        const infoEl = document.getElementById("login-info");
+        errEl.classList.add("hidden");
+        infoEl.classList.add("hidden");
+        if (!email) {
+          errEl.innerText =
+            "Please enter your email address first to reset password.";
+          errEl.classList.remove("hidden");
+          return;
+        }
+        try {
+          await sendPasswordResetEmail(auth, email);
+          infoEl.innerText = `Password reset link sent to ${email}. Check your inbox or spam folder.`;
+          infoEl.classList.remove("hidden");
+        } catch (err) {
+          errEl.innerText = "Could not send reset email: " + err.message;
+          errEl.classList.remove("hidden");
+        }
+      };
+
       document
         .getElementById("login-form")
         .addEventListener("submit", async (e) => {
@@ -1766,10 +3075,19 @@
           const email = document.getElementById("login-email").value.trim();
           const password = document.getElementById("login-password").value;
           const errEl = document.getElementById("login-error");
+          const infoEl = document.getElementById("login-info");
           errEl.classList.add("hidden");
+          infoEl.classList.add("hidden");
           try {
-            await signInWithEmailAndPassword(auth, email, password);
-          } catch (err) {
+            const cred = await signInWithEmailAndPassword(
+              auth,
+              email,
+              password,
+            );
+            if (!cred.user.emailVerified) {
+              await sendVerificationLink(cred.user, true);
+            }
+          } catch (_) {
             errEl.innerText =
               "Login failed! Please enter a valid email and password.";
             errEl.classList.remove("hidden");
@@ -1781,31 +3099,67 @@
         .addEventListener("submit", async (e) => {
           e.preventDefault();
           const errEl = document.getElementById("login-error");
+          const infoEl = document.getElementById("login-info");
           errEl.classList.add("hidden");
+          infoEl.classList.add("hidden");
 
           const name = document.getElementById("reg-name").value.trim();
-          const country = document.getElementById("reg-country").value.trim();
+          const age = document.getElementById("reg-age").value.trim();
           const phone = document.getElementById("reg-phone").value.trim();
+          const country = document.getElementById("reg-country").value.trim();
+          const fatherName = document.getElementById("reg-father").value.trim();
+          const motherName = document.getElementById("reg-mother").value.trim();
+          const parentsPhone = document
+            .getElementById("reg-parents-phone")
+            .value.trim();
           const designation =
             document.getElementById("reg-desig").value.trim() || "Member";
+          const presentAddress = document
+            .getElementById("reg-present-addr")
+            .value.trim();
+          const sameAddr = document.getElementById("reg-same-addr").checked;
+          const permanentAddress = sameAddr
+            ? presentAddress
+            : document.getElementById("reg-perm-addr").value.trim();
           const email = document.getElementById("reg-email").value.trim();
           const password = document.getElementById("reg-pass").value;
 
           pendingRegistrationProfile = {
             name,
-            email,
-            country,
+            age,
             phone,
+            fatherName,
+            motherName,
+            parentsPhone,
+            presentAddress,
+            permanentAddress,
+            country,
             designation,
+            email,
             role: "member",
             bio: "",
             photoURL: "",
             approved: false,
             disabled: false,
+            emailVerified: false,
           };
 
           try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            const cred = await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password,
+            );
+            await sendVerificationLink(cred.user, false);
+            await createAppNotification({
+              type: "member_pending",
+              title: "New Member Registration",
+              body: `${name} (${country}) registered and is awaiting verification & approval.`,
+              targetRole: "admin",
+              targetTab: "admin",
+              createdByUid: cred.user.uid,
+              authorName: name,
+            });
             e.target.reset();
           } catch (err) {
             pendingRegistrationProfile = null;
@@ -1815,6 +3169,7 @@
         });
 
       const doLogout = async () => {
+        stopVerifyPolling();
         if (currentUser) {
           try {
             await set(ref(rtdb, `status/${currentUser.uid}`), {
@@ -1829,6 +3184,9 @@
       document.getElementById("logout-btn").addEventListener("click", doLogout);
       document
         .getElementById("pending-logout-btn")
+        .addEventListener("click", doLogout);
+      document
+        .getElementById("verify-logout-btn")
         .addEventListener("click", doLogout);
 
       onAuthStateChanged(auth, async (user) => {
@@ -1848,7 +3206,10 @@
             }
 
             if (pendingRegistrationProfile) {
-              currentUserProfile = pendingRegistrationProfile;
+              currentUserProfile = {
+                ...pendingRegistrationProfile,
+                emailVerified: user.emailVerified,
+              };
               pendingRegistrationProfile = null;
               await setDoc(doc(db, "users", user.uid), currentUserProfile);
             } else {
@@ -1866,32 +3227,66 @@
                   photoURL: "",
                   approved: true,
                   disabled: false,
+                  emailVerified: user.emailVerified,
                 };
                 await setDoc(doc(db, "users", user.uid), currentUserProfile);
               } else {
                 currentUserProfile = userSnap.data();
+                if (user.emailVerified && !currentUserProfile.emailVerified) {
+                  currentUserProfile.emailVerified = true;
+                  await updateDoc(doc(db, "users", user.uid), {
+                    emailVerified: true,
+                  });
+                }
               }
             }
 
             if (currentUserProfile.disabled) {
-              alert("Your account has been suspended by the Admin.");
+              showToast(
+                "Your account has been suspended by the Admin.",
+                "error",
+              );
               await signOut(auth);
               return;
             }
 
+            if (!user.emailVerified) {
+              hideLoading();
+              document.getElementById("login-view").classList.add("hidden");
+              document.getElementById("pending-view").classList.add("hidden");
+              document.getElementById("app-view").classList.add("hidden");
+              document.getElementById("verify-view").classList.remove("hidden");
+              document.getElementById("verify-user-email").innerText =
+                user.email || "";
+              startVerifyPolling();
+              lucide.createIcons();
+              return;
+            }
+
+            stopVerifyPolling();
+
             if (currentUserProfile.approved === false) {
               hideLoading();
               document.getElementById("login-view").classList.add("hidden");
+              document.getElementById("verify-view").classList.add("hidden");
               document.getElementById("app-view").classList.add("hidden");
               document
                 .getElementById("pending-view")
                 .classList.remove("hidden");
+              document.getElementById("pending-verified-email").innerText =
+                user.email || "";
+              onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if (snap.exists() && snap.data().approved !== false) {
+                  location.reload();
+                }
+              });
               lucide.createIcons();
               return;
             }
 
             hideLoading();
             document.getElementById("login-view").classList.add("hidden");
+            document.getElementById("verify-view").classList.add("hidden");
             document.getElementById("pending-view").classList.add("hidden");
             document.getElementById("app-view").classList.remove("hidden");
             updateNavUserUI();
@@ -1899,12 +3294,19 @@
             if (currentUserProfile.role === "admin") {
               document.getElementById("tab-admin").classList.remove("hidden");
               document.getElementById("tab-admin").classList.add("flex");
+              document
+                .getElementById("btn-save-attendance-pdf")
+                .classList.remove("hidden");
             } else {
               document.getElementById("tab-admin").classList.add("hidden");
               document.getElementById("tab-admin").classList.remove("flex");
+              document
+                .getElementById("btn-save-attendance-pdf")
+                .classList.add("hidden");
             }
 
             fillProfileForm();
+            renderMyAttendanceRate();
             setupPresence(user.uid);
             listenAllData();
             lucide.createIcons();
@@ -1916,9 +3318,17 @@
             errEl.classList.remove("hidden");
           }
         } else {
+          stopVerifyPolling();
           currentUser = null;
+          currentUserProfile = null;
+          allNotifications = [];
+          firstUpdateLoad = true;
+          firstChatLoad = true;
+          firstNotifLoad = true;
+          seenNotifIds.clear();
           hideLoading();
           document.getElementById("login-view").classList.remove("hidden");
+          document.getElementById("verify-view").classList.add("hidden");
           document.getElementById("pending-view").classList.add("hidden");
           document.getElementById("app-view").classList.add("hidden");
         }
@@ -1959,13 +3369,25 @@
         });
       }
 
-      let firstUpdateLoad = true;
-      let firstChatLoad = true;
       function listenAllData() {
         onSnapshot(doc(db, "deletedIds", currentUser.uid), (snap) => {
           if (snap.exists()) {
-            alert("Your account has been deleted by the Admin.");
+            showToast("Your account has been deleted by the Admin.", "error");
             doLogout();
+          }
+        });
+
+        onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
+          if (snap.exists()) {
+            currentUserProfile = snap.data();
+            updateNavUserUI();
+            if (currentUserProfile.disabled) {
+              showToast(
+                "Your account has been suspended by the Admin.",
+                "error",
+              );
+              doLogout();
+            }
           }
         });
 
@@ -1979,6 +3401,7 @@
           renderMembers();
           renderPendingApprovals();
           renderAdminMembersList();
+          renderMeetingAttendanceSheet();
         });
 
         const qUpdates = query(
@@ -2008,12 +3431,18 @@
             activeTab !== "chat"
           ) {
             const last = newMsgs[newMsgs.length - 1];
-            if (last.uid !== currentUser.uid) {
+            if (last && last.uid !== currentUser.uid) {
               document
                 .getElementById("chat-unread-badge")
                 .classList.remove("hidden");
               updateHamburgerDot();
               showToast(`${last.name}: ${last.text.slice(0, 45)}`);
+              playNotificationChime();
+              showBrowserNotification(
+                `Group Chat • ${last.name}`,
+                last.text.slice(0, 90),
+                "chat",
+              );
             }
           }
           firstChatLoad = false;
@@ -2028,7 +3457,9 @@
         onSnapshot(qAtt, (snap) => {
           allAttendance = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
           renderTodayAttendance();
+          renderMeetingAttendanceSheet();
           renderAdminAttendance();
+          renderMyAttendanceRate();
         });
 
         onSnapshot(doc(db, "settings", "meeting"), (snap) => {
@@ -2039,6 +3470,7 @@
             currentMeetingTitle = data.title || "Official Meeting Room";
             document.getElementById("meeting-room-title").innerText =
               currentMeetingTitle;
+            renderMeetingAttendanceSheet();
             const banner = document.getElementById("live-meeting-banner");
             if (data.isActive) {
               document.getElementById("banner-meeting-title").innerText =
@@ -2048,6 +3480,42 @@
               banner.classList.add("hidden");
             }
           }
+        });
+
+        const qNotifs = query(
+          collection(db, "notifications"),
+          orderBy("createdAt", "desc"),
+          limit(50),
+        );
+        onSnapshot(qNotifs, (snap) => {
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          if (firstNotifLoad) {
+            list.forEach((n) => seenNotifIds.add(n.id));
+            firstNotifLoad = false;
+          } else {
+            const newItems = list.filter((n) => !seenNotifIds.has(n.id));
+            list.forEach((n) => seenNotifIds.add(n.id));
+
+            const isAdmin = currentUserProfile?.role === "admin";
+            for (const n of newItems) {
+              const isForMe =
+                n.targetRole === "all" || (n.targetRole === "admin" && isAdmin);
+              if (isForMe && n.createdByUid !== currentUser.uid) {
+                showToast(
+                  `${n.title}: ${n.body}`,
+                  n.type === "meeting" ? "warn" : "info",
+                );
+                playNotificationChime();
+                showBrowserNotification(
+                  n.title,
+                  n.body,
+                  n.targetTab || "updates",
+                );
+              }
+            }
+          }
+          allNotifications = list;
+          renderNotifications();
         });
       }
 
@@ -2145,7 +3613,7 @@
           timeLabel,
           joinedAt: serverTimestamp(),
         });
-        if (showAlert) showToast("Attendance marked for today's meeting!");
+        if (showAlert) showToast("Attendance marked & added to the sheet!");
       };
 
       function renderTodayAttendance() {
@@ -2172,6 +3640,199 @@
           )
           .join("");
       }
+
+      window.renderMeetingAttendanceSheet = () => {
+        const dateInput = document.getElementById("meeting-sheet-date");
+        const selectedDate = dateInput
+          ? dateInput.value || todayDateStr()
+          : todayDateStr();
+        const rows = allAttendance
+          .filter((a) => a.date === selectedDate)
+          .slice()
+          .reverse();
+
+        const approvedCount = allMembers.filter(
+          (m) => m.approved !== false && !m.disabled,
+        ).length;
+
+        const badge = document.getElementById("sheet-present-badge");
+        badge.innerText =
+          approvedCount > 0
+            ? `Present: ${rows.length} / ${approvedCount}`
+            : `Present: ${rows.length}`;
+
+        const infoEl = document.getElementById("sheet-meeting-info");
+        const sheetTitle = rows[0]?.meetingTitle || currentMeetingTitle;
+        infoEl.innerText = `${sheetTitle} • Date: ${selectedDate}`;
+
+        const tbody = document.getElementById("meeting-attendance-sheet-body");
+        if (rows.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+                No one has marked attendance for ${escapeHtml(selectedDate)} yet.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((r, idx) => {
+            const memberObj = allMembers.find((m) => m.id === r.uid);
+            const photo = avatarUrl(memberObj || { name: r.name });
+            const isMe = r.uid === currentUser?.uid;
+            return `
+            <tr class="hover:bg-emerald-50/60 transition ${isMe ? "bg-emerald-50/40" : ""}">
+              <td class="py-2.5 px-3 sm:px-4 font-bold text-slate-500">${idx + 1}</td>
+              <td class="py-2.5 px-3 sm:px-4">
+                <div class="flex items-center gap-2.5">
+                  <img src="${photo}" class="w-8 h-8 rounded-full object-cover border border-emerald-200 shrink-0" />
+                  <span class="font-bold text-slate-800">${escapeHtml(r.name)}${isMe ? ' <span class="text-[10px] text-emerald-700 font-semibold">(You)</span>' : ""}</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3 sm:px-4 text-slate-600">${escapeHtml(r.designation || "Member")}</td>
+              <td class="py-2.5 px-3 sm:px-4 text-slate-600">${escapeHtml(r.country || "Global")}</td>
+              <td class="py-2.5 px-3 sm:px-4 text-emerald-800 font-semibold">${escapeHtml(r.timeLabel || "")}</td>
+              <td class="py-2.5 px-3 sm:px-4 text-right">
+                <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                  <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+                  Present
+                </span>
+              </td>
+            </tr>
+          `;
+          })
+          .join("");
+      };
+
+      window.exportAttendancePDF = (source = "meeting") => {
+        if (currentUserProfile?.role !== "admin") {
+          showToast(
+            "Only Admin can save the attendance sheet as PDF.",
+            "error",
+          );
+          return;
+        }
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          showToast(
+            "PDF library not loaded. Check internet connection.",
+            "error",
+          );
+          return;
+        }
+
+        const dateVal =
+          source === "admin"
+            ? document.getElementById("attendance-date-filter").value
+            : document.getElementById("meeting-sheet-date").value ||
+              todayDateStr();
+
+        const rows = (
+          dateVal
+            ? allAttendance.filter((a) => a.date === dateVal)
+            : allAttendance
+        )
+          .slice()
+          .reverse();
+
+        if (rows.length === 0) {
+          showToast(
+            "No attendance records found for this date to save as PDF.",
+            "warn",
+          );
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const docPdf = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+        });
+
+        const approvedCount = allMembers.filter(
+          (m) => m.approved !== false && !m.disabled,
+        ).length;
+        const meetingName = rows[0]?.meetingTitle || currentMeetingTitle;
+
+        docPdf.setFillColor(6, 78, 59);
+        docPdf.rect(0, 0, 210, 28, "F");
+
+        docPdf.setTextColor(255, 255, 255);
+        docPdf.setFont("helvetica", "bold");
+        docPdf.setFontSize(16);
+        docPdf.text("DARBER E CHANDPURISHAH", 14, 12);
+
+        docPdf.setFont("helvetica", "normal");
+        docPdf.setFontSize(10);
+        docPdf.text("Official Class / Meeting Attendance Sheet", 14, 19);
+
+        docPdf.setTextColor(30, 41, 59);
+        docPdf.setFontSize(10);
+        docPdf.text(`Meeting: ${meetingName}`, 14, 36);
+        docPdf.text(`Date: ${dateVal || "All Dates"}`, 14, 42);
+        docPdf.text(
+          `Total Present: ${rows.length}${approvedCount > 0 ? " / " + approvedCount : ""}`,
+          130,
+          36,
+        );
+        docPdf.text(`Saved By: ${currentUserProfile.name || "Admin"}`, 130, 42);
+
+        const tableBody = rows.map((r, i) => [
+          i + 1,
+          r.name || "",
+          r.designation || "Member",
+          r.country || "Global",
+          r.timeLabel || "",
+          "Present",
+        ]);
+
+        docPdf.autoTable({
+          startY: 48,
+          head: [
+            [
+              "#",
+              "Member Name",
+              "Designation",
+              "Country",
+              "Check-in",
+              "Status",
+            ],
+          ],
+          body: tableBody,
+          theme: "grid",
+          headStyles: {
+            fillColor: [6, 95, 70],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+            fontSize: 9,
+          },
+          bodyStyles: {
+            fontSize: 9,
+            textColor: [30, 41, 59],
+          },
+          alternateRowStyles: {
+            fillColor: [236, 253, 245],
+          },
+          columnStyles: {
+            0: { halign: "center", cellWidth: 10 },
+            5: { halign: "center", textColor: [6, 95, 70], fontStyle: "bold" },
+          },
+          didDrawPage: () => {
+            docPdf.setFontSize(8);
+            docPdf.setTextColor(100, 116, 139);
+            docPdf.text(
+              `Generated on ${new Date().toLocaleString()} • DARBER E CHANDPURISHAH`,
+              14,
+              docPdf.internal.pageSize.height - 10,
+            );
+          },
+        });
+
+        docPdf.save(`Darber_Attendance_Sheet_${dateVal || "all"}.pdf`);
+        showToast("Attendance Sheet saved as PDF!");
+      };
 
       window.renderAdminAttendance = () => {
         const container = document.getElementById("admin-attendance-list");
@@ -2264,7 +3925,7 @@
           .map(
             (m) => `
         <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2.5">
-          <div class="flex items-center gap-2.5 min-w-0">
+          <div onclick="openMemberModal('${m.id}')" class="flex items-center gap-2.5 min-w-0 cursor-pointer">
             <img src="${avatarUrl(m)}" class="w-9 h-9 rounded-xl object-cover shrink-0" />
             <div class="min-w-0">
               <p class="text-sm font-bold text-slate-800 truncate">${escapeHtml(m.name)}</p>
@@ -2315,12 +3976,25 @@
           list.innerHTML = pending
             .map(
               (m) => `
-          <div class="bg-white/80 p-3.5 rounded-xl border border-amber-200 flex items-center justify-between gap-3">
-            <div class="min-w-0">
-              <p class="font-bold text-slate-900 truncate">${escapeHtml(m.name)}</p>
+          <div class="bg-white/85 p-4 rounded-xl border border-amber-200 flex flex-col justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center justify-between gap-2">
+                <p class="font-bold text-slate-900 truncate">${escapeHtml(m.name)}</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${m.emailVerified ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}">
+                  ${m.emailVerified ? "Email Verified" : "Unverified"}
+                </span>
+              </div>
               <p class="text-xs text-slate-600 truncate">${escapeHtml(m.email)} • ${escapeHtml(m.country || "Global")}</p>
+              <div class="text-[11px] text-slate-600 pt-1 space-y-0.5">
+                ${m.age ? `<p><strong>Age:</strong> ${escapeHtml(m.age)} • <strong>Phone:</strong> ${escapeHtml(m.phone || "N/A")}</p>` : ""}
+                ${m.fatherName ? `<p><strong>Father:</strong> ${escapeHtml(m.fatherName)}</p>` : ""}
+                ${m.motherName ? `<p><strong>Mother:</strong> ${escapeHtml(m.motherName)}</p>` : ""}
+                ${m.parentsPhone ? `<p><strong>Parents' Phone:</strong> ${escapeHtml(m.parentsPhone)}</p>` : ""}
+                ${m.presentAddress ? `<p class="truncate"><strong>Present:</strong> ${escapeHtml(m.presentAddress)}</p>` : ""}
+              </div>
             </div>
-            <div class="flex gap-1.5 shrink-0">
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button onclick="openMemberModal('${m.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Full Info</button>
               <button onclick="approveMember('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">Approve</button>
               <button onclick="deleteMember('${m.id}', '${escapeHtml(m.name)}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Delete</button>
             </div>
@@ -2406,9 +4080,37 @@
         );
         document.getElementById("modal-mem-desig").innerText =
           `${m.designation || "Member"}${m.role === "admin" ? " • Admin" : ""}`;
+
+        const verEl = document.getElementById("modal-mem-verified");
+        if (m.emailVerified) verEl.classList.remove("hidden");
+        else verEl.classList.add("hidden");
+
         document.getElementById("modal-mem-bio").innerText = m.bio
           ? `"${m.bio}"`
           : "";
+
+        const { attended, totalHeld, rate } = calcMonthlyAttendance(
+          m.id,
+          currentMonthStr(),
+        );
+        const modalAttEl = document.getElementById("modal-mem-att-rate");
+        modalAttEl.innerText =
+          totalHeld > 0 ? `${rate}% (${attended}/${totalHeld})` : "0% (0/0)";
+        modalAttEl.className =
+          rate >= 75
+            ? "bg-emerald-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full"
+            : rate >= 50
+              ? "bg-amber-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full"
+              : "bg-slate-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full";
+
+        const ageRow = document.getElementById("modal-mem-age-row");
+        if (m.age) {
+          ageRow.classList.remove("hidden");
+          document.getElementById("modal-mem-age").innerText = m.age;
+        } else {
+          ageRow.classList.add("hidden");
+        }
+
         document.getElementById("modal-mem-country").innerText =
           m.country || "Location not set";
 
@@ -2419,6 +4121,47 @@
         const phoneEl = document.getElementById("modal-mem-phone");
         phoneEl.innerText = m.phone || "No phone number";
         phoneEl.href = m.phone ? `tel:${m.phone}` : "#";
+
+        const canViewPrivate =
+          currentUserProfile?.role === "admin" || m.id === currentUser?.uid;
+        const privBox = document.getElementById("modal-private-box");
+        if (
+          canViewPrivate &&
+          (m.fatherName ||
+            m.motherName ||
+            m.parentsPhone ||
+            m.presentAddress ||
+            m.permanentAddress)
+        ) {
+          privBox.classList.remove("hidden");
+          const setRow = (rowId, valId, val, isTel = false) => {
+            const r = document.getElementById(rowId);
+            const v = document.getElementById(valId);
+            if (val) {
+              r.classList.remove("hidden");
+              v.innerText = val;
+              if (isTel) v.href = `tel:${val}`;
+            } else {
+              r.classList.add("hidden");
+            }
+          };
+          setRow("modal-mem-father-row", "modal-mem-father", m.fatherName);
+          setRow("modal-mem-mother-row", "modal-mem-mother", m.motherName);
+          setRow(
+            "modal-mem-parents-phone-row",
+            "modal-mem-parents-phone",
+            m.parentsPhone,
+            true,
+          );
+          setRow(
+            "modal-mem-present-row",
+            "modal-mem-present",
+            m.presentAddress,
+          );
+          setRow("modal-mem-perm-row", "modal-mem-perm", m.permanentAddress);
+        } else {
+          privBox.classList.add("hidden");
+        }
 
         const adminBox = document.getElementById("modal-admin-actions");
         const suspendBtn = document.getElementById("modal-suspend-btn");
@@ -2668,17 +4411,36 @@
       function fillProfileForm() {
         document.getElementById("prof-name").value =
           currentUserProfile.name || "";
+        document.getElementById("prof-age").value =
+          currentUserProfile.age || "";
         document.getElementById("prof-designation").value =
           currentUserProfile.designation || "";
         document.getElementById("prof-country").value =
           currentUserProfile.country || "";
         document.getElementById("prof-phone").value =
           currentUserProfile.phone || "";
+        document.getElementById("prof-parents-phone").value =
+          currentUserProfile.parentsPhone || "";
+        document.getElementById("prof-father").value =
+          currentUserProfile.fatherName || "";
+        document.getElementById("prof-mother").value =
+          currentUserProfile.motherName || "";
+        document.getElementById("prof-present-addr").value =
+          currentUserProfile.presentAddress || "";
+        document.getElementById("prof-perm-addr").value =
+          currentUserProfile.permanentAddress || "";
+        document.getElementById("prof-email-readonly").value =
+          currentUserProfile.email || currentUser?.email || "";
         document.getElementById("prof-bio").value =
           currentUserProfile.bio || "";
         uploadedPhotoBase64 = currentUserProfile.photoURL || "";
         document.getElementById("prof-preview-img").src =
           avatarUrl(currentUserProfile);
+        if (currentUser?.emailVerified) {
+          document
+            .getElementById("prof-verified-badge")
+            .classList.remove("hidden");
+        }
       }
 
       document
@@ -2687,11 +4449,23 @@
           e.preventDefault();
           const updated = {
             name: document.getElementById("prof-name").value.trim(),
+            age: document.getElementById("prof-age").value.trim(),
             designation: document
               .getElementById("prof-designation")
               .value.trim(),
             country: document.getElementById("prof-country").value.trim(),
             phone: document.getElementById("prof-phone").value.trim(),
+            parentsPhone: document
+              .getElementById("prof-parents-phone")
+              .value.trim(),
+            fatherName: document.getElementById("prof-father").value.trim(),
+            motherName: document.getElementById("prof-mother").value.trim(),
+            presentAddress: document
+              .getElementById("prof-present-addr")
+              .value.trim(),
+            permanentAddress: document
+              .getElementById("prof-perm-addr")
+              .value.trim(),
             bio: document.getElementById("prof-bio").value.trim(),
             photoURL: uploadedPhotoBase64,
           };
@@ -2708,12 +4482,10 @@
           const name = document.getElementById("new-mem-name").value.trim();
           const email = document.getElementById("new-mem-email").value.trim();
           const pass = document.getElementById("new-mem-pass").value;
-          const designation = document
-            .getElementById("new-mem-desig")
-            .value.trim();
-          const country = document
-            .getElementById("new-mem-country")
-            .value.trim();
+          const designation =
+            document.getElementById("new-mem-desig").value.trim() || "Member";
+          const country =
+            document.getElementById("new-mem-country").value.trim() || "Global";
           const role = document.getElementById("new-mem-role").value;
 
           try {
@@ -2722,6 +4494,7 @@
               email,
               pass,
             );
+            await sendEmailVerification(cred.user);
             await setDoc(doc(db, "users", cred.user.uid), {
               name,
               email,
@@ -2733,10 +4506,13 @@
               photoURL: "",
               approved: true,
               disabled: false,
+              emailVerified: false,
             });
             await signOut(secondaryAuth);
             e.target.reset();
-            showToast(`New member "${name}" has been added!`);
+            showToast(
+              `New member "${name}" added and verification email sent!`,
+            );
           } catch (err) {
             showToast("Error: " + err.message, "error");
           }
@@ -2746,11 +4522,13 @@
         .getElementById("admin-post-update-form")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
+          const title = document.getElementById("upd-title").value.trim();
+          const description = document.getElementById("upd-desc").value.trim();
           try {
             await addDoc(collection(db, "updates"), {
               type: document.getElementById("upd-type").value,
-              title: document.getElementById("upd-title").value.trim(),
-              description: document.getElementById("upd-desc").value.trim(),
+              title,
+              description,
               url: document.getElementById("upd-url").value.trim(),
               fileData: uploadedUpdateFile?.dataUrl || "",
               fileName: uploadedUpdateFile?.fileName || "",
@@ -2758,12 +4536,50 @@
               authorName: currentUserProfile.name,
               createdAt: serverTimestamp(),
             });
+            await createAppNotification({
+              type: "update",
+              title: `New Update: ${title}`,
+              body: description.slice(0, 140),
+              targetRole: "all",
+              targetTab: "updates",
+              createdByUid: currentUser.uid,
+              authorName: currentUserProfile.name,
+              readBy: [currentUser.uid],
+            });
             e.target.reset();
             uploadedUpdateFile = null;
             document.getElementById("upd-file-status").classList.add("hidden");
-            showToast("Update published to everyone!");
+            showToast("Update published & notification sent to everyone!");
           } catch (err) {
             showToast("Failed to publish: " + err.message, "error");
+          }
+        });
+
+      document
+        .getElementById("admin-broadcast-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const title = document.getElementById("notif-title").value.trim();
+          const body = document.getElementById("notif-body").value.trim();
+          const targetTab = document.getElementById("notif-target-tab").value;
+          if (!title || !body) return;
+          const btn = document.getElementById("notif-send-btn");
+          btn.disabled = true;
+          try {
+            await createAppNotification({
+              type: "announcement",
+              title,
+              body,
+              targetRole: "all",
+              targetTab,
+              createdByUid: currentUser.uid,
+              authorName: currentUserProfile.name,
+              readBy: [currentUser.uid],
+            });
+            e.target.reset();
+            showToast("Notification sent to all admins and members!");
+          } finally {
+            btn.disabled = false;
           }
         });
 
@@ -2790,8 +4606,22 @@
           roomName: "DarberEChandpurishahOfficialRoom",
           updatedAt: serverTimestamp(),
         });
+        if (isActive && currentUser && currentUserProfile) {
+          await createAppNotification({
+            type: "meeting",
+            title: "Live Meeting Started",
+            body: `"${title}" is live now! Click to join.`,
+            targetRole: "all",
+            targetTab: "meeting",
+            createdByUid: currentUser.uid,
+            authorName: currentUserProfile.name,
+            readBy: [currentUser.uid],
+          });
+        }
         showToast(
-          isActive ? "Live meeting alert enabled!" : "Meeting notice ended",
+          isActive
+            ? "Live meeting alert enabled & everyone notified!"
+            : "Meeting notice ended",
         );
       };
 
@@ -3100,7 +4930,7 @@
             !lkRoom.localParticipant.isScreenShareEnabled,
           );
           syncLiveKitUI();
-        } catch (err) {
+        } catch (_) {
           showToast("Screen share cancelled or blocked", "warn");
         }
       };
