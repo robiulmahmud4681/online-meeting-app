@@ -2813,13 +2813,43 @@
         document.getElementById("nav-menu-backdrop").classList.add("hidden");
       };
 
-      window.togglePasswordVisibility = (inputId, iconId) => {
+      // Password Show/Hide Toggle
+      window.togglePasswordVisibility = (inputId, targetId) => {
         const input = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-        if (!input || !icon) return;
-        const isPass = input.type === "password";
-        input.type = isPass ? "text" : "password";
-        icon.setAttribute("data-lucide", isPass ? "eye-off" : "eye");
+        const target =
+          typeof targetId === "string"
+            ? document.getElementById(targetId)
+            : targetId;
+        if (!input || !target) return;
+
+        const btn =
+          target.tagName === "BUTTON" ? target : target.closest("button");
+        const showing = input.type === "password";
+        input.type = showing ? "text" : "password";
+
+        const iconIdAttr =
+          typeof targetId === "string" && (!btn || btn.id !== targetId)
+            ? ` id="${targetId}"`
+            : "";
+
+        if (btn) {
+          btn.setAttribute(
+            "aria-label",
+            showing ? "Hide password" : "Show password",
+          );
+          btn.classList.add(
+            "inline-flex",
+            "items-center",
+            "gap-1",
+            "text-xs",
+            "font-semibold",
+          );
+          btn.innerHTML = showing
+            ? `<i${iconIdAttr} data-lucide="eye-off" class="w-4 h-4"></i><span>Hide</span>`
+            : `<i${iconIdAttr} data-lucide="eye" class="w-4 h-4"></i><span>Show</span>`;
+        } else {
+          target.setAttribute("data-lucide", showing ? "eye-off" : "eye");
+        }
         lucide.createIcons();
       };
 
