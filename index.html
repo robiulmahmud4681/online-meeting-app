@@ -155,7 +155,7 @@
             <div class="relative">
               <i
                 data-lucide="mail"
-                class="w-4 h-4 text-emerald-600 absolute left-3.5 top-3.5"
+                class="w-4 h-4 text-emerald-600 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
               ></i>
               <input
                 type="email"
@@ -183,24 +183,25 @@
             <div class="relative">
               <i
                 data-lucide="lock"
-                class="w-4 h-4 text-emerald-600 absolute left-3.5 top-3.5"
+                class="w-4 h-4 text-emerald-600 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
               ></i>
               <input
                 type="password"
                 id="login-password"
                 required
                 placeholder="••••••••"
-                class="w-full pl-10 pr-10 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                class="w-full pl-10 pr-20 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
               <button
                 type="button"
                 onclick="
                   togglePasswordVisibility('login-password', 'login-eye-icon')
                 "
-                class="absolute right-3 top-3 text-slate-400 hover:text-emerald-700"
-                aria-label="Toggle password visibility"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 px-2 py-1 rounded-lg text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 inline-flex items-center gap-1 transition"
+                aria-label="Show password"
               >
                 <i id="login-eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+                <span>Show</span>
               </button>
             </div>
           </div>
@@ -405,15 +406,16 @@
                   required
                   minlength="6"
                   placeholder="••••••••"
-                  class="w-full pl-3.5 pr-10 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+                  class="w-full pl-3.5 pr-20 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
                 />
                 <button
                   type="button"
                   onclick="togglePasswordVisibility('reg-pass', 'reg-eye-icon')"
-                  class="absolute right-3 top-3 text-slate-400 hover:text-emerald-700"
-                  aria-label="Toggle password visibility"
+                  class="absolute right-2.5 top-1/2 -translate-y-1/2 px-2 py-1 rounded-lg text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 inline-flex items-center gap-1 transition"
+                  aria-label="Show password"
                 >
                   <i id="reg-eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+                  <span>Show</span>
                 </button>
               </div>
             </div>
@@ -836,20 +838,27 @@
           <button
             onclick="switchTab('csf')"
             id="tab-csf"
-            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center justify-between hover:bg-emerald-50 transition"
           >
-            <img
-              src="./csf-logo.png"
-              onerror="
-                if (!this.dataset.t) {
-                  this.dataset.t = 1;
-                  this.src = './csf-logo.jpg';
-                }
-              "
-              alt="CSF"
-              class="w-5 h-5 rounded-full object-cover border border-emerald-200 shrink-0"
-            />
-            <span>CSF</span>
+            <span class="flex items-center gap-3">
+              <img
+                src="./csf-logo.png"
+                onerror="
+                  if (!this.dataset.t) {
+                    this.dataset.t = 1;
+                    this.src = './csf-logo.jpg';
+                  }
+                "
+                alt="CSF"
+                class="w-5 h-5 rounded-full object-cover border border-emerald-200 shrink-0"
+              />
+              <span>CSF &amp; Help Desk</span>
+            </span>
+            <span
+              id="drawer-hd-badge"
+              class="hidden bg-[#25D366]/15 text-[#128C7E] text-[10px] px-2 py-0.5 rounded-full font-bold"
+              >WhatsApp</span
+            >
           </button>
           <button
             onclick="switchTab('profile')"
@@ -1348,9 +1357,9 @@
           </div>
         </section>
 
-        <!-- 6. CSF TAB -->
-        <section id="section-csf" class="hidden max-w-3xl mx-auto">
-          <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
+        <!-- 6. CSF & HELP DESK TAB -->
+        <section id="section-csf" class="hidden max-w-3xl mx-auto space-y-6">
+          <div class="glass p-6 sm:p-8 rounded-3xl text-center space-y-3">
             <img
               src="./csf-logo.png"
               onerror="
@@ -1360,21 +1369,176 @@
                 }
               "
               alt="CHANDPURISHA SPECIAL FORCE (CSF)"
-              class="w-28 h-28 rounded-full object-cover mx-auto shadow-xl border-2 border-emerald-600 bg-black p-0.5"
+              class="w-24 h-24 rounded-full object-cover mx-auto shadow-xl border-2 border-emerald-600 bg-black p-0.5"
             />
             <h2 class="text-2xl font-extrabold text-emerald-950">
               CHANDPURISHA SPECIAL FORCE (CSF)
             </h2>
-            <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              This section is dedicated to
-              <strong>CSF (Chandpurisha Special Force)</strong> updates,
-              mission, and activities.
+            <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
+              Dedicated support, coordination, and assistance for all members of
+              <strong>DARBER E CHANDPURISHAH</strong> and
+              <strong>CSF (Chandpurisha Special Force)</strong>.
             </p>
+          </div>
+
+          <div
+            class="glass p-6 sm:p-8 rounded-3xl border border-emerald-200/80 space-y-5"
+          >
             <div
-              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
+              class="flex flex-wrap items-start justify-between gap-3 border-b border-emerald-100 pb-4"
             >
-              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-              <span>Details coming soon</span>
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-[#25D366]/15 text-[#128C7E] border border-[#25D366]/30 flex items-center justify-center shrink-0"
+                >
+                  <i data-lucide="headphones" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h3
+                    id="csf-hd-title"
+                    class="text-lg sm:text-xl font-extrabold text-emerald-950"
+                  >
+                    CSF Help Desk (WhatsApp)
+                  </h3>
+                  <p
+                    id="csf-hd-subtitle"
+                    class="text-xs sm:text-sm text-slate-600"
+                  >
+                    Get instant help from CSF support team directly on WhatsApp.
+                  </p>
+                </div>
+              </div>
+
+              <span
+                id="csf-hd-status-badge"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 bg-amber-100 text-amber-800 border border-amber-200"
+              >
+                <span
+                  id="csf-hd-status-dot"
+                  class="w-2 h-2 rounded-full bg-amber-500"
+                ></span>
+                <span id="csf-hd-status-text">Setup Pending</span>
+              </span>
+            </div>
+
+            <!-- Active Help Desk Area -->
+            <div id="csf-hd-active-box" class="hidden space-y-4">
+              <div id="csf-hd-form-fields" class="grid grid-cols-1 gap-3">
+                <div>
+                  <label
+                    class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5"
+                    >Select Help Topic</label
+                  >
+                  <select
+                    id="csf-hd-topic"
+                    onchange="updateHelpDeskWhatsAppHref()"
+                    class="w-full px-3.5 py-2.5 bg-white/90 border border-emerald-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="General Help / Inquiry">
+                      General Help / Inquiry
+                    </option>
+                    <option value="Membership & Account Support">
+                      Membership &amp; Account Support
+                    </option>
+                    <option value="Online Meeting Technical Help">
+                      Online Meeting Technical Help
+                    </option>
+                    <option value="CSF Volunteer / Emergency Support">
+                      CSF Volunteer / Emergency Support
+                    </option>
+                    <option value="Report an Issue">Report an Issue</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5"
+                    >Write Your Question / Issue (Optional)</label
+                  >
+                  <textarea
+                    id="csf-hd-note"
+                    rows="3"
+                    oninput="updateHelpDeskWhatsAppHref()"
+                    placeholder="Briefly describe what help you need (will be pre-filled in WhatsApp)..."
+                    class="w-full px-3.5 py-2.5 bg-white/90 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div
+                id="csf-hd-group-info"
+                class="hidden bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 text-xs sm:text-sm text-emerald-900"
+              >
+                Click the button below to join/open the official
+                <strong>CSF Help Desk WhatsApp Group</strong> and ask your
+                question directly.
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 pt-1">
+                <a
+                  id="csf-hd-wa-btn"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex-1 min-w-[220px] bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-3.5 px-5 rounded-2xl shadow-lg shadow-[#25D366]/25 flex items-center justify-center gap-2.5 text-sm transition"
+                >
+                  <i data-lucide="message-circle" class="w-5 h-5"></i>
+                  <span id="csf-hd-wa-btn-text"
+                    >Message CSF Help Desk on WhatsApp</span
+                  >
+                  <i data-lucide="external-link" class="w-4 h-4 opacity-90"></i>
+                </a>
+
+                <button
+                  type="button"
+                  onclick="copyHelpDeskLink()"
+                  class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold py-3.5 px-4 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 transition"
+                >
+                  <i data-lucide="copy" class="w-4 h-4"></i>
+                  <span id="csf-hd-copy-text">Copy Link</span>
+                </button>
+              </div>
+
+              <p class="text-[11px] text-slate-500 text-center">
+                Direct Link:
+                <span
+                  id="csf-hd-direct-url"
+                  class="font-mono text-emerald-800 break-all"
+                ></span>
+              </p>
+            </div>
+
+            <!-- Pending Setup Box -->
+            <div
+              id="csf-hd-pending-box"
+              class="bg-amber-50/90 border border-amber-200 rounded-2xl p-5 text-center space-y-3"
+            >
+              <div
+                class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto"
+              >
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+              </div>
+              <div class="space-y-1">
+                <p class="text-sm font-bold text-amber-950">
+                  WhatsApp Help Desk link is not configured yet
+                </p>
+                <p
+                  id="csf-hd-pending-msg"
+                  class="text-xs text-amber-800 max-w-md mx-auto"
+                >
+                  An Admin will add the official CSF Help Desk WhatsApp link
+                  shortly.
+                </p>
+              </div>
+              <button
+                type="button"
+                id="csf-hd-admin-setup-btn"
+                onclick="switchTab('admin')"
+                class="hidden inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow"
+              >
+                <i data-lucide="settings" class="w-4 h-4"></i>
+                <span>Setup WhatsApp Help Desk in Admin Panel</span>
+              </button>
             </div>
           </div>
         </section>
@@ -1930,6 +2094,123 @@
               </form>
             </div>
 
+            <!-- CSF HELP DESK (WHATSAPP) SETTINGS -->
+            <div
+              class="glass p-6 rounded-2xl space-y-4 lg:col-span-2 border border-emerald-200"
+            >
+              <div
+                class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-2.5"
+              >
+                <h3
+                  class="text-lg font-bold text-emerald-950 flex items-center gap-2"
+                >
+                  <i
+                    data-lucide="headphones"
+                    class="w-5 h-5 text-[#128C7E]"
+                  ></i>
+                  <span>CSF Help Desk (WhatsApp Link Setup)</span>
+                </h3>
+                <label
+                  class="inline-flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200"
+                >
+                  <input
+                    type="checkbox"
+                    id="hd-enabled"
+                    checked
+                    class="rounded border-emerald-300 text-emerald-700 focus:ring-emerald-500"
+                  />
+                  <span>Active in App</span>
+                </label>
+              </div>
+
+              <form id="admin-helpdesk-form" class="space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                      >WhatsApp Number or Group Invite Link *</label
+                    >
+                    <input
+                      type="text"
+                      id="hd-whatsapp"
+                      required
+                      oninput="updateHelpDeskPreview()"
+                      placeholder="e.g. +88017XXXXXXXX or https://chat.whatsapp.com/..."
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                      >Help Desk Title</label
+                    >
+                    <input
+                      type="text"
+                      id="hd-title"
+                      placeholder="CSF Help Desk (WhatsApp)"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                      >Short Subtitle / Support Hours</label
+                    >
+                    <input
+                      type="text"
+                      id="hd-subtitle"
+                      placeholder="24/7 WhatsApp support for all CSF & Darber members"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                      >Default Pre-filled Greeting</label
+                    >
+                    <input
+                      type="text"
+                      id="hd-default-msg"
+                      placeholder="Assalamu Alaikum, I need help from CSF Help Desk."
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  id="hd-preview-box"
+                  class="hidden bg-emerald-50/80 border border-emerald-200 rounded-xl px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs"
+                >
+                  <span class="text-emerald-900 truncate">
+                    <strong>Generated Link:</strong>
+                    <span id="hd-preview-url" class="font-mono"></span>
+                  </span>
+                  <a
+                    id="hd-test-link"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 text-[#128C7E] font-bold hover:underline shrink-0"
+                  >
+                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                    <span>Test Link</span>
+                  </a>
+                </div>
+
+                <button
+                  type="submit"
+                  id="hd-save-btn"
+                  class="bg-[#128C7E] hover:bg-[#0e7367] disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                >
+                  <i data-lucide="save" class="w-4 h-4"></i>
+                  <span>Save CSF Help Desk Settings</span>
+                </button>
+              </form>
+            </div>
+
             <div class="glass p-6 rounded-2xl space-y-4 lg:col-span-2">
               <div
                 class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
@@ -2053,6 +2334,32 @@
               </a>
             </div>
           </div>
+
+          <a
+            id="footer-helpdesk-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hidden group glass rounded-2xl px-3.5 py-2 flex items-center gap-2.5 border border-[#25D366]/35 hover:bg-[#25D366] hover:text-white text-emerald-950 transition shadow-sm"
+          >
+            <i
+              data-lucide="headphones"
+              class="w-4 h-4 text-[#128C7E] group-hover:text-white shrink-0"
+            ></i>
+            <span class="text-xs font-bold">CSF Help Desk (WhatsApp)</span>
+          </a>
+          <button
+            type="button"
+            id="footer-helpdesk-btn"
+            onclick="switchTab('csf')"
+            class="glass rounded-2xl px-3.5 py-2 flex items-center gap-2 border border-emerald-200 hover:bg-emerald-50 text-emerald-950 transition shadow-sm"
+          >
+            <i
+              data-lucide="headphones"
+              class="w-4 h-4 text-emerald-700 shrink-0"
+            ></i>
+            <span class="text-xs font-bold">CSF Help Desk</span>
+          </button>
 
           <div class="glass rounded-2xl px-3.5 py-2 flex items-center gap-3">
             <p
@@ -2392,6 +2699,14 @@
       let lkRoom = null;
       let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
       let currentMeetingTitle = "Official Meeting Room";
+      let helpDeskSettings = {
+        enabled: true,
+        title: "CSF Help Desk (WhatsApp)",
+        subtitle:
+          "Get instant help from CSF support team directly on WhatsApp.",
+        whatsappInput: "",
+        defaultMessage: "Assalamu Alaikum, I need help from CSF Help Desk.",
+      };
       let uploadedPhotoBase64 = "";
       let uploadedUpdateFile = null;
       let pendingRegistrationProfile = null;
@@ -2417,7 +2732,7 @@
         chat: "Group Chat",
         members: "Members & Status",
         history: "History of Darber E Chandpurishah",
-        csf: "CSF",
+        csf: "CSF & Help Desk",
         profile: "My Profile",
         admin: "Admin Panel",
       };
@@ -2448,6 +2763,210 @@
           m?.photoURL ||
           `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(m?.name || "M")}`
         );
+      }
+
+      // ================= CSF HELP DESK (WHATSAPP) =================
+      function buildWhatsAppUrl(rawInput = "", message = "") {
+        const trimmed = String(rawInput || "").trim();
+        if (!trimmed) return "";
+        const text = String(message || "").trim();
+
+        if (/^https?:\/\//i.test(trimmed)) {
+          try {
+            const parsed = new URL(trimmed);
+            if (
+              (parsed.hostname === "wa.me" ||
+                parsed.hostname === "api.whatsapp.com") &&
+              text &&
+              !parsed.searchParams.has("text")
+            ) {
+              parsed.searchParams.set("text", text);
+            }
+            return parsed.toString();
+          } catch (_) {
+            return trimmed;
+          }
+        }
+
+        let digits = trimmed.replace(/\D/g, "");
+        if (!digits) return "";
+        if (digits.length === 11 && digits.startsWith("01")) {
+          digits = `88${digits}`;
+        } else if (digits.length === 13 && digits.startsWith("0088")) {
+          digits = digits.slice(2);
+        }
+        const base = `https://wa.me/${digits}`;
+        return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+      }
+
+      function isWhatsAppGroupOrChannelLink(rawInput = "") {
+        const lower = String(rawInput || "")
+          .trim()
+          .toLowerCase();
+        return (
+          lower.includes("chat.whatsapp.com") ||
+          lower.includes("whatsapp.com/channel")
+        );
+      }
+
+      window.updateHelpDeskWhatsAppHref = () => {
+        const isGroup = isWhatsAppGroupOrChannelLink(
+          helpDeskSettings.whatsappInput,
+        );
+        const topic =
+          document.getElementById("csf-hd-topic")?.value ||
+          "General Help / Inquiry";
+        const note = (
+          document.getElementById("csf-hd-note")?.value || ""
+        ).trim();
+        const memberName = currentUserProfile?.name || "Member";
+        const memberCountry = currentUserProfile?.country || "Global";
+
+        const composed = [
+          helpDeskSettings.defaultMessage ||
+            "Assalamu Alaikum, I need help from CSF Help Desk.",
+          `Name: ${memberName} (${memberCountry})`,
+          `Topic: ${topic}`,
+          note ? `Message: ${note}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        const waUrl = buildWhatsAppUrl(
+          helpDeskSettings.whatsappInput,
+          isGroup ? "" : composed,
+        );
+        const btn = document.getElementById("csf-hd-wa-btn");
+        if (btn) btn.href = waUrl || "#";
+      };
+
+      window.copyHelpDeskLink = async () => {
+        const baseUrl = buildWhatsAppUrl(helpDeskSettings.whatsappInput);
+        if (!baseUrl) return;
+        try {
+          await navigator.clipboard.writeText(baseUrl);
+          const lbl = document.getElementById("csf-hd-copy-text");
+          if (lbl) lbl.innerText = "Copied";
+          showToast("WhatsApp Help Desk link copied!");
+          setTimeout(() => {
+            if (lbl) lbl.innerText = "Copy Link";
+          }, 2000);
+        } catch (_) {
+          showToast("Could not copy link automatically.", "warn");
+        }
+      };
+
+      window.updateHelpDeskPreview = () => {
+        const val = document.getElementById("hd-whatsapp")?.value || "";
+        const url = buildWhatsAppUrl(val);
+        const box = document.getElementById("hd-preview-box");
+        const urlEl = document.getElementById("hd-preview-url");
+        const testLink = document.getElementById("hd-test-link");
+        if (!box) return;
+        if (url) {
+          box.classList.remove("hidden");
+          if (urlEl) urlEl.innerText = url;
+          if (testLink) testLink.href = url;
+        } else {
+          box.classList.add("hidden");
+        }
+      };
+
+      function fillHelpDeskAdminForm() {
+        const enEl = document.getElementById("hd-enabled");
+        if (!enEl) return;
+        enEl.checked = helpDeskSettings.enabled !== false;
+        document.getElementById("hd-whatsapp").value =
+          helpDeskSettings.whatsappInput || "";
+        document.getElementById("hd-title").value =
+          helpDeskSettings.title || "CSF Help Desk (WhatsApp)";
+        document.getElementById("hd-subtitle").value =
+          helpDeskSettings.subtitle || "";
+        document.getElementById("hd-default-msg").value =
+          helpDeskSettings.defaultMessage || "";
+        window.updateHelpDeskPreview();
+      }
+
+      function renderHelpDeskUI() {
+        const baseUrl = buildWhatsAppUrl(helpDeskSettings.whatsappInput);
+        const isAvailable = Boolean(helpDeskSettings.enabled && baseUrl);
+        const isGroup = isWhatsAppGroupOrChannelLink(
+          helpDeskSettings.whatsappInput,
+        );
+        const isAdmin = currentUserProfile?.role === "admin";
+
+        document.getElementById("csf-hd-title").innerText =
+          helpDeskSettings.title || "CSF Help Desk (WhatsApp)";
+        document.getElementById("csf-hd-subtitle").innerText =
+          helpDeskSettings.subtitle ||
+          "Get instant help from CSF support team directly on WhatsApp.";
+
+        const badge = document.getElementById("csf-hd-status-badge");
+        const dot = document.getElementById("csf-hd-status-dot");
+        const statusText = document.getElementById("csf-hd-status-text");
+        if (isAvailable) {
+          badge.className =
+            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 bg-emerald-100 text-emerald-800 border border-emerald-200";
+          dot.className = "w-2 h-2 rounded-full bg-[#25D366] animate-pulse";
+          statusText.innerText = "WhatsApp Active";
+        } else {
+          badge.className =
+            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 bg-amber-100 text-amber-800 border border-amber-200";
+          dot.className = "w-2 h-2 rounded-full bg-amber-500";
+          statusText.innerText = "Setup Pending";
+        }
+
+        const activeBox = document.getElementById("csf-hd-active-box");
+        const pendingBox = document.getElementById("csf-hd-pending-box");
+        const drawerBadge = document.getElementById("drawer-hd-badge");
+        const footerLink = document.getElementById("footer-helpdesk-link");
+        const footerBtn = document.getElementById("footer-helpdesk-btn");
+
+        if (isAvailable) {
+          activeBox.classList.remove("hidden");
+          pendingBox.classList.add("hidden");
+          drawerBadge?.classList.remove("hidden");
+          document.getElementById("csf-hd-direct-url").innerText = baseUrl;
+
+          document
+            .getElementById("csf-hd-form-fields")
+            .classList.toggle("hidden", isGroup);
+          document
+            .getElementById("csf-hd-group-info")
+            .classList.toggle("hidden", !isGroup);
+          document.getElementById("csf-hd-wa-btn-text").innerText = isGroup
+            ? "Join CSF Help Desk on WhatsApp"
+            : "Message CSF Help Desk on WhatsApp";
+          window.updateHelpDeskWhatsAppHref();
+
+          if (footerLink && footerBtn) {
+            footerLink.href = buildWhatsAppUrl(
+              helpDeskSettings.whatsappInput,
+              isGroup ? "" : helpDeskSettings.defaultMessage,
+            );
+            footerLink.classList.remove("hidden");
+            footerBtn.classList.add("hidden");
+          }
+        } else {
+          activeBox.classList.add("hidden");
+          pendingBox.classList.remove("hidden");
+          drawerBadge?.classList.add("hidden");
+
+          const pendingMsg = document.getElementById("csf-hd-pending-msg");
+          const setupBtn = document.getElementById("csf-hd-admin-setup-btn");
+          if (pendingMsg) {
+            pendingMsg.innerText = isAdmin
+              ? "As an Admin, add your CSF Help Desk WhatsApp number or WhatsApp Group invite link from Admin Panel."
+              : "An Admin will add the official CSF Help Desk WhatsApp link shortly.";
+          }
+          if (setupBtn) setupBtn.classList.toggle("hidden", !isAdmin);
+
+          if (footerLink && footerBtn) {
+            footerLink.classList.add("hidden");
+            footerBtn.classList.remove("hidden");
+          }
+        }
+        lucide.createIcons();
       }
 
       // ================= NOTIFICATION HELPERS =================
@@ -2813,7 +3332,7 @@
         document.getElementById("nav-menu-backdrop").classList.add("hidden");
       };
 
-      // Password Show/Hide Toggle
+      // Password Show/Hide Toggle (preserves targetId so 2nd+ clicks always work)
       window.togglePasswordVisibility = (inputId, targetId) => {
         const input = document.getElementById(inputId);
         const target =
@@ -2927,6 +3446,9 @@
         }
         if (tabName === "profile") {
           renderMyAttendanceRate();
+        }
+        if (tabName === "csf") {
+          renderHelpDeskUI();
         }
         closeNavMenu();
         lucide.createIcons();
@@ -3337,6 +3859,7 @@
 
             fillProfileForm();
             renderMyAttendanceRate();
+            renderHelpDeskUI();
             setupPresence(user.uid);
             listenAllData();
             lucide.createIcons();
@@ -3411,6 +3934,7 @@
           if (snap.exists()) {
             currentUserProfile = snap.data();
             updateNavUserUI();
+            renderHelpDeskUI();
             if (currentUserProfile.disabled) {
               showToast(
                 "Your account has been suspended by the Admin.",
@@ -3510,6 +4034,25 @@
               banner.classList.add("hidden");
             }
           }
+        });
+
+        onSnapshot(doc(db, "settings", "helpdesk"), (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            helpDeskSettings = {
+              enabled: data.enabled !== false,
+              title: data.title || "CSF Help Desk (WhatsApp)",
+              subtitle:
+                data.subtitle ||
+                "Get instant help from CSF support team directly on WhatsApp.",
+              whatsappInput: data.whatsappInput || "",
+              defaultMessage:
+                data.defaultMessage ||
+                "Assalamu Alaikum, I need help from CSF Help Desk.",
+            };
+          }
+          fillHelpDeskAdminForm();
+          renderHelpDeskUI();
         });
 
         const qNotifs = query(
@@ -4608,6 +5151,38 @@
             });
             e.target.reset();
             showToast("Notification sent to all admins and members!");
+          } finally {
+            btn.disabled = false;
+          }
+        });
+
+      document
+        .getElementById("admin-helpdesk-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("hd-save-btn");
+          btn.disabled = true;
+          try {
+            const payload = {
+              enabled: document.getElementById("hd-enabled").checked,
+              whatsappInput: document
+                .getElementById("hd-whatsapp")
+                .value.trim(),
+              title:
+                document.getElementById("hd-title").value.trim() ||
+                "CSF Help Desk (WhatsApp)",
+              subtitle:
+                document.getElementById("hd-subtitle").value.trim() ||
+                "Get instant help from CSF support team directly on WhatsApp.",
+              defaultMessage:
+                document.getElementById("hd-default-msg").value.trim() ||
+                "Assalamu Alaikum, I need help from CSF Help Desk.",
+              updatedAt: serverTimestamp(),
+            };
+            await setDoc(doc(db, "settings", "helpdesk"), payload);
+            showToast("CSF Help Desk (WhatsApp) settings saved!");
+          } catch (err) {
+            showToast("Failed to save Help Desk: " + err.message, "error");
           } finally {
             btn.disabled = false;
           }
