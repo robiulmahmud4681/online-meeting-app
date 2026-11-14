@@ -314,24 +314,24 @@
             <div>
               <label
                 class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >Parents' Phone Number *</label
+                >Parents' Phone Number (Optional)</label
               >
               <input
                 type="tel"
                 id="reg-parents-phone"
-                required
-                placeholder="+8801..."
+                placeholder="+8801... (Optional)"
                 class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
             </div>
             <div>
               <label
                 class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >Designation (Optional)</label
+                >Designation *</label
               >
               <input
                 type="text"
                 id="reg-desig"
+                required
                 placeholder="e.g. Member / Volunteer"
                 class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
               />
@@ -612,7 +612,7 @@
                   class="inline-block w-2 h-2 bg-emerald-300 rounded-full animate-pulse shrink-0"
                 ></span>
                 <span id="current-page-label" class="font-semibold text-white"
-                  >Updates &amp; Notice</span
+                  >Members &amp; Status</span
                 >
                 <span class="hidden sm:inline text-emerald-200/80"
                   >• Worldwide Cloud</span
@@ -789,9 +789,24 @@
 
         <div class="p-3 space-y-1.5 flex-1 overflow-y-auto text-sm">
           <button
+            onclick="switchTab('members')"
+            id="tab-members"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center justify-between hover:bg-emerald-50 transition menu-item-active"
+          >
+            <span class="flex items-center gap-3">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span>Members &amp; Status</span>
+            </span>
+            <span
+              id="nav-members-count"
+              class="text-xs font-bold tabular-nums px-2 py-0.5 rounded-full bg-white/20"
+              >0</span
+            >
+          </button>
+          <button
             onclick="switchTab('updates')"
             id="tab-updates"
-            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition menu-item-active"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
           >
             <i data-lucide="megaphone" class="w-4 h-4"></i>
             <span>Updates &amp; Notice</span>
@@ -818,14 +833,6 @@
               class="hidden bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold"
               >New</span
             >
-          </button>
-          <button
-            onclick="switchTab('members')"
-            id="tab-members"
-            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
-          >
-            <i data-lucide="users" class="w-4 h-4"></i>
-            <span>Members &amp; Status</span>
           </button>
           <button
             onclick="switchTab('history')"
@@ -899,9 +906,30 @@
         </button>
       </div>
 
+      <div
+        id="incomplete-profile-banner"
+        class="hidden bg-amber-50 border-b border-amber-200 text-amber-950 px-4 py-2.5 text-center text-xs sm:text-sm font-medium flex flex-wrap items-center justify-center gap-2.5"
+      >
+        <i
+          data-lucide="alert-triangle"
+          class="w-4 h-4 text-amber-600 shrink-0"
+        ></i>
+        <span>
+          Your profile information is incomplete (Missing:
+          <strong id="incomplete-banner-fields"></strong>).
+        </span>
+        <button
+          type="button"
+          onclick="switchTab('profile')"
+          class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1 rounded-lg text-xs font-bold transition"
+        >
+          Complete Profile Now
+        </button>
+      </div>
+
       <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1">
         <!-- 1. UPDATES & RESOURCES TAB -->
-        <section id="section-updates" class="space-y-6">
+        <section id="section-updates" class="hidden space-y-6">
           <div
             class="glass rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3"
           >
@@ -943,57 +971,143 @@
 
         <!-- 2. ONLINE MEETING & ATTENDANCE TAB -->
         <section id="section-meeting" class="hidden space-y-5">
-          <div
-            class="glass p-4 sm:p-5 rounded-2xl flex flex-wrap items-center justify-between gap-3"
-          >
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
-              >
-                <i data-lucide="video" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <h2
-                  class="text-lg font-bold text-emerald-950"
-                  id="meeting-room-title"
+          <div class="glass p-4 sm:p-5 rounded-2xl space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"
                 >
-                  CSF Meeting Room
-                </h2>
-                <p class="text-xs text-slate-500">
-                  LiveKit HD Audio, Video, Screen Sharing &amp; Auto Attendance
-                </p>
+                  <i data-lucide="video" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h2
+                      class="text-lg font-bold text-emerald-950 truncate"
+                      id="meeting-room-title"
+                    >
+                      CSF Meeting Room
+                    </h2>
+                    <span
+                      id="meeting-live-pill"
+                      class="hidden inline-flex items-center gap-1 bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"
+                      ></span>
+                      Live
+                    </span>
+                    <span
+                      id="meeting-platform-badge"
+                      class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                    >
+                      LiveKit HD
+                    </span>
+                  </div>
+                  <p
+                    id="meeting-subtitle"
+                    class="text-xs text-slate-500 mt-0.5"
+                  >
+                    LiveKit HD Audio, Video, Screen Sharing &amp; Auto
+                    Attendance
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  id="btn-mark-attendance"
+                  disabled
+                  onclick="markMyAttendance(true)"
+                  title="Attendance can only be marked while a meeting is in progress"
+                  class="bg-emerald-50 hover:bg-emerald-100 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed text-emerald-800 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                >
+                  <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                  <span id="mark-att-label"
+                    >Mark Attendance (Meeting Not Started)</span
+                  >
+                </button>
+                <button
+                  type="button"
+                  id="join-meeting-btn"
+                  onclick="joinMeeting()"
+                  class="bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-700/20 flex items-center gap-2 transition"
+                >
+                  <i data-lucide="phone-call" class="w-4 h-4"></i>
+                  <span>Join Meeting</span>
+                </button>
+                <button
+                  type="button"
+                  id="leave-meeting-btn"
+                  onclick="leaveMeeting()"
+                  class="hidden bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-red-600/20 flex items-center gap-2 transition"
+                >
+                  <i data-lucide="phone-off" class="w-4 h-4"></i>
+                  <span>Leave Meeting</span>
+                </button>
               </div>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <button
-                onclick="markMyAttendance(true)"
-                class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
-              >
-                <i data-lucide="clipboard-check" class="w-4 h-4"></i>
-                <span>Mark Attendance</span>
-              </button>
-              <button
-                id="join-meeting-btn"
-                onclick="joinMeeting()"
-                class="bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-700/20 flex items-center gap-2 transition"
-              >
-                <i data-lucide="phone-call" class="w-4 h-4"></i>
-                <span>Join Meeting</span>
-              </button>
-              <button
-                id="leave-meeting-btn"
-                onclick="leaveMeeting()"
-                class="hidden bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-red-600/20 flex items-center gap-2 transition"
-              >
-                <i data-lucide="phone-off" class="w-4 h-4"></i>
-                <span>Leave Meeting</span>
-              </button>
+
+            <!-- ADMIN ONLY: PLATFORM SWITCHER & GOOGLE MEET LINK -->
+            <div
+              id="meeting-admin-platform-bar"
+              class="hidden pt-3 border-t border-emerald-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-emerald-50/70 rounded-xl p-3"
+            >
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="text-xs font-bold text-emerald-950 flex items-center gap-1.5 mr-1"
+                >
+                  <i
+                    data-lucide="shield-check"
+                    class="w-4 h-4 text-emerald-700"
+                  ></i>
+                  <span>Admin Meeting Platform:</span>
+                </span>
+                <button
+                  type="button"
+                  id="btn-switch-livekit"
+                  onclick="switchMeetingProvider('livekit')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold border transition bg-emerald-700 text-white border-emerald-700"
+                >
+                  LiveKit (In-App)
+                </button>
+                <button
+                  type="button"
+                  id="btn-switch-gmeet"
+                  onclick="switchMeetingProvider('google_meet')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold border transition bg-white text-slate-700 border-emerald-200 hover:bg-emerald-50"
+                >
+                  Google Meet (Fallback)
+                </button>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 flex-1 lg:max-w-lg">
+                <input
+                  type="url"
+                  id="meeting-quick-gmeet-input"
+                  placeholder="https://meet.google.com/xxx-yyyy-zzz"
+                  class="flex-1 min-w-[200px] px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button
+                  type="button"
+                  onclick="saveQuickGoogleMeetUrl()"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white transition shrink-0"
+                >
+                  Save Meet Link
+                </button>
+                <button
+                  type="button"
+                  id="meeting-admin-toggle-live-btn"
+                  onclick="toggleGlobalMeeting()"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white transition shrink-0"
+                >
+                  Start Meeting
+                </button>
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
             <div
-              class="lg:col-span-3 bg-slate-950 rounded-2xl overflow-hidden shadow-xl min-h-[480px] flex flex-col justify-between relative border border-white/20"
+              class="lg:col-span-3 bg-slate-950 rounded-2xl overflow-hidden shadow-xl min-h-[420px] sm:min-h-[480px] flex flex-col justify-between relative border border-white/20"
             >
               <div
                 id="meeting-placeholder"
@@ -1010,6 +1124,70 @@
                 <p class="text-xs text-slate-400 mt-1">
                   Unlimited session length inside the app • Worldwide HD
                 </p>
+                <div
+                  id="lk-limit-fallback-box"
+                  class="hidden mt-4 max-w-md bg-amber-500/15 border border-amber-400/40 rounded-xl p-3 text-xs text-amber-100 space-y-2"
+                >
+                  <p id="lk-limit-fallback-msg" class="font-medium"></p>
+                </div>
+              </div>
+
+              <!-- GOOGLE MEET STAGE (Shown when Admin selects Google Meet) -->
+              <div
+                id="gmeet-meeting-stage"
+                class="hidden flex-1 flex flex-col items-center justify-center text-center p-6 sm:p-10 bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white"
+              >
+                <div
+                  class="w-16 h-16 rounded-2xl bg-white/10 border border-emerald-400/30 flex items-center justify-center mb-4"
+                >
+                  <i data-lucide="video" class="w-8 h-8 text-emerald-300"></i>
+                </div>
+                <span
+                  class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full mb-3"
+                >
+                  Google Meet Session Active
+                </span>
+                <h3
+                  id="gmeet-stage-title"
+                  class="text-xl sm:text-2xl font-extrabold text-white"
+                >
+                  Official Meeting Room
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 max-w-md mt-2">
+                  The Admin has set this session to run on Google Meet (used
+                  when LiveKit quota/limit is reached or by Admin preference).
+                </p>
+                <div
+                  id="gmeet-has-link-box"
+                  class="hidden mt-6 flex flex-col sm:flex-row items-center gap-3"
+                >
+                  <a
+                    id="gmeet-join-link"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onclick="handleGoogleMeetJoinClick()"
+                    class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-sm shadow-lg flex items-center gap-2 transition"
+                  >
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>Open Google Meet &amp; Mark Attendance</span>
+                  </a>
+                  <button
+                    type="button"
+                    onclick="copyGoogleMeetLink()"
+                    class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 flex items-center gap-1.5 transition"
+                  >
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span>Copy Link</span>
+                  </button>
+                </div>
+                <div
+                  id="gmeet-no-link-box"
+                  class="hidden mt-5 bg-amber-500/15 border border-amber-400/35 rounded-xl px-4 py-3 text-xs text-amber-200 max-w-md"
+                >
+                  Google Meet link has not been added by the Admin yet. Please
+                  wait for the Admin to share the meeting link.
+                </div>
               </div>
 
               <div
@@ -1135,8 +1313,11 @@
             </div>
           </div>
 
-          <!-- ATTENDANCE SHEET -->
-          <div class="glass rounded-2xl p-4 sm:p-6 space-y-4">
+          <!-- ATTENDANCE SHEET (ADMIN ONLY) -->
+          <div
+            id="meeting-attendance-sheet-card"
+            class="hidden glass rounded-2xl p-4 sm:p-6 space-y-4"
+          >
             <div
               class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-3"
             >
@@ -1280,26 +1461,55 @@
         </section>
 
         <!-- 4. MEMBERS & ONLINE STATUS TAB -->
-        <section id="section-members" class="hidden space-y-5">
+        <section id="section-members" class="space-y-5">
           <div
-            class="glass p-4 sm:p-5 rounded-2xl flex flex-wrap items-center justify-between gap-3"
+            class="glass p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div class="flex items-center gap-3">
               <div
-                class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
+                class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"
               >
                 <i data-lucide="users" class="w-5 h-5"></i>
               </div>
               <div>
-                <h2 class="text-xl font-bold text-emerald-950">
-                  Member Directory &amp; Live Status
-                </h2>
-                <p class="text-xs text-slate-500">
-                  Click any member card to view their full profile
-                </p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h2 class="text-xl font-bold text-emerald-950">
+                    Member Directory &amp; Live Status
+                  </h2>
+                  <span
+                    id="members-total-count"
+                    class="inline-flex items-center gap-1 bg-emerald-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full tabular-nums"
+                  >
+                    0 Members
+                  </span>
+                </div>
+                <div
+                  class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-1"
+                >
+                  <span>Click any member card to view their full profile</span>
+                  <span class="hidden sm:inline">•</span>
+                  <span
+                    class="inline-flex items-center gap-1 text-emerald-700 font-semibold"
+                  >
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <span id="members-active-count">0 Active</span>
+                  </span>
+                  <span
+                    class="inline-flex items-center gap-1 text-amber-700 font-semibold"
+                  >
+                    <span class="w-2 h-2 bg-amber-500 rounded-full"></span>
+                    <span id="members-away-count">0 Away</span>
+                  </span>
+                  <span
+                    class="inline-flex items-center gap-1 text-slate-500 font-semibold"
+                  >
+                    <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
+                    <span id="members-offline-count">0 Offline</span>
+                  </span>
+                </div>
               </div>
             </div>
-            <div class="relative w-full sm:w-72">
+            <div class="relative w-full md:w-72">
               <i
                 data-lucide="search"
                 class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"
@@ -1407,6 +1617,24 @@
                 <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
                 <span>Email Verified</span>
               </span>
+            </div>
+
+            <div
+              id="prof-incomplete-alert"
+              class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-2.5 text-xs text-amber-900"
+            >
+              <i
+                data-lucide="alert-triangle"
+                class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
+              ></i>
+              <div>
+                <p class="font-bold">
+                  Please complete your required registration info
+                </p>
+                <p class="mt-0.5">
+                  Missing: <strong id="prof-incomplete-fields"></strong>
+                </p>
+              </div>
             </div>
 
             <!-- MONTHLY ATTENDANCE RATE CARD -->
@@ -1524,7 +1752,7 @@
                 <div class="sm:col-span-2">
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Full Name</label
+                    >Full Name *</label
                   >
                   <input
                     type="text"
@@ -1536,11 +1764,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Age</label
+                    >Age *</label
                   >
                   <input
                     type="number"
                     id="prof-age"
+                    required
                     min="1"
                     max="120"
                     placeholder="Age"
@@ -1553,11 +1782,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Designation</label
+                    >Designation *</label
                   >
                   <input
                     type="text"
                     id="prof-designation"
+                    required
                     placeholder="e.g. Member / Secretary"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
@@ -1565,11 +1795,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Country / Location</label
+                    >Country / Location *</label
                   >
                   <input
                     type="text"
                     id="prof-country"
+                    required
                     placeholder="e.g. Bangladesh / UK"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
@@ -1580,11 +1811,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Phone Number</label
+                    >Phone Number *</label
                   >
                   <input
                     type="tel"
                     id="prof-phone"
+                    required
                     placeholder="+880..."
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
@@ -1592,12 +1824,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Parents' Phone Number</label
+                    >Parents' Phone Number (Optional)</label
                   >
                   <input
                     type="tel"
                     id="prof-parents-phone"
-                    placeholder="+880..."
+                    placeholder="+880... (Optional)"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
@@ -1607,11 +1839,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Father's Name</label
+                    >Father's Name *</label
                   >
                   <input
                     type="text"
                     id="prof-father"
+                    required
                     placeholder="Father's name"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
@@ -1619,11 +1852,12 @@
                 <div>
                   <label
                     class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Mother's Name</label
+                    >Mother's Name *</label
                   >
                   <input
                     type="text"
                     id="prof-mother"
+                    required
                     placeholder="Mother's name"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
@@ -1633,11 +1867,12 @@
               <div>
                 <label
                   class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                  >Present Address</label
+                  >Present Address *</label
                 >
                 <textarea
                   id="prof-present-addr"
                   rows="2"
+                  required
                   placeholder="Your present address"
                   class="w-full mt-1 px-3.5 py-2 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 ></textarea>
@@ -1646,11 +1881,12 @@
               <div>
                 <label
                   class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                  >Permanent Address</label
+                  >Permanent Address *</label
                 >
                 <textarea
                   id="prof-perm-addr"
                   rows="2"
+                  required
                   placeholder="Your permanent address"
                   class="w-full mt-1 px-3.5 py-2 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 ></textarea>
@@ -1719,6 +1955,48 @@
             <div
               id="pending-approvals-list"
               class="grid grid-cols-1 md:grid-cols-2 gap-3"
+            ></div>
+          </div>
+
+          <!-- INCOMPLETE MEMBER PROFILES CARD (ADMIN ONLY) -->
+          <div
+            id="incomplete-members-card"
+            class="hidden glass p-6 rounded-2xl border-2 border-amber-300/80 space-y-4"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3
+                  class="text-lg font-bold text-amber-950 flex items-center gap-2"
+                >
+                  <i
+                    data-lucide="alert-triangle"
+                    class="w-5 h-5 text-amber-600"
+                  ></i>
+                  <span
+                    >Members With Incomplete Information (<span
+                      id="incomplete-members-count"
+                      >0</span
+                    >)</span
+                  >
+                </h3>
+                <p class="text-xs text-slate-600 mt-0.5">
+                  Send a notification prompting these members to complete their
+                  required registration details.
+                </p>
+              </div>
+              <button
+                type="button"
+                id="btn-notify-all-incomplete"
+                onclick="notifyAllIncompleteMembers()"
+                class="bg-amber-600 hover:bg-amber-700 disabled:opacity-60 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
+              >
+                <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                <span>Notify All Incomplete</span>
+              </button>
+            </div>
+            <div
+              id="incomplete-members-list"
+              class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto"
             ></div>
           </div>
 
@@ -1859,16 +2137,44 @@
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
               >
                 <i data-lucide="radio" class="w-5 h-5 text-emerald-600"></i>
-                <span>Live Meeting Controls</span>
+                <span>Live Meeting Controls (LiveKit &amp; Google Meet)</span>
               </h3>
-              <div class="flex flex-wrap gap-3 items-center">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <input
                   type="text"
                   id="admin-meeting-title"
                   placeholder="Meeting Title (e.g. Monthly Meeting - Oct)"
-                  class="flex-1 min-w-[220px] px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  class="md:col-span-2 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <select
+                  id="admin-meeting-provider"
+                  class="px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="livekit">LiveKit (In-App Meeting)</option>
+                  <option value="google_meet">
+                    Google Meet (Backup / Fallback)
+                  </option>
+                </select>
+              </div>
+              <div class="flex flex-wrap gap-3 items-center">
+                <input
+                  type="url"
+                  id="admin-gmeet-url"
+                  placeholder="Google Meet URL (e.g. https://meet.google.com/abc-defg-hij)"
+                  class="flex-1 min-w-[240px] px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
+                  type="button"
+                  onclick="saveAdminMeetingConfig()"
+                  class="bg-emerald-800 hover:bg-emerald-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                >
+                  <i data-lucide="save" class="w-4 h-4"></i>
+                  <span>Save Platform &amp; Link</span>
+                </button>
+              </div>
+              <div class="flex flex-wrap gap-3 items-center pt-1">
+                <button
+                  type="button"
                   onclick="toggleGlobalMeeting(true)"
                   class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
                 >
@@ -1876,6 +2182,7 @@
                   <span>Start Live Meeting Alert</span>
                 </button>
                 <button
+                  type="button"
                   onclick="toggleGlobalMeeting(false)"
                   class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
                 >
@@ -2258,210 +2565,250 @@
     <!-- ================= MEMBER PROFILE MODAL ================= -->
     <div
       id="member-modal"
-      class="hidden fixed inset-0 z-50 bg-emerald-950/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      class="hidden fixed inset-0 z-50 bg-emerald-950/55 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
       onclick="if (event.target === this) closeMemberModal();"
     >
       <div
-        class="bg-white/95 backdrop-blur-2xl border border-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative my-4"
+        class="bg-white border border-emerald-100 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative my-auto max-h-[92vh] flex flex-col"
       >
-        <div
-          class="h-24 bg-gradient-to-r from-emerald-800 to-teal-700 relative"
+        <button
+          type="button"
+          onclick="closeMemberModal()"
+          aria-label="Close member profile"
+          class="absolute top-3 right-3 z-20 bg-emerald-950/65 hover:bg-emerald-950/85 text-white p-2 rounded-full shadow-md backdrop-blur-sm transition"
         >
-          <button
-            onclick="closeMemberModal()"
-            class="absolute top-3 right-3 bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-full transition"
-          >
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-        <div class="px-6 pb-6 -mt-12 text-center relative z-10">
-          <img
-            id="modal-mem-photo"
-            src=""
-            class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg mx-auto bg-white relative z-10"
-          />
-          <div class="mt-3 flex items-center justify-center gap-2 flex-wrap">
-            <h3
-              id="modal-mem-name"
-              class="text-xl font-extrabold text-slate-900"
-            >
-              Member Name
-            </h3>
-            <span id="modal-mem-status"></span>
-          </div>
-          <p
-            id="modal-mem-desig"
-            class="text-sm font-semibold text-emerald-700 mt-0.5"
-          >
-            Designation
-          </p>
-          <div
-            id="modal-mem-verified"
-            class="hidden mt-1.5 inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
-          >
-            <i data-lucide="check-circle-2" class="w-3 h-3"></i>
-            <span>Verified Email</span>
-          </div>
-          <p id="modal-mem-bio" class="text-xs text-slate-500 mt-2 italic"></p>
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
 
-          <div
-            class="mt-5 space-y-2.5 text-left bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-sm max-h-72 overflow-y-auto"
-          >
-            <div
-              class="flex items-center justify-between gap-2 pb-2 border-b border-emerald-200/70"
-            >
-              <span
-                class="flex items-center gap-2 text-emerald-900 font-semibold text-xs"
+        <div class="overflow-y-auto flex-1">
+          <div class="h-24 bg-gradient-to-r from-emerald-800 to-teal-700"></div>
+          <div class="px-5 sm:px-6 pb-6 -mt-12 text-center relative">
+            <img
+              id="modal-mem-photo"
+              src=""
+              class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg mx-auto bg-white"
+            />
+            <div class="mt-3 flex items-center justify-center gap-2 flex-wrap">
+              <h3
+                id="modal-mem-name"
+                class="text-xl font-extrabold text-slate-900"
               >
+                Member Name
+              </h3>
+              <span id="modal-mem-status"></span>
+            </div>
+            <p
+              id="modal-mem-desig"
+              class="text-sm font-semibold text-emerald-700 mt-0.5"
+            >
+              Designation
+            </p>
+            <div
+              id="modal-mem-verified"
+              class="hidden mt-1.5 inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
+            >
+              <i data-lucide="check-circle-2" class="w-3 h-3"></i>
+              <span>Verified Email</span>
+            </div>
+            <p
+              id="modal-mem-bio"
+              class="text-xs text-slate-500 mt-2 italic"
+            ></p>
+
+            <div
+              class="mt-5 space-y-2.5 text-left bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-sm"
+            >
+              <div
+                class="flex items-center justify-between gap-2 pb-2 border-b border-emerald-200/70"
+              >
+                <span
+                  class="flex items-center gap-2 text-emerald-900 font-semibold text-xs"
+                >
+                  <i
+                    data-lucide="bar-chart-3"
+                    class="w-4 h-4 text-emerald-600 shrink-0"
+                  ></i>
+                  <span>This Month's Attendance</span>
+                </span>
+                <span
+                  id="modal-mem-att-rate"
+                  class="bg-emerald-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full"
+                  >0%</span
+                >
+              </div>
+              <div class="flex items-center gap-3">
                 <i
-                  data-lucide="bar-chart-3"
+                  data-lucide="map-pin"
                   class="w-4 h-4 text-emerald-600 shrink-0"
                 ></i>
-                <span>This Month's Attendance</span>
-              </span>
-              <span
-                id="modal-mem-att-rate"
-                class="bg-emerald-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full"
-                >0%</span
+                <span class="text-slate-700 font-medium text-xs sm:text-sm">
+                  <strong>Country:</strong>
+                  <span id="modal-mem-country">Country</span>
+                </span>
+              </div>
+              <div class="flex items-center gap-3">
+                <i
+                  data-lucide="mail"
+                  class="w-4 h-4 text-emerald-600 shrink-0"
+                ></i>
+                <a
+                  id="modal-mem-email"
+                  href="#"
+                  class="text-emerald-800 hover:underline truncate text-xs sm:text-sm"
+                  >email@example.com</a
+                >
+              </div>
+              <div class="flex items-center gap-3">
+                <i
+                  data-lucide="phone"
+                  class="w-4 h-4 text-emerald-600 shrink-0"
+                ></i>
+                <a
+                  id="modal-mem-phone"
+                  href="#"
+                  class="text-slate-700 font-medium text-xs sm:text-sm"
+                  >Not provided</a
+                >
+              </div>
+
+              <div
+                id="modal-private-box"
+                class="hidden pt-3 mt-2 border-t border-emerald-200/80 space-y-2.5 text-xs sm:text-sm"
               >
-            </div>
-            <div id="modal-mem-age-row" class="hidden flex items-center gap-3">
-              <i
-                data-lucide="calendar"
-                class="w-4 h-4 text-emerald-600 shrink-0"
-              ></i>
-              <span class="text-slate-700 text-xs sm:text-sm"
-                ><strong>Age:</strong> <span id="modal-mem-age"></span
-              ></span>
-            </div>
-            <div class="flex items-center gap-3">
-              <i
-                data-lucide="map-pin"
-                class="w-4 h-4 text-emerald-600 shrink-0"
-              ></i>
-              <span
-                id="modal-mem-country"
-                class="text-slate-700 font-medium text-xs sm:text-sm"
-                >Country</span
+                <p class="text-xs font-bold text-emerald-950">
+                  Full Registration Details
+                </p>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="user"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Full Name:</strong>
+                    <span id="modal-mem-fullname">Not provided</span></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="calendar"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Age:</strong>
+                    <span id="modal-mem-age">Not provided</span></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="briefcase"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Designation:</strong>
+                    <span id="modal-mem-desig-full">Not provided</span></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="user"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Father's Name:</strong>
+                    <span id="modal-mem-father">Not provided</span></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="user"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Mother's Name:</strong>
+                    <span id="modal-mem-mother">Not provided</span></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="users"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Parents' Phone:</strong>
+                    <a
+                      id="modal-mem-parents-phone"
+                      href="#"
+                      class="text-emerald-800 hover:underline"
+                      >Not provided</a
+                    ></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="home"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Present Address:</strong>
+                    <span id="modal-mem-present">Not provided</span></span
+                  >
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <i
+                    data-lucide="home"
+                    class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                  ></i>
+                  <span class="text-slate-700"
+                    ><strong>Permanent Address:</strong>
+                    <span id="modal-mem-perm">Not provided</span></span
+                  >
+                </div>
+              </div>
+
+              <div
+                id="modal-incomplete-box"
+                class="hidden mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-left space-y-2"
               >
-            </div>
-            <div class="flex items-center gap-3">
-              <i
-                data-lucide="mail"
-                class="w-4 h-4 text-emerald-600 shrink-0"
-              ></i>
-              <a
-                id="modal-mem-email"
-                href="#"
-                class="text-emerald-800 hover:underline truncate text-xs sm:text-sm"
-                >email@example.com</a
-              >
-            </div>
-            <div class="flex items-center gap-3">
-              <i
-                data-lucide="phone"
-                class="w-4 h-4 text-emerald-600 shrink-0"
-              ></i>
-              <a
-                id="modal-mem-phone"
-                href="#"
-                class="text-slate-700 font-medium text-xs sm:text-sm"
-                >Not provided</a
-              >
+                <div class="flex items-start gap-2 text-xs text-amber-900">
+                  <i
+                    data-lucide="alert-triangle"
+                    class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
+                  ></i>
+                  <div>
+                    <p class="font-bold">Incomplete Registration Info</p>
+                    <p class="text-amber-800 mt-0.5">
+                      Missing: <span id="modal-incomplete-fields"></span>
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  id="modal-notify-incomplete-btn"
+                  class="hidden w-full bg-amber-600 hover:bg-amber-700 disabled:opacity-60 text-white py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+                >
+                  <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+                  <span>Notify Member to Complete Info</span>
+                </button>
+              </div>
             </div>
 
-            <div
-              id="modal-private-box"
-              class="hidden pt-2 mt-2 border-t border-emerald-200/70 space-y-2 text-xs"
-            >
-              <div
-                id="modal-mem-father-row"
-                class="hidden flex items-start gap-2.5"
+            <div id="modal-admin-actions" class="mt-4 hidden space-y-2">
+              <button
+                id="modal-role-btn"
+                class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
+              ></button>
+              <button
+                id="modal-suspend-btn"
+                class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
+              ></button>
+              <button
+                id="modal-delete-btn"
+                class="w-full py-2.5 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1.5 transition"
               >
-                <i
-                  data-lucide="user"
-                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
-                ></i>
-                <span class="text-slate-700"
-                  ><strong>Father's Name:</strong>
-                  <span id="modal-mem-father"></span
-                ></span>
-              </div>
-              <div
-                id="modal-mem-mother-row"
-                class="hidden flex items-start gap-2.5"
-              >
-                <i
-                  data-lucide="user"
-                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
-                ></i>
-                <span class="text-slate-700"
-                  ><strong>Mother's Name:</strong>
-                  <span id="modal-mem-mother"></span
-                ></span>
-              </div>
-              <div
-                id="modal-mem-parents-phone-row"
-                class="hidden flex items-start gap-2.5"
-              >
-                <i
-                  data-lucide="users"
-                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
-                ></i>
-                <span class="text-slate-700"
-                  ><strong>Parents' Phone:</strong>
-                  <a
-                    id="modal-mem-parents-phone"
-                    href="#"
-                    class="text-emerald-800 hover:underline"
-                  ></a
-                ></span>
-              </div>
-              <div
-                id="modal-mem-present-row"
-                class="hidden flex items-start gap-2.5"
-              >
-                <i
-                  data-lucide="home"
-                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
-                ></i>
-                <span class="text-slate-700"
-                  ><strong>Present Address:</strong>
-                  <span id="modal-mem-present"></span
-                ></span>
-              </div>
-              <div
-                id="modal-mem-perm-row"
-                class="hidden flex items-start gap-2.5"
-              >
-                <i
-                  data-lucide="home"
-                  class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
-                ></i>
-                <span class="text-slate-700"
-                  ><strong>Permanent Address:</strong>
-                  <span id="modal-mem-perm"></span
-                ></span>
-              </div>
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>Delete Member Permanently</span>
+              </button>
             </div>
-          </div>
-
-          <div id="modal-admin-actions" class="mt-4 hidden space-y-2">
-            <button
-              id="modal-role-btn"
-              class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
-            ></button>
-            <button
-              id="modal-suspend-btn"
-              class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
-            ></button>
-            <button
-              id="modal-delete-btn"
-              class="w-full py-2.5 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-1.5 transition"
-            >
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>Delete Member Permanently</span>
-            </button>
           </div>
         </div>
       </div>
@@ -2548,12 +2895,15 @@
         defaultMessage: "Assalamu Alaikum, I need help from CSF Help Desk.",
       };
       let lkRoom = null;
+      let currentMeetingActive = false;
       let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
       let currentMeetingTitle = "Official Meeting Room";
+      let currentMeetingProvider = "livekit";
+      let currentGoogleMeetUrl = "";
       let uploadedPhotoBase64 = "";
       let uploadedUpdateFile = null;
       let pendingRegistrationProfile = null;
-      let activeTab = "updates";
+      let activeTab = "members";
       let verifyCooldown = 0;
       let verifyCooldownTimer = null;
       let verifyPollInterval = null;
@@ -2570,15 +2920,73 @@
       const seenNotifIds = new Set();
 
       const tabNames = {
+        members: "Members & Status",
         updates: "Updates & Notice",
         meeting: "Online Meeting",
         chat: "Group Chat",
-        members: "Members & Status",
         history: "History of Darber E Chandpurishah",
         csf: "CSF",
         profile: "My Profile",
         admin: "Admin Panel",
       };
+
+      function getMissingMemberFields(m) {
+        if (!m) return [];
+        const missing = [];
+        if (!String(m.name || "").trim()) missing.push("Full Name");
+        if (!String(m.age ?? "").trim()) missing.push("Age");
+        if (!String(m.phone || "").trim()) missing.push("Phone Number");
+        if (!String(m.country || "").trim()) missing.push("Country");
+        if (!String(m.fatherName || "").trim()) missing.push("Father's Name");
+        if (!String(m.motherName || "").trim()) missing.push("Mother's Name");
+        if (!String(m.designation || "").trim()) missing.push("Designation");
+        if (!String(m.presentAddress || "").trim())
+          missing.push("Present Address");
+        if (!String(m.permanentAddress || "").trim())
+          missing.push("Permanent Address");
+        return missing;
+      }
+
+      function normalizeGoogleMeetUrl(raw = "") {
+        const trimmed = String(raw || "").trim();
+        if (!trimmed) return "";
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        if (/^[a-z]{3}-[a-z]{4}-[a-z]{3}$/i.test(trimmed)) {
+          return `https://meet.google.com/${trimmed.toLowerCase()}`;
+        }
+        if (trimmed.startsWith("meet.google.com/")) {
+          return `https://${trimmed}`;
+        }
+        return trimmed;
+      }
+
+      function isValidGoogleMeetUrl(raw = "") {
+        const url = normalizeGoogleMeetUrl(raw);
+        if (!url) return false;
+        try {
+          const parsed = new URL(url);
+          return (
+            parsed.protocol === "https:" &&
+            (parsed.hostname === "meet.google.com" ||
+              parsed.hostname.endsWith(".google.com"))
+          );
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function matchesNotificationRecipient(n, uid, isAdmin) {
+        if (!n) return false;
+        if (n.targetRole === "all") return true;
+        if (n.targetRole === "admin") return isAdmin;
+        if (n.targetRole === "user") {
+          if (n.targetUid && n.targetUid === uid) return true;
+          if (Array.isArray(n.targetUids) && n.targetUids.includes(uid))
+            return true;
+          return false;
+        }
+        return false;
+      }
 
       lucide.createIcons();
 
@@ -2732,12 +3140,24 @@
         const isAdmin = currentUserProfile?.role === "admin";
         const tabAdmin = document.getElementById("tab-admin");
         const pdfBtn = document.getElementById("btn-save-attendance-pdf");
+        const sheetCard = document.getElementById(
+          "meeting-attendance-sheet-card",
+        );
+        const platformBar = document.getElementById(
+          "meeting-admin-platform-bar",
+        );
+        const incompleteCard = document.getElementById(
+          "incomplete-members-card",
+        );
 
         if (isAdmin) {
           tabAdmin.classList.remove("hidden");
           tabAdmin.classList.add("flex");
           pdfBtn.classList.remove("hidden");
+          if (sheetCard) sheetCard.classList.remove("hidden");
+          if (platformBar) platformBar.classList.remove("hidden");
           renderPendingApprovals();
+          renderIncompleteMembersCard();
           renderAdminAttendance();
           renderAdminMembersList();
           fillHelpDeskAdminForm();
@@ -2745,10 +3165,14 @@
           tabAdmin.classList.add("hidden");
           tabAdmin.classList.remove("flex");
           pdfBtn.classList.add("hidden");
+          if (sheetCard) sheetCard.classList.add("hidden");
+          if (platformBar) platformBar.classList.add("hidden");
+          if (incompleteCard) incompleteCard.classList.add("hidden");
           if (activeTab === "admin") {
-            switchTab("updates");
+            switchTab("members");
           }
         }
+        syncMeetingStageUI();
         renderHelpDeskUI();
       }
 
@@ -2816,13 +3240,15 @@
         title,
         body,
         targetRole = "all",
+        targetUid = "",
+        targetUids = [],
         targetTab = "updates",
         createdByUid = "",
         authorName = "",
         readBy = [],
       }) {
         try {
-          await addDoc(collection(db, "notifications"), {
+          const payload = {
             type,
             title,
             body,
@@ -2832,7 +3258,12 @@
             authorName,
             readBy,
             createdAt: serverTimestamp(),
-          });
+          };
+          if (targetUid) payload.targetUid = targetUid;
+          if (Array.isArray(targetUids) && targetUids.length > 0) {
+            payload.targetUids = targetUids;
+          }
+          await addDoc(collection(db, "notifications"), payload);
         } catch (_) {}
       }
 
@@ -2858,9 +3289,9 @@
 
       function getVisibleNotifications() {
         const isAdmin = currentUserProfile?.role === "admin";
-        return allNotifications.filter(
-          (n) =>
-            n.targetRole === "all" || (n.targetRole === "admin" && isAdmin),
+        const uid = currentUser?.uid || "";
+        return allNotifications.filter((n) =>
+          matchesNotificationRecipient(n, uid, isAdmin),
         );
       }
 
@@ -2932,6 +3363,8 @@
                 iconHtml = `<div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><i data-lucide="video" class="w-4 h-4"></i></div>`;
               } else if (n.type === "member_pending") {
                 iconHtml = `<div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0"><i data-lucide="user-check" class="w-4 h-4"></i></div>`;
+              } else if (n.type === "profile_incomplete") {
+                iconHtml = `<div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><i data-lucide="user-cog" class="w-4 h-4"></i></div>`;
               }
               return `
                 <button type="button" onclick="openNotificationItem('${n.id}', '${escapeHtml(n.targetTab || "updates")}')" class="w-full text-left px-4 py-3 hover:bg-emerald-50/70 transition flex items-start gap-3 ${isUnread ? "bg-emerald-50/50" : "bg-white"}">
@@ -3214,10 +3647,12 @@
         }
         if (tabName === "profile") {
           renderMyAttendanceRate();
+          fillProfileForm();
         }
         if (tabName === "csf") {
           renderHelpDeskUI();
         }
+        renderIncompleteProfileBanner();
         closeNavMenu();
         lucide.createIcons();
       };
@@ -3432,8 +3867,7 @@
           const parentsPhone = document
             .getElementById("reg-parents-phone")
             .value.trim();
-          const designation =
-            document.getElementById("reg-desig").value.trim() || "Member";
+          const designation = document.getElementById("reg-desig").value.trim();
           const presentAddress = document
             .getElementById("reg-present-addr")
             .value.trim();
@@ -3443,6 +3877,26 @@
             : document.getElementById("reg-perm-addr").value.trim();
           const email = document.getElementById("reg-email").value.trim();
           const password = document.getElementById("reg-pass").value;
+
+          const missingLabels = [];
+          if (!name) missingLabels.push("Full Name");
+          if (!age) missingLabels.push("Age");
+          if (!phone) missingLabels.push("Phone Number");
+          if (!country) missingLabels.push("Country");
+          if (!fatherName) missingLabels.push("Father's Name");
+          if (!motherName) missingLabels.push("Mother's Name");
+          if (!designation) missingLabels.push("Designation");
+          if (!presentAddress) missingLabels.push("Present Address");
+          if (!permanentAddress) missingLabels.push("Permanent Address");
+          if (!email) missingLabels.push("Email Address");
+          if (!password || password.length < 6) {
+            missingLabels.push("Password (min 6 chars)");
+          }
+          if (missingLabels.length > 0) {
+            errEl.innerText = `Please complete all required fields: ${missingLabels.join(", ")} (only Parents' Phone Number is optional).`;
+            errEl.classList.remove("hidden");
+            return;
+          }
 
           pendingRegistrationProfile = {
             name,
@@ -3612,7 +4066,9 @@
             updateNavUserUI();
             syncAdminRoleUI();
             fillProfileForm();
+            renderIncompleteProfileBanner();
             renderMyAttendanceRate();
+            switchTab("members");
             setupPresence(user.uid);
             listenAllData();
             lucide.createIcons();
@@ -3632,6 +4088,7 @@
           firstChatLoad = true;
           firstNotifLoad = true;
           seenNotifIds.clear();
+          switchTab("members");
           hideLoading();
           document.getElementById("login-view").classList.remove("hidden");
           document.getElementById("verify-view").classList.add("hidden");
@@ -3688,6 +4145,8 @@
             const prevRole = currentUserProfile?.role;
             currentUserProfile = snap.data();
             updateNavUserUI();
+            renderIncompleteProfileBanner();
+            if (activeTab === "profile") fillProfileForm();
             if (prevRole !== currentUserProfile.role) {
               syncAdminRoleUI();
               renderNotifications();
@@ -3713,6 +4172,7 @@
           allMembers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
           renderMembers();
           renderPendingApprovals();
+          renderIncompleteMembersCard();
           renderAdminMembersList();
           renderMeetingAttendanceSheet();
         });
@@ -3778,21 +4238,23 @@
         onSnapshot(doc(db, "settings", "meeting"), (snap) => {
           if (snap.exists()) {
             const data = snap.data();
+            currentMeetingActive = Boolean(data.isActive);
             currentMeetingRoom =
               data.roomName || "DarberEChandpurishahOfficialRoom";
             currentMeetingTitle = data.title || "Official Meeting Room";
-            document.getElementById("meeting-room-title").innerText =
-              currentMeetingTitle;
-            renderMeetingAttendanceSheet();
-            const banner = document.getElementById("live-meeting-banner");
-            if (data.isActive) {
-              document.getElementById("banner-meeting-title").innerText =
-                `${currentMeetingTitle} is live now!`;
-              banner.classList.remove("hidden");
-            } else {
-              banner.classList.add("hidden");
+            currentMeetingProvider =
+              data.provider === "google_meet" ? "google_meet" : "livekit";
+            currentGoogleMeetUrl = data.googleMeetUrl || "";
+            if (currentMeetingProvider === "google_meet" && lkRoom) {
+              leaveMeeting();
             }
+          } else {
+            currentMeetingActive = false;
+            currentMeetingProvider = "livekit";
+            currentGoogleMeetUrl = "";
           }
+          syncMeetingStageUI();
+          renderMeetingAttendanceSheet();
         });
 
         onSnapshot(doc(db, "settings", "helpdesk"), (snap) => {
@@ -3830,12 +4292,17 @@
 
             const isAdmin = currentUserProfile?.role === "admin";
             for (const n of newItems) {
-              const isForMe =
-                n.targetRole === "all" || (n.targetRole === "admin" && isAdmin);
+              const isForMe = matchesNotificationRecipient(
+                n,
+                currentUser.uid,
+                isAdmin,
+              );
               if (isForMe && n.createdByUid !== currentUser.uid) {
                 showToast(
                   `${n.title}: ${n.body}`,
-                  n.type === "meeting" ? "warn" : "info",
+                  n.type === "meeting" || n.type === "profile_incomplete"
+                    ? "warn"
+                    : "info",
                 );
                 playNotificationChime();
                 showBrowserNotification(
@@ -3927,8 +4394,17 @@
         }
       };
 
-      window.markMyAttendance = async (showAlert = true) => {
+      window.markMyAttendance = async (showAlert = true, provider = "") => {
         if (!currentUser || !currentUserProfile) return;
+        if (!currentMeetingActive) {
+          if (showAlert) {
+            showToast(
+              "Mark Attendance is only enabled while a meeting is in progress.",
+              "warn",
+            );
+          }
+          return;
+        }
         const date = todayDateStr();
         const docId = `${date}_${currentUser.uid}`;
         const timeLabel = new Date().toLocaleTimeString([], {
@@ -3941,6 +4417,7 @@
           designation: currentUserProfile.designation || "Member",
           country: currentUserProfile.country || "Global",
           meetingTitle: currentMeetingTitle,
+          provider: provider || currentMeetingProvider || "livekit",
           date,
           timeLabel,
           joinedAt: serverTimestamp(),
@@ -4407,12 +4884,35 @@
         const grid = document.getElementById("members-grid");
         grid.innerHTML = "";
 
-        const filtered = allMembers.filter(
+        const approvedMembers = allMembers.filter((m) => m.approved !== false);
+        let activeCount = 0;
+        let awayCount = 0;
+        let offlineCount = 0;
+        approvedMembers.forEach((m) => {
+          const st = presenceMap[m.id]?.state || "offline";
+          if (st === "active") activeCount++;
+          else if (st === "away") awayCount++;
+          else offlineCount++;
+        });
+
+        const totalBadge = document.getElementById("members-total-count");
+        if (totalBadge) {
+          totalBadge.innerText = `${approvedMembers.length} ${approvedMembers.length === 1 ? "Member" : "Members"}`;
+        }
+        const navCount = document.getElementById("nav-members-count");
+        if (navCount) navCount.innerText = String(approvedMembers.length);
+        const activeEl = document.getElementById("members-active-count");
+        if (activeEl) activeEl.innerText = `${activeCount} Active`;
+        const awayEl = document.getElementById("members-away-count");
+        if (awayEl) awayEl.innerText = `${awayCount} Away`;
+        const offlineEl = document.getElementById("members-offline-count");
+        if (offlineEl) offlineEl.innerText = `${offlineCount} Offline`;
+
+        const filtered = approvedMembers.filter(
           (m) =>
-            m.approved !== false &&
-            ((m.name || "").toLowerCase().includes(search) ||
-              (m.country || "").toLowerCase().includes(search) ||
-              (m.designation || "").toLowerCase().includes(search)),
+            (m.name || "").toLowerCase().includes(search) ||
+            (m.country || "").toLowerCase().includes(search) ||
+            (m.designation || "").toLowerCase().includes(search),
         );
 
         filtered.forEach((m) => {
@@ -4477,64 +4977,80 @@
               ? "bg-amber-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full"
               : "bg-slate-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full";
 
-        const ageRow = document.getElementById("modal-mem-age-row");
-        if (m.age) {
-          ageRow.classList.remove("hidden");
-          document.getElementById("modal-mem-age").innerText = m.age;
-        } else {
-          ageRow.classList.add("hidden");
-        }
-
         document.getElementById("modal-mem-country").innerText =
-          m.country || "Location not set";
+          m.country || "Not provided";
 
         const emailEl = document.getElementById("modal-mem-email");
-        emailEl.innerText = m.email || "No email";
+        emailEl.innerText = m.email || "Not provided";
         emailEl.href = m.email ? `mailto:${m.email}` : "#";
 
         const phoneEl = document.getElementById("modal-mem-phone");
-        phoneEl.innerText = m.phone || "No phone number";
+        phoneEl.innerText = m.phone || "Not provided";
         phoneEl.href = m.phone ? `tel:${m.phone}` : "#";
 
-        const canViewPrivate =
-          currentUserProfile?.role === "admin" || m.id === currentUser?.uid;
+        const valOrFallback = (v) => {
+          const str = String(v ?? "").trim();
+          return str.length > 0 ? str : "Not provided";
+        };
+
+        const isAdmin = currentUserProfile?.role === "admin";
+        const canViewPrivate = isAdmin || m.id === currentUser?.uid;
         const privBox = document.getElementById("modal-private-box");
-        if (
-          canViewPrivate &&
-          (m.fatherName ||
-            m.motherName ||
-            m.parentsPhone ||
-            m.presentAddress ||
-            m.permanentAddress)
-        ) {
+        if (canViewPrivate) {
           privBox.classList.remove("hidden");
-          const setRow = (rowId, valId, val, isTel = false) => {
-            const r = document.getElementById(rowId);
-            const v = document.getElementById(valId);
-            if (val) {
-              r.classList.remove("hidden");
-              v.innerText = val;
-              if (isTel) v.href = `tel:${val}`;
-            } else {
-              r.classList.add("hidden");
-            }
-          };
-          setRow("modal-mem-father-row", "modal-mem-father", m.fatherName);
-          setRow("modal-mem-mother-row", "modal-mem-mother", m.motherName);
-          setRow(
-            "modal-mem-parents-phone-row",
-            "modal-mem-parents-phone",
-            m.parentsPhone,
-            true,
+          document.getElementById("modal-mem-fullname").innerText =
+            valOrFallback(m.name);
+          document.getElementById("modal-mem-age").innerText = valOrFallback(
+            m.age,
           );
-          setRow(
-            "modal-mem-present-row",
-            "modal-mem-present",
-            m.presentAddress,
+          document.getElementById("modal-mem-desig-full").innerText =
+            valOrFallback(m.designation || "Member");
+          document.getElementById("modal-mem-father").innerText = valOrFallback(
+            m.fatherName,
           );
-          setRow("modal-mem-perm-row", "modal-mem-perm", m.permanentAddress);
+          document.getElementById("modal-mem-mother").innerText = valOrFallback(
+            m.motherName,
+          );
+          const pPhoneEl = document.getElementById("modal-mem-parents-phone");
+          const pPhoneVal = String(m.parentsPhone || "").trim();
+          pPhoneEl.innerText = pPhoneVal || "Not provided";
+          pPhoneEl.href = pPhoneVal ? `tel:${pPhoneVal}` : "#";
+          document.getElementById("modal-mem-present").innerText =
+            valOrFallback(m.presentAddress);
+          document.getElementById("modal-mem-perm").innerText = valOrFallback(
+            m.permanentAddress,
+          );
         } else {
           privBox.classList.add("hidden");
+        }
+
+        const missingFields = getMissingMemberFields(m);
+        const incompleteBox = document.getElementById("modal-incomplete-box");
+        const incompleteFieldsEl = document.getElementById(
+          "modal-incomplete-fields",
+        );
+        const notifyBtn = document.getElementById(
+          "modal-notify-incomplete-btn",
+        );
+        if (isAdmin && missingFields.length > 0) {
+          incompleteBox.classList.remove("hidden");
+          incompleteFieldsEl.innerText = missingFields.join(", ");
+          if (m.id !== currentUser?.uid) {
+            notifyBtn.classList.remove("hidden");
+            notifyBtn.disabled = false;
+            notifyBtn.onclick = async () => {
+              notifyBtn.disabled = true;
+              try {
+                await window.notifyIncompleteMember(m.id);
+              } finally {
+                notifyBtn.disabled = false;
+              }
+            };
+          } else {
+            notifyBtn.classList.add("hidden");
+          }
+        } else {
+          incompleteBox.classList.add("hidden");
         }
 
         const adminBox = document.getElementById("modal-admin-actions");
@@ -4542,7 +5058,7 @@
         const suspendBtn = document.getElementById("modal-suspend-btn");
         const deleteBtn = document.getElementById("modal-delete-btn");
 
-        if (currentUserProfile?.role === "admin" && m.id !== currentUser?.uid) {
+        if (isAdmin && m.id !== currentUser?.uid) {
           adminBox.classList.remove("hidden");
           if (roleBtn) {
             const isTargetAdmin = m.role === "admin";
@@ -4800,7 +5316,157 @@
           `https://ui-avatars.com/api/?background=065f46&color=fff&name=${encodeURIComponent(currentUserProfile?.name || "M")}`;
       };
 
+      function renderIncompleteProfileBanner() {
+        const banner = document.getElementById("incomplete-profile-banner");
+        const fieldsEl = document.getElementById("incomplete-banner-fields");
+        if (!banner || !fieldsEl || !currentUserProfile) return;
+        const missing = getMissingMemberFields(currentUserProfile);
+        if (missing.length > 0 && activeTab !== "profile") {
+          fieldsEl.innerText = missing.join(", ");
+          banner.classList.remove("hidden");
+        } else {
+          banner.classList.add("hidden");
+        }
+      }
+
+      function renderIncompleteMembersCard() {
+        const card = document.getElementById("incomplete-members-card");
+        const listEl = document.getElementById("incomplete-members-list");
+        const countEl = document.getElementById("incomplete-members-count");
+        if (!card || !listEl) return;
+        if (currentUserProfile?.role !== "admin") {
+          card.classList.add("hidden");
+          return;
+        }
+        const entries = allMembers
+          .filter((m) => m.approved !== false)
+          .map((member) => ({
+            member,
+            missing: getMissingMemberFields(member),
+          }))
+          .filter((entry) => entry.missing.length > 0);
+
+        if (countEl) countEl.innerText = String(entries.length);
+        if (entries.length === 0) {
+          card.classList.add("hidden");
+          return;
+        }
+        card.classList.remove("hidden");
+        listEl.innerHTML = entries
+          .map(
+            ({ member, missing }) => `
+            <div class="bg-white/85 p-3.5 rounded-xl border border-amber-200 flex flex-col justify-between gap-2.5">
+              <div>
+                <div class="flex items-center justify-between gap-2">
+                  <p class="font-bold text-slate-900 truncate text-sm">${escapeHtml(member.name || "Member")}</p>
+                  <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full shrink-0">${missing.length} missing</span>
+                </div>
+                <p class="text-[11px] text-slate-500 truncate">${escapeHtml(member.email || "")}</p>
+                <p class="text-[11px] text-amber-900 mt-1"><strong>Missing:</strong> ${escapeHtml(missing.join(", "))}</p>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="openMemberModal('${member.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-semibold transition">View Info</button>
+                <button type="button" onclick="notifyIncompleteMember('${member.id}')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition">
+                  <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+                  <span>Notify Member</span>
+                </button>
+              </div>
+            </div>
+          `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      window.notifyIncompleteMember = async (uid) => {
+        if (currentUserProfile?.role !== "admin") return;
+        const member = allMembers.find((m) => m.id === uid);
+        if (!member) return;
+        const missing = getMissingMemberFields(member);
+        if (missing.length === 0) return;
+        await createAppNotification({
+          type: "profile_incomplete",
+          title: "Complete Your Profile Information",
+          body: `Missing required info: ${missing.join(", ")}. Please update your profile.`,
+          targetRole: "user",
+          targetUid: member.id,
+          targetTab: "profile",
+          createdByUid: currentUser.uid,
+          authorName: currentUserProfile.name,
+        });
+        showToast(`Notification sent to ${member.name || member.email}!`);
+      };
+
+      window.notifyAllIncompleteMembers = async () => {
+        if (currentUserProfile?.role !== "admin") return;
+        const entries = allMembers
+          .filter((m) => m.approved !== false)
+          .map((member) => ({
+            member,
+            missing: getMissingMemberFields(member),
+          }))
+          .filter((entry) => entry.missing.length > 0);
+        if (entries.length === 0) return;
+        const btn = document.getElementById("btn-notify-all-incomplete");
+        if (btn) btn.disabled = true;
+        try {
+          await Promise.all(
+            entries.map(({ member, missing }) =>
+              createAppNotification({
+                type: "profile_incomplete",
+                title: "Complete Your Profile Information",
+                body: `Missing required info: ${missing.join(", ")}. Please update your profile.`,
+                targetRole: "user",
+                targetUid: member.id,
+                targetTab: "profile",
+                createdByUid: currentUser.uid,
+                authorName: currentUserProfile.name,
+              }),
+            ),
+          );
+          showToast(
+            `Sent profile completion alerts to ${entries.length} member${entries.length === 1 ? "" : "s"}!`,
+          );
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      function highlightIncompleteProfileInputs() {
+        const pairs = [
+          ["prof-name", currentUserProfile?.name],
+          ["prof-age", currentUserProfile?.age],
+          ["prof-designation", currentUserProfile?.designation],
+          ["prof-country", currentUserProfile?.country],
+          ["prof-phone", currentUserProfile?.phone],
+          ["prof-father", currentUserProfile?.fatherName],
+          ["prof-mother", currentUserProfile?.motherName],
+          ["prof-present-addr", currentUserProfile?.presentAddress],
+          ["prof-perm-addr", currentUserProfile?.permanentAddress],
+        ];
+        pairs.forEach(([id, val]) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const empty = !String(val ?? "").trim();
+          el.classList.toggle("border-amber-400", empty);
+          el.classList.toggle("bg-amber-50/60", empty);
+          el.classList.toggle("border-emerald-200", !empty);
+        });
+        const missing = getMissingMemberFields(currentUserProfile);
+        const alertBox = document.getElementById("prof-incomplete-alert");
+        const alertFields = document.getElementById("prof-incomplete-fields");
+        if (alertBox && alertFields) {
+          if (missing.length > 0) {
+            alertFields.innerText = missing.join(", ");
+            alertBox.classList.remove("hidden");
+          } else {
+            alertBox.classList.add("hidden");
+          }
+        }
+      }
+
       function fillProfileForm() {
+        if (!currentUserProfile) return;
         document.getElementById("prof-name").value =
           currentUserProfile.name || "";
         document.getElementById("prof-age").value =
@@ -4833,6 +5499,7 @@
             .getElementById("prof-verified-badge")
             .classList.remove("hidden");
         }
+        highlightIncompleteProfileInputs();
       }
 
       document
@@ -4861,9 +5528,20 @@
             bio: document.getElementById("prof-bio").value.trim(),
             photoURL: uploadedPhotoBase64,
           };
+          const missing = getMissingMemberFields(updated);
+          if (missing.length > 0) {
+            showToast(
+              `Please complete required fields: ${missing.join(", ")}`,
+              "error",
+            );
+            return;
+          }
           await updateDoc(doc(db, "users", currentUser.uid), updated);
           currentUserProfile = { ...currentUserProfile, ...updated };
           updateNavUserUI();
+          highlightIncompleteProfileInputs();
+          renderIncompleteProfileBanner();
+          renderIncompleteMembersCard();
           showToast("Profile updated successfully!");
         });
 
@@ -5025,33 +5703,363 @@
         );
       };
 
-      window.toggleGlobalMeeting = async (isActive) => {
-        const title =
-          document.getElementById("admin-meeting-title").value.trim() ||
-          "DARBER E CHANDPURISHAH Monthly Meeting";
-        await setDoc(doc(db, "settings", "meeting"), {
-          isActive,
-          title,
-          roomName: "DarberEChandpurishahOfficialRoom",
-          updatedAt: serverTimestamp(),
-        });
-        if (isActive && currentUser && currentUserProfile) {
-          await createAppNotification({
-            type: "meeting",
-            title: "Live Meeting Started",
-            body: `"${title}" is live now! Click to join.`,
-            targetRole: "all",
-            targetTab: "meeting",
-            createdByUid: currentUser.uid,
-            authorName: currentUserProfile.name,
-            readBy: [currentUser.uid],
-          });
+      function syncMeetingStageUI() {
+        const titleEl = document.getElementById("meeting-room-title");
+        if (titleEl) titleEl.innerText = currentMeetingTitle;
+
+        const gmeetStageTitle = document.getElementById("gmeet-stage-title");
+        if (gmeetStageTitle) gmeetStageTitle.innerText = currentMeetingTitle;
+
+        const livePill = document.getElementById("meeting-live-pill");
+        if (livePill) {
+          if (currentMeetingActive) livePill.classList.remove("hidden");
+          else livePill.classList.add("hidden");
         }
-        showToast(
-          isActive
-            ? "Live meeting alert enabled & everyone notified!"
-            : "Meeting notice ended",
+
+        const banner = document.getElementById("live-meeting-banner");
+        const bannerTitle = document.getElementById("banner-meeting-title");
+        if (banner && bannerTitle) {
+          if (currentMeetingActive) {
+            bannerTitle.innerText = `${currentMeetingTitle} is live now!`;
+            banner.classList.remove("hidden");
+          } else {
+            banner.classList.add("hidden");
+          }
+        }
+
+        const markBtn = document.getElementById("btn-mark-attendance");
+        const markLabel = document.getElementById("mark-att-label");
+        if (markBtn && markLabel) {
+          markBtn.disabled = !currentMeetingActive;
+          markLabel.innerText = currentMeetingActive
+            ? "Mark Attendance"
+            : "Mark Attendance (Meeting Not Started)";
+        }
+
+        const platformBadge = document.getElementById("meeting-platform-badge");
+        const subtitle = document.getElementById("meeting-subtitle");
+        const isGoogleMeet = currentMeetingProvider === "google_meet";
+        if (platformBadge) {
+          platformBadge.innerText = isGoogleMeet ? "Google Meet" : "LiveKit HD";
+        }
+        if (subtitle) {
+          subtitle.innerText = isGoogleMeet
+            ? "Google Meet Backup Session • Managed by Admin"
+            : "LiveKit HD Audio, Video, Screen Sharing & Auto Attendance";
+        }
+
+        const joinBtn = document.getElementById("join-meeting-btn");
+        const leaveBtn = document.getElementById("leave-meeting-btn");
+        const placeholder = document.getElementById("meeting-placeholder");
+        const lkStage = document.getElementById("lk-meeting-stage");
+        const gmeetStage = document.getElementById("gmeet-meeting-stage");
+
+        if (isGoogleMeet) {
+          if (joinBtn) joinBtn.classList.add("hidden");
+          if (leaveBtn) leaveBtn.classList.add("hidden");
+          if (placeholder) placeholder.classList.add("hidden");
+          if (lkStage) lkStage.classList.add("hidden");
+          if (gmeetStage) gmeetStage.classList.remove("hidden");
+
+          const normalizedUrl = normalizeGoogleMeetUrl(currentGoogleMeetUrl);
+          const hasValidLink = isValidGoogleMeetUrl(normalizedUrl);
+          const hasBox = document.getElementById("gmeet-has-link-box");
+          const noBox = document.getElementById("gmeet-no-link-box");
+          const joinLink = document.getElementById("gmeet-join-link");
+          if (hasValidLink && hasBox && noBox && joinLink) {
+            joinLink.href = normalizedUrl;
+            hasBox.classList.remove("hidden");
+            noBox.classList.add("hidden");
+          } else if (hasBox && noBox) {
+            hasBox.classList.add("hidden");
+            noBox.classList.remove("hidden");
+          }
+        } else {
+          if (gmeetStage) gmeetStage.classList.add("hidden");
+          if (lkRoom) {
+            if (joinBtn) joinBtn.classList.add("hidden");
+            if (leaveBtn) leaveBtn.classList.remove("hidden");
+            if (placeholder) placeholder.classList.add("hidden");
+            if (lkStage) lkStage.classList.remove("hidden");
+          } else {
+            if (joinBtn) joinBtn.classList.remove("hidden");
+            if (leaveBtn) leaveBtn.classList.add("hidden");
+            if (placeholder) placeholder.classList.remove("hidden");
+            if (lkStage) lkStage.classList.add("hidden");
+          }
+        }
+
+        // Sync Admin controls in Meeting & Admin tabs
+        const btnLk = document.getElementById("btn-switch-livekit");
+        const btnGm = document.getElementById("btn-switch-gmeet");
+        if (btnLk && btnGm) {
+          btnLk.className = !isGoogleMeet
+            ? "px-3 py-1.5 rounded-lg text-xs font-bold border transition bg-emerald-700 text-white border-emerald-700"
+            : "px-3 py-1.5 rounded-lg text-xs font-bold border transition bg-white text-slate-700 border-emerald-200 hover:bg-emerald-50";
+          btnGm.className = isGoogleMeet
+            ? "px-3 py-1.5 rounded-lg text-xs font-bold border transition bg-emerald-700 text-white border-emerald-700"
+            : "px-3 py-1.5 rounded-lg text-xs font-bold border transition bg-white text-slate-700 border-emerald-200 hover:bg-emerald-50";
+        }
+        const quickInput = document.getElementById("meeting-quick-gmeet-input");
+        if (quickInput && document.activeElement !== quickInput) {
+          quickInput.value = currentGoogleMeetUrl || "";
+        }
+        const toggleLiveBtn = document.getElementById(
+          "meeting-admin-toggle-live-btn",
         );
+        if (toggleLiveBtn) {
+          toggleLiveBtn.innerText = currentMeetingActive
+            ? "End Meeting"
+            : "Start Meeting";
+          toggleLiveBtn.className = currentMeetingActive
+            ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-700 hover:bg-slate-800 text-white transition shrink-0"
+            : "px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white transition shrink-0";
+        }
+        const adminTitle = document.getElementById("admin-meeting-title");
+        if (adminTitle && document.activeElement !== adminTitle) {
+          adminTitle.value = currentMeetingTitle || "";
+        }
+        const adminProv = document.getElementById("admin-meeting-provider");
+        if (adminProv && document.activeElement !== adminProv) {
+          adminProv.value = isGoogleMeet ? "google_meet" : "livekit";
+        }
+        const adminGmUrl = document.getElementById("admin-gmeet-url");
+        if (adminGmUrl && document.activeElement !== adminGmUrl) {
+          adminGmUrl.value = currentGoogleMeetUrl || "";
+        }
+        lucide.createIcons();
+      }
+
+      window.switchMeetingProvider = async (provider) => {
+        if (currentUserProfile?.role !== "admin") {
+          showToast("Only Admin can switch meeting platforms.", "error");
+          return;
+        }
+        const nextProvider =
+          provider === "google_meet" ? "google_meet" : "livekit";
+        try {
+          await setDoc(
+            doc(db, "settings", "meeting"),
+            {
+              isActive: currentMeetingActive,
+              title: currentMeetingTitle,
+              roomName: currentMeetingRoom,
+              provider: nextProvider,
+              googleMeetUrl: currentGoogleMeetUrl,
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+          currentMeetingProvider = nextProvider;
+          syncMeetingStageUI();
+          showToast(
+            nextProvider === "google_meet"
+              ? "Switched all members to Google Meet!"
+              : "Switched all members back to LiveKit!",
+          );
+        } catch (err) {
+          console.error(err);
+          showToast(
+            "Failed to switch platform: " + (err?.message || err),
+            "error",
+          );
+        }
+      };
+
+      window.saveQuickGoogleMeetUrl = async () => {
+        if (currentUserProfile?.role !== "admin") return;
+        const raw =
+          document.getElementById("meeting-quick-gmeet-input")?.value || "";
+        const normalized = normalizeGoogleMeetUrl(raw);
+        if (normalized && !isValidGoogleMeetUrl(normalized)) {
+          showToast(
+            "Please enter a valid https://meet.google.com/... link.",
+            "error",
+          );
+          return;
+        }
+        try {
+          await setDoc(
+            doc(db, "settings", "meeting"),
+            {
+              isActive: currentMeetingActive,
+              title: currentMeetingTitle,
+              roomName: currentMeetingRoom,
+              provider: currentMeetingProvider,
+              googleMeetUrl: normalized,
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+          currentGoogleMeetUrl = normalized;
+          syncMeetingStageUI();
+          showToast("Google Meet link saved!");
+        } catch (err) {
+          console.error(err);
+          showToast(
+            "Failed to save Google Meet link: " + (err?.message || err),
+            "error",
+          );
+        }
+      };
+
+      window.saveAdminMeetingConfig = async () => {
+        if (currentUserProfile?.role !== "admin") return;
+        const title =
+          document.getElementById("admin-meeting-title")?.value.trim() ||
+          currentMeetingTitle ||
+          "DARBER E CHANDPURISHAH Monthly Meeting";
+        const provider =
+          document.getElementById("admin-meeting-provider")?.value ===
+          "google_meet"
+            ? "google_meet"
+            : "livekit";
+        const rawUrl = document.getElementById("admin-gmeet-url")?.value || "";
+        const normalized = normalizeGoogleMeetUrl(rawUrl);
+        if (normalized && !isValidGoogleMeetUrl(normalized)) {
+          showToast(
+            "Please enter a valid https://meet.google.com/... link.",
+            "error",
+          );
+          return;
+        }
+        try {
+          await setDoc(
+            doc(db, "settings", "meeting"),
+            {
+              isActive: currentMeetingActive,
+              title,
+              roomName:
+                currentMeetingRoom || "DarberEChandpurishahOfficialRoom",
+              provider,
+              googleMeetUrl: normalized,
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+          currentMeetingTitle = title;
+          currentMeetingProvider = provider;
+          currentGoogleMeetUrl = normalized;
+          syncMeetingStageUI();
+          showToast("Meeting platform & Google Meet settings saved!");
+        } catch (err) {
+          console.error(err);
+          showToast(
+            "Failed to save meeting settings: " + (err?.message || err),
+            "error",
+          );
+        }
+      };
+
+      window.handleGoogleMeetJoinClick = () => {
+        if (currentMeetingActive) {
+          markMyAttendance(false, "google_meet");
+          showToast("Opening Google Meet & attendance marked!");
+        } else {
+          showToast(
+            "Opening Google Meet (attendance opens when meeting is live).",
+            "warn",
+          );
+        }
+      };
+
+      window.copyGoogleMeetLink = async () => {
+        const normalized = normalizeGoogleMeetUrl(currentGoogleMeetUrl);
+        if (!normalized) return;
+        try {
+          await navigator.clipboard.writeText(normalized);
+          showToast("Google Meet link copied!");
+        } catch (_) {
+          showToast("Copy failed — please copy from the address bar.", "warn");
+        }
+      };
+
+      window.toggleGlobalMeeting = async (isActive) => {
+        if (currentUserProfile?.role !== "admin") {
+          showToast("Only Admin can start or end a live meeting.", "error");
+          return;
+        }
+        const nextActive =
+          typeof isActive === "boolean" ? isActive : !currentMeetingActive;
+        const title =
+          document.getElementById("admin-meeting-title")?.value.trim() ||
+          currentMeetingTitle ||
+          "DARBER E CHANDPURISHAH Monthly Meeting";
+        const adminUrl =
+          document.getElementById("admin-gmeet-url")?.value || "";
+        const quickUrl =
+          document.getElementById("meeting-quick-gmeet-input")?.value || "";
+        const rawUrl = adminUrl.trim() ? adminUrl : quickUrl;
+        const normalizedUrl = rawUrl.trim()
+          ? normalizeGoogleMeetUrl(rawUrl)
+          : currentGoogleMeetUrl;
+        if (normalizedUrl && !isValidGoogleMeetUrl(normalizedUrl)) {
+          showToast(
+            "Please enter a valid https://meet.google.com/... link.",
+            "error",
+          );
+          return;
+        }
+        const adminProv = document.getElementById(
+          "admin-meeting-provider",
+        )?.value;
+        const provider =
+          typeof isActive === "boolean" && adminProv === "google_meet"
+            ? "google_meet"
+            : currentMeetingProvider ||
+              (adminProv === "google_meet" ? "google_meet" : "livekit");
+
+        const toggleLiveBtn = document.getElementById(
+          "meeting-admin-toggle-live-btn",
+        );
+        if (toggleLiveBtn) toggleLiveBtn.disabled = true;
+
+        try {
+          await setDoc(
+            doc(db, "settings", "meeting"),
+            {
+              isActive: nextActive,
+              title,
+              roomName:
+                currentMeetingRoom || "DarberEChandpurishahOfficialRoom",
+              provider,
+              googleMeetUrl: normalizedUrl || "",
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+          currentMeetingActive = nextActive;
+          currentMeetingTitle = title;
+          currentMeetingProvider = provider;
+          currentGoogleMeetUrl = normalizedUrl || "";
+          syncMeetingStageUI();
+
+          if (nextActive && currentUser && currentUserProfile) {
+            await createAppNotification({
+              type: "meeting",
+              title: "Live Meeting Started",
+              body: `"${title}" is live now! Click to join.`,
+              targetRole: "all",
+              targetTab: "meeting",
+              createdByUid: currentUser.uid,
+              authorName: currentUserProfile.name,
+              readBy: [currentUser.uid],
+            });
+          }
+          showToast(
+            nextActive
+              ? "Live meeting started & everyone notified!"
+              : "Meeting ended — attendance marking is now closed.",
+          );
+        } catch (err) {
+          console.error(err);
+          showToast(
+            "Failed to update live meeting: " + (err?.message || err),
+            "error",
+          );
+        } finally {
+          if (toggleLiveBtn) toggleLiveBtn.disabled = false;
+        }
       };
 
       function getSafeId(identity) {
@@ -5301,7 +6309,7 @@
             showToast("Joined without camera", "warn");
           }
 
-          markMyAttendance(false);
+          markMyAttendance(false, "livekit");
           document
             .getElementById("meeting-placeholder")
             .classList.add("hidden");
@@ -5314,9 +6322,24 @@
             .classList.remove("hidden");
 
           syncLiveKitUI();
-          showToast("Joined LiveKit meeting & attendance marked!");
+          showToast(
+            currentMeetingActive
+              ? "Joined LiveKit meeting & attendance marked!"
+              : "Joined LiveKit room (attendance opens when Admin starts the meeting).",
+          );
         } catch (err) {
-          showToast("Meeting error: " + err.message, "error");
+          const msg = err?.message || "Failed to join LiveKit meeting";
+          const looksLikeLimit =
+            /limit|quota|full|capacity|minutes|exceeded|402|429|503/i.test(msg);
+          const fallbackBox = document.getElementById("lk-limit-fallback-box");
+          const fallbackMsg = document.getElementById("lk-limit-fallback-msg");
+          if (fallbackBox && fallbackMsg) {
+            fallbackMsg.innerText = looksLikeLimit
+              ? "LiveKit monthly limit or capacity may have been reached. Admin can switch to Google Meet above or from Admin Panel."
+              : msg;
+            fallbackBox.classList.remove("hidden");
+          }
+          showToast("Meeting error: " + msg, "error");
           if (lkRoom) {
             lkRoom.disconnect();
             lkRoom = null;
