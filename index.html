@@ -838,27 +838,20 @@
           <button
             onclick="switchTab('csf')"
             id="tab-csf"
-            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center justify-between hover:bg-emerald-50 transition"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
           >
-            <span class="flex items-center gap-3">
-              <img
-                src="./csf-logo.png"
-                onerror="
-                  if (!this.dataset.t) {
-                    this.dataset.t = 1;
-                    this.src = './csf-logo.jpg';
-                  }
-                "
-                alt="CSF"
-                class="w-5 h-5 rounded-full object-cover border border-emerald-200 shrink-0"
-              />
-              <span>CSF &amp; Help Desk</span>
-            </span>
-            <span
-              id="drawer-hd-badge"
-              class="hidden bg-[#25D366]/15 text-[#128C7E] text-[10px] px-2 py-0.5 rounded-full font-bold"
-              >WhatsApp</span
-            >
+            <img
+              src="./csf-logo.png"
+              onerror="
+                if (!this.dataset.t) {
+                  this.dataset.t = 1;
+                  this.src = './csf-logo.jpg';
+                }
+              "
+              alt="CSF"
+              class="w-5 h-5 rounded-full object-cover border border-emerald-200 shrink-0"
+            />
+            <span>CSF</span>
           </button>
           <button
             onclick="switchTab('profile')"
@@ -1357,9 +1350,9 @@
           </div>
         </section>
 
-        <!-- 6. CSF & HELP DESK TAB -->
-        <section id="section-csf" class="hidden max-w-3xl mx-auto space-y-6">
-          <div class="glass p-6 sm:p-8 rounded-3xl text-center space-y-3">
+        <!-- 6. CSF TAB -->
+        <section id="section-csf" class="hidden max-w-3xl mx-auto">
+          <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
             <img
               src="./csf-logo.png"
               onerror="
@@ -1369,176 +1362,21 @@
                 }
               "
               alt="CHANDPURISHA SPECIAL FORCE (CSF)"
-              class="w-24 h-24 rounded-full object-cover mx-auto shadow-xl border-2 border-emerald-600 bg-black p-0.5"
+              class="w-28 h-28 rounded-full object-cover mx-auto shadow-xl border-2 border-emerald-600 bg-black p-0.5"
             />
             <h2 class="text-2xl font-extrabold text-emerald-950">
               CHANDPURISHA SPECIAL FORCE (CSF)
             </h2>
-            <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
-              Dedicated support, coordination, and assistance for all members of
-              <strong>DARBER E CHANDPURISHAH</strong> and
-              <strong>CSF (Chandpurisha Special Force)</strong>.
+            <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              This section is dedicated to
+              <strong>CSF (Chandpurisha Special Force)</strong> updates,
+              mission, and activities.
             </p>
-          </div>
-
-          <div
-            class="glass p-6 sm:p-8 rounded-3xl border border-emerald-200/80 space-y-5"
-          >
             <div
-              class="flex flex-wrap items-start justify-between gap-3 border-b border-emerald-100 pb-4"
+              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
             >
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-12 h-12 rounded-2xl bg-[#25D366]/15 text-[#128C7E] border border-[#25D366]/30 flex items-center justify-center shrink-0"
-                >
-                  <i data-lucide="headphones" class="w-6 h-6"></i>
-                </div>
-                <div>
-                  <h3
-                    id="csf-hd-title"
-                    class="text-lg sm:text-xl font-extrabold text-emerald-950"
-                  >
-                    CSF Help Desk (WhatsApp)
-                  </h3>
-                  <p
-                    id="csf-hd-subtitle"
-                    class="text-xs sm:text-sm text-slate-600"
-                  >
-                    Get instant help from CSF support team directly on WhatsApp.
-                  </p>
-                </div>
-              </div>
-
-              <span
-                id="csf-hd-status-badge"
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 bg-amber-100 text-amber-800 border border-amber-200"
-              >
-                <span
-                  id="csf-hd-status-dot"
-                  class="w-2 h-2 rounded-full bg-amber-500"
-                ></span>
-                <span id="csf-hd-status-text">Setup Pending</span>
-              </span>
-            </div>
-
-            <!-- Active Help Desk Area -->
-            <div id="csf-hd-active-box" class="hidden space-y-4">
-              <div id="csf-hd-form-fields" class="grid grid-cols-1 gap-3">
-                <div>
-                  <label
-                    class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5"
-                    >Select Help Topic</label
-                  >
-                  <select
-                    id="csf-hd-topic"
-                    onchange="updateHelpDeskWhatsAppHref()"
-                    class="w-full px-3.5 py-2.5 bg-white/90 border border-emerald-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="General Help / Inquiry">
-                      General Help / Inquiry
-                    </option>
-                    <option value="Membership & Account Support">
-                      Membership &amp; Account Support
-                    </option>
-                    <option value="Online Meeting Technical Help">
-                      Online Meeting Technical Help
-                    </option>
-                    <option value="CSF Volunteer / Emergency Support">
-                      CSF Volunteer / Emergency Support
-                    </option>
-                    <option value="Report an Issue">Report an Issue</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5"
-                    >Write Your Question / Issue (Optional)</label
-                  >
-                  <textarea
-                    id="csf-hd-note"
-                    rows="3"
-                    oninput="updateHelpDeskWhatsAppHref()"
-                    placeholder="Briefly describe what help you need (will be pre-filled in WhatsApp)..."
-                    class="w-full px-3.5 py-2.5 bg-white/90 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  ></textarea>
-                </div>
-              </div>
-
-              <div
-                id="csf-hd-group-info"
-                class="hidden bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 text-xs sm:text-sm text-emerald-900"
-              >
-                Click the button below to join/open the official
-                <strong>CSF Help Desk WhatsApp Group</strong> and ask your
-                question directly.
-              </div>
-
-              <div class="flex flex-wrap items-center gap-3 pt-1">
-                <a
-                  id="csf-hd-wa-btn"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="flex-1 min-w-[220px] bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-3.5 px-5 rounded-2xl shadow-lg shadow-[#25D366]/25 flex items-center justify-center gap-2.5 text-sm transition"
-                >
-                  <i data-lucide="message-circle" class="w-5 h-5"></i>
-                  <span id="csf-hd-wa-btn-text"
-                    >Message CSF Help Desk on WhatsApp</span
-                  >
-                  <i data-lucide="external-link" class="w-4 h-4 opacity-90"></i>
-                </a>
-
-                <button
-                  type="button"
-                  onclick="copyHelpDeskLink()"
-                  class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold py-3.5 px-4 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 transition"
-                >
-                  <i data-lucide="copy" class="w-4 h-4"></i>
-                  <span id="csf-hd-copy-text">Copy Link</span>
-                </button>
-              </div>
-
-              <p class="text-[11px] text-slate-500 text-center">
-                Direct Link:
-                <span
-                  id="csf-hd-direct-url"
-                  class="font-mono text-emerald-800 break-all"
-                ></span>
-              </p>
-            </div>
-
-            <!-- Pending Setup Box -->
-            <div
-              id="csf-hd-pending-box"
-              class="bg-amber-50/90 border border-amber-200 rounded-2xl p-5 text-center space-y-3"
-            >
-              <div
-                class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto"
-              >
-                <i data-lucide="shield-alert" class="w-6 h-6"></i>
-              </div>
-              <div class="space-y-1">
-                <p class="text-sm font-bold text-amber-950">
-                  WhatsApp Help Desk link is not configured yet
-                </p>
-                <p
-                  id="csf-hd-pending-msg"
-                  class="text-xs text-amber-800 max-w-md mx-auto"
-                >
-                  An Admin will add the official CSF Help Desk WhatsApp link
-                  shortly.
-                </p>
-              </div>
-              <button
-                type="button"
-                id="csf-hd-admin-setup-btn"
-                onclick="switchTab('admin')"
-                class="hidden inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow"
-              >
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span>Setup WhatsApp Help Desk in Admin Panel</span>
-              </button>
+              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+              <span>Details coming soon</span>
             </div>
           </div>
         </section>
@@ -2258,7 +2096,7 @@
                 class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
               >
                 <i data-lucide="user-x" class="w-5 h-5 text-red-600"></i>
-                <span>Manage &amp; Delete Members</span>
+                <span>Manage, Promote &amp; Delete Members</span>
               </h3>
               <div
                 id="admin-members-list"
@@ -2346,19 +2184,21 @@
               data-lucide="headphones"
               class="w-4 h-4 text-[#128C7E] group-hover:text-white shrink-0"
             ></i>
-            <span class="text-xs font-bold">CSF Help Desk (WhatsApp)</span>
+            <span id="footer-helpdesk-link-label" class="text-xs font-bold"
+              >CSF Help Desk (WhatsApp)</span
+            >
           </a>
           <button
             type="button"
             id="footer-helpdesk-btn"
-            onclick="switchTab('csf')"
-            class="glass rounded-2xl px-3.5 py-2 flex items-center gap-2 border border-emerald-200 hover:bg-emerald-50 text-emerald-950 transition shadow-sm"
+            onclick="switchTab('admin')"
+            class="hidden glass rounded-2xl px-3.5 py-2 flex items-center gap-2 border border-emerald-200 hover:bg-emerald-50 text-emerald-950 transition shadow-sm"
           >
             <i
               data-lucide="headphones"
               class="w-4 h-4 text-emerald-700 shrink-0"
             ></i>
-            <span class="text-xs font-bold">CSF Help Desk</span>
+            <span class="text-xs font-bold">Setup CSF Help Desk</span>
           </button>
 
           <div class="glass rounded-2xl px-3.5 py-2 flex items-center gap-3">
@@ -2608,6 +2448,10 @@
 
           <div id="modal-admin-actions" class="mt-4 hidden space-y-2">
             <button
+              id="modal-role-btn"
+              class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
+            ></button>
+            <button
               id="modal-suspend-btn"
               class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
             ></button>
@@ -2622,7 +2466,6 @@
         </div>
       </div>
     </div>
-
     <!-- ================= FIREBASE & APP LOGIC ================= -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -2696,9 +2539,6 @@
       let allMessages = [];
       let allAttendance = [];
       let allNotifications = [];
-      let lkRoom = null;
-      let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
-      let currentMeetingTitle = "Official Meeting Room";
       let helpDeskSettings = {
         enabled: true,
         title: "CSF Help Desk (WhatsApp)",
@@ -2707,6 +2547,9 @@
         whatsappInput: "",
         defaultMessage: "Assalamu Alaikum, I need help from CSF Help Desk.",
       };
+      let lkRoom = null;
+      let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
+      let currentMeetingTitle = "Official Meeting Room";
       let uploadedPhotoBase64 = "";
       let uploadedUpdateFile = null;
       let pendingRegistrationProfile = null;
@@ -2732,7 +2575,7 @@
         chat: "Group Chat",
         members: "Members & Status",
         history: "History of Darber E Chandpurishah",
-        csf: "CSF & Help Desk",
+        csf: "CSF",
         profile: "My Profile",
         admin: "Admin Panel",
       };
@@ -2765,7 +2608,7 @@
         );
       }
 
-      // ================= CSF HELP DESK (WHATSAPP) =================
+      // ================= WHATSAPP CSF HELP DESK HELPERS =================
       function buildWhatsAppUrl(rawInput = "", message = "") {
         const trimmed = String(rawInput || "").trim();
         if (!trimmed) return "";
@@ -2795,6 +2638,7 @@
         } else if (digits.length === 13 && digits.startsWith("0088")) {
           digits = digits.slice(2);
         }
+
         const base = `https://wa.me/${digits}`;
         return text ? `${base}?text=${encodeURIComponent(text)}` : base;
       }
@@ -2809,164 +2653,103 @@
         );
       }
 
-      window.updateHelpDeskWhatsAppHref = () => {
-        const isGroup = isWhatsAppGroupOrChannelLink(
-          helpDeskSettings.whatsappInput,
-        );
-        const topic =
-          document.getElementById("csf-hd-topic")?.value ||
-          "General Help / Inquiry";
-        const note = (
-          document.getElementById("csf-hd-note")?.value || ""
-        ).trim();
-        const memberName = currentUserProfile?.name || "Member";
-        const memberCountry = currentUserProfile?.country || "Global";
-
-        const composed = [
-          helpDeskSettings.defaultMessage ||
-            "Assalamu Alaikum, I need help from CSF Help Desk.",
-          `Name: ${memberName} (${memberCountry})`,
-          `Topic: ${topic}`,
-          note ? `Message: ${note}` : "",
-        ]
-          .filter(Boolean)
-          .join("\n");
-
-        const waUrl = buildWhatsAppUrl(
-          helpDeskSettings.whatsappInput,
-          isGroup ? "" : composed,
-        );
-        const btn = document.getElementById("csf-hd-wa-btn");
-        if (btn) btn.href = waUrl || "#";
-      };
-
-      window.copyHelpDeskLink = async () => {
-        const baseUrl = buildWhatsAppUrl(helpDeskSettings.whatsappInput);
-        if (!baseUrl) return;
-        try {
-          await navigator.clipboard.writeText(baseUrl);
-          const lbl = document.getElementById("csf-hd-copy-text");
-          if (lbl) lbl.innerText = "Copied";
-          showToast("WhatsApp Help Desk link copied!");
-          setTimeout(() => {
-            if (lbl) lbl.innerText = "Copy Link";
-          }, 2000);
-        } catch (_) {
-          showToast("Could not copy link automatically.", "warn");
-        }
-      };
-
       window.updateHelpDeskPreview = () => {
-        const val = document.getElementById("hd-whatsapp")?.value || "";
-        const url = buildWhatsAppUrl(val);
-        const box = document.getElementById("hd-preview-box");
-        const urlEl = document.getElementById("hd-preview-url");
-        const testLink = document.getElementById("hd-test-link");
-        if (!box) return;
+        const input = document.getElementById("hd-whatsapp")?.value || "";
+        const previewBox = document.getElementById("hd-preview-box");
+        const previewUrl = document.getElementById("hd-preview-url");
+        const previewTest = document.getElementById("hd-test-link");
+        if (!previewBox || !previewUrl || !previewTest) return;
+
+        const url = buildWhatsAppUrl(input);
         if (url) {
-          box.classList.remove("hidden");
-          if (urlEl) urlEl.innerText = url;
-          if (testLink) testLink.href = url;
+          previewUrl.innerText = url;
+          previewTest.href = url;
+          previewBox.classList.remove("hidden");
         } else {
-          box.classList.add("hidden");
+          previewBox.classList.add("hidden");
         }
       };
 
       function fillHelpDeskAdminForm() {
-        const enEl = document.getElementById("hd-enabled");
-        if (!enEl) return;
-        enEl.checked = helpDeskSettings.enabled !== false;
+        const enabledEl = document.getElementById("hd-enabled");
+        if (!enabledEl) return;
+        enabledEl.checked = helpDeskSettings.enabled !== false;
         document.getElementById("hd-whatsapp").value =
           helpDeskSettings.whatsappInput || "";
         document.getElementById("hd-title").value =
           helpDeskSettings.title || "CSF Help Desk (WhatsApp)";
         document.getElementById("hd-subtitle").value =
-          helpDeskSettings.subtitle || "";
+          helpDeskSettings.subtitle ||
+          "Get instant help from CSF support team directly on WhatsApp.";
         document.getElementById("hd-default-msg").value =
-          helpDeskSettings.defaultMessage || "";
+          helpDeskSettings.defaultMessage ||
+          "Assalamu Alaikum, I need help from CSF Help Desk.";
         window.updateHelpDeskPreview();
       }
 
       function renderHelpDeskUI() {
         const baseUrl = buildWhatsAppUrl(helpDeskSettings.whatsappInput);
-        const isAvailable = Boolean(helpDeskSettings.enabled && baseUrl);
+        const isAvailable = Boolean(
+          helpDeskSettings.enabled !== false && baseUrl,
+        );
         const isGroup = isWhatsAppGroupOrChannelLink(
           helpDeskSettings.whatsappInput,
         );
         const isAdmin = currentUserProfile?.role === "admin";
-
-        document.getElementById("csf-hd-title").innerText =
-          helpDeskSettings.title || "CSF Help Desk (WhatsApp)";
-        document.getElementById("csf-hd-subtitle").innerText =
-          helpDeskSettings.subtitle ||
-          "Get instant help from CSF support team directly on WhatsApp.";
-
-        const badge = document.getElementById("csf-hd-status-badge");
-        const dot = document.getElementById("csf-hd-status-dot");
-        const statusText = document.getElementById("csf-hd-status-text");
-        if (isAvailable) {
-          badge.className =
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 bg-emerald-100 text-emerald-800 border border-emerald-200";
-          dot.className = "w-2 h-2 rounded-full bg-[#25D366] animate-pulse";
-          statusText.innerText = "WhatsApp Active";
-        } else {
-          badge.className =
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 bg-amber-100 text-amber-800 border border-amber-200";
-          dot.className = "w-2 h-2 rounded-full bg-amber-500";
-          statusText.innerText = "Setup Pending";
-        }
-
-        const activeBox = document.getElementById("csf-hd-active-box");
-        const pendingBox = document.getElementById("csf-hd-pending-box");
-        const drawerBadge = document.getElementById("drawer-hd-badge");
         const footerLink = document.getElementById("footer-helpdesk-link");
+        const footerLinkLabel = document.getElementById(
+          "footer-helpdesk-link-label",
+        );
         const footerBtn = document.getElementById("footer-helpdesk-btn");
 
-        if (isAvailable) {
-          activeBox.classList.remove("hidden");
-          pendingBox.classList.add("hidden");
-          drawerBadge?.classList.remove("hidden");
-          document.getElementById("csf-hd-direct-url").innerText = baseUrl;
-
-          document
-            .getElementById("csf-hd-form-fields")
-            .classList.toggle("hidden", isGroup);
-          document
-            .getElementById("csf-hd-group-info")
-            .classList.toggle("hidden", !isGroup);
-          document.getElementById("csf-hd-wa-btn-text").innerText = isGroup
-            ? "Join CSF Help Desk on WhatsApp"
-            : "Message CSF Help Desk on WhatsApp";
-          window.updateHelpDeskWhatsAppHref();
-
-          if (footerLink && footerBtn) {
+        if (footerLink && footerBtn) {
+          if (isAvailable) {
             footerLink.href = buildWhatsAppUrl(
               helpDeskSettings.whatsappInput,
-              isGroup ? "" : helpDeskSettings.defaultMessage,
+              isGroup
+                ? ""
+                : helpDeskSettings.defaultMessage ||
+                    "Assalamu Alaikum, I need help from CSF Help Desk.",
             );
+            footerLink.title =
+              helpDeskSettings.subtitle || "CSF Help Desk (WhatsApp)";
+            if (footerLinkLabel) {
+              footerLinkLabel.innerText =
+                helpDeskSettings.title || "CSF Help Desk (WhatsApp)";
+            }
             footerLink.classList.remove("hidden");
             footerBtn.classList.add("hidden");
-          }
-        } else {
-          activeBox.classList.add("hidden");
-          pendingBox.classList.remove("hidden");
-          drawerBadge?.classList.add("hidden");
-
-          const pendingMsg = document.getElementById("csf-hd-pending-msg");
-          const setupBtn = document.getElementById("csf-hd-admin-setup-btn");
-          if (pendingMsg) {
-            pendingMsg.innerText = isAdmin
-              ? "As an Admin, add your CSF Help Desk WhatsApp number or WhatsApp Group invite link from Admin Panel."
-              : "An Admin will add the official CSF Help Desk WhatsApp link shortly.";
-          }
-          if (setupBtn) setupBtn.classList.toggle("hidden", !isAdmin);
-
-          if (footerLink && footerBtn) {
+          } else {
             footerLink.classList.add("hidden");
-            footerBtn.classList.remove("hidden");
+            if (isAdmin) footerBtn.classList.remove("hidden");
+            else footerBtn.classList.add("hidden");
           }
         }
         lucide.createIcons();
+      }
+
+      function syncAdminRoleUI() {
+        const isAdmin = currentUserProfile?.role === "admin";
+        const tabAdmin = document.getElementById("tab-admin");
+        const pdfBtn = document.getElementById("btn-save-attendance-pdf");
+
+        if (isAdmin) {
+          tabAdmin.classList.remove("hidden");
+          tabAdmin.classList.add("flex");
+          pdfBtn.classList.remove("hidden");
+          renderPendingApprovals();
+          renderAdminAttendance();
+          renderAdminMembersList();
+          fillHelpDeskAdminForm();
+        } else {
+          tabAdmin.classList.add("hidden");
+          tabAdmin.classList.remove("flex");
+          pdfBtn.classList.add("hidden");
+          if (activeTab === "admin") {
+            switchTab("updates");
+          }
+        }
+        renderHelpDeskUI();
       }
 
       // ================= NOTIFICATION HELPERS =================
@@ -3332,40 +3115,25 @@
         document.getElementById("nav-menu-backdrop").classList.add("hidden");
       };
 
-      // Password Show/Hide Toggle (preserves targetId so 2nd+ clicks always work)
+      // Fixed Password Show/Hide Toggle (preserves targetId across Lucide SVG swaps)
       window.togglePasswordVisibility = (inputId, targetId) => {
         const input = document.getElementById(inputId);
-        const target =
-          typeof targetId === "string"
-            ? document.getElementById(targetId)
-            : targetId;
+        const target = document.getElementById(targetId);
         if (!input || !target) return;
-
         const btn =
           target.tagName === "BUTTON" ? target : target.closest("button");
         const showing = input.type === "password";
         input.type = showing ? "text" : "password";
-
-        const iconIdAttr =
-          typeof targetId === "string" && (!btn || btn.id !== targetId)
-            ? ` id="${targetId}"`
-            : "";
-
         if (btn) {
           btn.setAttribute(
             "aria-label",
             showing ? "Hide password" : "Show password",
           );
-          btn.classList.add(
-            "inline-flex",
-            "items-center",
-            "gap-1",
-            "text-xs",
-            "font-semibold",
-          );
+          const iconIdAttr =
+            target.tagName !== "BUTTON" ? `id="${targetId}"` : "";
           btn.innerHTML = showing
-            ? `<i${iconIdAttr} data-lucide="eye-off" class="w-4 h-4"></i><span>Hide</span>`
-            : `<i${iconIdAttr} data-lucide="eye" class="w-4 h-4"></i><span>Show</span>`;
+            ? `<i ${iconIdAttr} data-lucide="eye-off" class="w-4 h-4"></i><span>Hide</span>`
+            : `<i ${iconIdAttr} data-lucide="eye" class="w-4 h-4"></i><span>Show</span>`;
         } else {
           target.setAttribute("data-lucide", showing ? "eye-off" : "eye");
         }
@@ -3842,24 +3610,9 @@
             document.getElementById("pending-view").classList.add("hidden");
             document.getElementById("app-view").classList.remove("hidden");
             updateNavUserUI();
-
-            if (currentUserProfile.role === "admin") {
-              document.getElementById("tab-admin").classList.remove("hidden");
-              document.getElementById("tab-admin").classList.add("flex");
-              document
-                .getElementById("btn-save-attendance-pdf")
-                .classList.remove("hidden");
-            } else {
-              document.getElementById("tab-admin").classList.add("hidden");
-              document.getElementById("tab-admin").classList.remove("flex");
-              document
-                .getElementById("btn-save-attendance-pdf")
-                .classList.add("hidden");
-            }
-
+            syncAdminRoleUI();
             fillProfileForm();
             renderMyAttendanceRate();
-            renderHelpDeskUI();
             setupPresence(user.uid);
             listenAllData();
             lucide.createIcons();
@@ -3932,9 +3685,15 @@
 
         onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
           if (snap.exists()) {
+            const prevRole = currentUserProfile?.role;
             currentUserProfile = snap.data();
             updateNavUserUI();
-            renderHelpDeskUI();
+            if (prevRole !== currentUserProfile.role) {
+              syncAdminRoleUI();
+              renderNotifications();
+              renderUpdates();
+              renderChatMessages();
+            }
             if (currentUserProfile.disabled) {
               showToast(
                 "Your account has been suspended by the Admin.",
@@ -4484,6 +4243,26 @@
         URL.revokeObjectURL(url);
       };
 
+      // ================= ADMIN ROLE PROMOTE / DEMOTE =================
+      window.toggleMemberRole = async (uid, name, nextRole) => {
+        const msg =
+          nextRole === "admin"
+            ? `Are you sure you want to make "${name}" an Admin? They will get full Admin Panel access.`
+            : `Remove Admin Panel access from "${name}" and set them as a regular Member?`;
+        if (!confirm(msg)) return;
+        try {
+          await updateDoc(doc(db, "users", uid), { role: nextRole });
+          showToast(
+            nextRole === "admin"
+              ? `"${name}" is now an Admin!`
+              : `"${name}" is now a regular Member.`,
+          );
+          closeMemberModal();
+        } catch (err) {
+          showToast("Failed to update role: " + err.message, "error");
+        }
+      };
+
       function renderAdminMembersList() {
         const container = document.getElementById("admin-members-list");
         if (!container || currentUserProfile?.role !== "admin") return;
@@ -4495,23 +4274,45 @@
         }
 
         container.innerHTML = others
-          .map(
-            (m) => `
-        <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2.5">
+          .map((m) => {
+            const isMemberAdmin = m.role === "admin";
+            const nextRole = isMemberAdmin ? "member" : "admin";
+            const safeName = escapeHtml(m.name || "Member");
+            const safeNameJs = String(m.name || "Member")
+              .replace(/\\/g, "\\\\")
+              .replace(/'/g, "\\'");
+            return `
+        <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2">
           <div onclick="openMemberModal('${m.id}')" class="flex items-center gap-2.5 min-w-0 cursor-pointer">
             <img src="${avatarUrl(m)}" class="w-9 h-9 rounded-xl object-cover shrink-0" />
             <div class="min-w-0">
-              <p class="text-sm font-bold text-slate-800 truncate">${escapeHtml(m.name)}</p>
+              <div class="flex items-center gap-1.5">
+                <p class="text-sm font-bold text-slate-800 truncate">${safeName}</p>
+                ${
+                  isMemberAdmin
+                    ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full shrink-0">Admin</span>`
+                    : ""
+                }
+              </div>
               <p class="text-[11px] text-slate-500 truncate">${escapeHtml(m.email)}</p>
             </div>
           </div>
-          <button onclick="deleteMember('${m.id}', '${escapeHtml(m.name)}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition shrink-0">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>Delete</span>
-          </button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="toggleMemberRole('${m.id}', '${safeNameJs}', '${nextRole}')" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 border transition ${
+              isMemberAdmin
+                ? "bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200"
+                : "bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border-emerald-200"
+            }">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>${isMemberAdmin ? "Remove Admin" : "Make Admin"}</span>
+            </button>
+            <button onclick="deleteMember('${m.id}', '${safeNameJs}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
         </div>
-      `,
-          )
+      `;
+          })
           .join("");
         lucide.createIcons();
       }
@@ -4737,11 +4538,29 @@
         }
 
         const adminBox = document.getElementById("modal-admin-actions");
+        const roleBtn = document.getElementById("modal-role-btn");
         const suspendBtn = document.getElementById("modal-suspend-btn");
         const deleteBtn = document.getElementById("modal-delete-btn");
 
         if (currentUserProfile?.role === "admin" && m.id !== currentUser?.uid) {
           adminBox.classList.remove("hidden");
+          if (roleBtn) {
+            const isTargetAdmin = m.role === "admin";
+            roleBtn.className = isTargetAdmin
+              ? "w-full py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 flex items-center justify-center gap-1.5 transition"
+              : "w-full py-2.5 rounded-xl text-xs font-semibold bg-emerald-600 text-white border border-emerald-600 hover:bg-emerald-700 flex items-center justify-center gap-1.5 transition";
+            roleBtn.innerHTML = `<i data-lucide="shield-check" class="w-3.5 h-3.5"></i><span>${
+              isTargetAdmin
+                ? "Remove Admin Access (Set as Member)"
+                : "Grant Admin Panel Access (Make Admin)"
+            }</span>`;
+            roleBtn.onclick = () =>
+              toggleMemberRole(
+                m.id,
+                m.name,
+                isTargetAdmin ? "member" : "admin",
+              );
+          }
           suspendBtn.innerText = m.disabled
             ? "Re-enable Member Account"
             : "Suspend Member Temporarily";
@@ -5156,12 +4975,12 @@
           }
         });
 
-      document
-        .getElementById("admin-helpdesk-form")
-        .addEventListener("submit", async (e) => {
+      const hdForm = document.getElementById("admin-helpdesk-form");
+      if (hdForm) {
+        hdForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const btn = document.getElementById("hd-save-btn");
-          btn.disabled = true;
+          if (btn) btn.disabled = true;
           try {
             const payload = {
               enabled: document.getElementById("hd-enabled").checked,
@@ -5177,16 +4996,21 @@
               defaultMessage:
                 document.getElementById("hd-default-msg").value.trim() ||
                 "Assalamu Alaikum, I need help from CSF Help Desk.",
-              updatedAt: serverTimestamp(),
             };
-            await setDoc(doc(db, "settings", "helpdesk"), payload);
+            await setDoc(doc(db, "settings", "helpdesk"), {
+              ...payload,
+              updatedAt: serverTimestamp(),
+            });
+            helpDeskSettings = payload;
+            renderHelpDeskUI();
             showToast("CSF Help Desk (WhatsApp) settings saved!");
           } catch (err) {
             showToast("Failed to save Help Desk: " + err.message, "error");
           } finally {
-            btn.disabled = false;
+            if (btn) btn.disabled = false;
           }
         });
+      }
 
       window.deleteUpdate = async (id) => {
         if (confirm("Are you sure you want to delete this update?")) {
