@@ -403,7 +403,9 @@
       html.dark [class~="bg-emerald-100/90"] {
         background-color: rgba(16, 185, 129, 0.2) !important;
       }
-      html.dark [class~="bg-amber-50"] {
+      html.dark [class~="bg-amber-50"],
+      html.dark [class~="bg-amber-50/30"],
+      html.dark [class~="bg-amber-50/90"] {
         background-color: rgba(245, 158, 11, 0.13) !important;
       }
       html.dark [class~="bg-amber-100"],
@@ -3304,68 +3306,6 @@
               </div>
             </div>
 
-            <!-- ===== DASHBOARD SCROLLING NOTICE (admin editable) ===== -->
-            <div
-              id="admin-pane-dashboard_notice"
-              class="admin-sector-pane hidden"
-            >
-              <div
-                id="live-title-card"
-                class="glass p-5 sm:p-6 rounded-2xl space-y-3 border-2 border-red-300/60"
-              >
-                <h3
-                  class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
-                >
-                  <i data-lucide="radio" class="w-5 h-5 text-red-600"></i>
-                  <span>Dashboard Notice (scrolling)</span>
-                </h3>
-                <p class="text-xs text-slate-500">
-                  The notice you write here scrolls from right to left on every
-                  member's and admin's dashboard.
-                </p>
-                <form
-                  id="live-title-form"
-                  onsubmit="saveLiveTitle(event)"
-                  class="space-y-3"
-                >
-                  <input
-                    id="lt-title"
-                    type="text"
-                    maxlength="300"
-                    placeholder="Write notice (e.g. Friday class will be held at 8 PM on Google Meet)"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <label
-                    class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer"
-                  >
-                    <input
-                      id="lt-enabled"
-                      type="checkbox"
-                      checked
-                      class="w-4 h-4 accent-emerald-600"
-                    />
-                    <span>Show notice on dashboard</span>
-                  </label>
-                  <div class="flex gap-2">
-                    <button
-                      id="lt-save-btn"
-                      type="submit"
-                      class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition"
-                    >
-                      Save Notice
-                    </button>
-                    <button
-                      type="button"
-                      onclick="clearLiveTitle()"
-                      class="px-4 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 py-2.5 rounded-xl text-sm font-bold transition"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
             <!-- ===== FINANCE DASHBOARD (Income / Expense / Payments) ===== -->
             <div id="admin-pane-finance" class="admin-sector-pane hidden">
               <div
@@ -3777,258 +3717,669 @@
               </div>
             </div>
 
-            <div id="admin-pane-registrations" class="admin-sector-pane hidden">
-              <div
-                id="pending-approvals-card"
-                class="glass p-6 rounded-2xl border-2 border-amber-300/80 space-y-4"
-              >
-                <h3
-                  class="text-lg font-bold text-amber-900 flex items-center gap-2"
-                >
-                  <i
-                    data-lucide="user-check"
-                    class="w-5 h-5 text-amber-600"
-                  ></i>
-                  <span>Pending New Member Registrations</span>
-                </h3>
-                <div
-                  id="pending-approvals-list"
-                  class="grid grid-cols-1 md:grid-cols-2 gap-3"
-                ></div>
-              </div>
-            </div>
-
-            <div id="admin-pane-add_member" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
-                <h3
-                  class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
-                >
-                  <i
-                    data-lucide="user-plus"
-                    class="w-5 h-5 text-emerald-600"
-                  ></i>
-                  <span>Add New Member Directly</span>
-                </h3>
-                <form id="admin-add-member-form" class="space-y-3">
-                  <input
-                    type="text"
-                    id="new-mem-name"
-                    required
-                    placeholder="Member Full Name"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <input
-                    type="email"
-                    id="new-mem-email"
-                    required
-                    placeholder="Email (for login)"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <input
-                    type="password"
-                    id="new-mem-pass"
-                    required
-                    minlength="6"
-                    placeholder="Password (min 6 characters)"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <div class="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      id="new-mem-desig"
-                      placeholder="Designation"
-                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                    <input
-                      type="text"
-                      id="new-mem-country"
-                      placeholder="Country"
-                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
-                  <select
-                    id="new-mem-role"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="member">Regular Member</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <button
-                    type="submit"
-                    class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition"
-                  >
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                    <span>Create Member Account</span>
-                  </button>
-                </form>
-              </div>
-            </div>
-
+            <!-- ===== POST NOTICE / UPLOAD (Post Update + Send Notification + Dashboard Notice + Gmail Setup) ===== -->
             <div id="admin-pane-updates" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
-                <h3
-                  class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
+              <div
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200/80"
+              >
+                <div
+                  class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3"
                 >
-                  <i data-lucide="send" class="w-5 h-5 text-amber-600"></i>
-                  <span>Post Notice / Upload PDF or Photo</span>
-                </h3>
-                <form id="admin-post-update-form" class="space-y-3">
-                  <select
-                    id="upd-type"
-                    onchange="onUpdateTypeChange()"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  <h3
+                    class="text-lg font-bold text-emerald-950 flex items-center gap-2"
                   >
-                    <option value="notice">Important Notice</option>
-                    <option value="event">Event / Meeting Schedule</option>
-                    <option value="document">Document / PDF</option>
-                    <option value="photo">Photo</option>
-                    <option value="link">Important Link</option>
-                  </select>
-                  <input
-                    type="text"
-                    id="upd-title"
-                    required
-                    placeholder="Title (e.g. Monthly Meeting)"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <textarea
-                    id="upd-desc"
-                    rows="2"
-                    placeholder="Write details (optional) e.g. Monthly meeting will be held tomorrow at 8 PM..."
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  ></textarea>
+                    <i data-lucide="send" class="w-5 h-5 text-amber-600"></i>
+                    <span>Post Notice / Upload &amp; Notifications</span>
+                  </h3>
+                  <span
+                    id="updates-gmail-pill"
+                    class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200"
+                    >Gmail: Not Connected</span
+                  >
+                </div>
 
+                <div
+                  class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100"
+                >
+                  <button
+                    type="button"
+                    id="upd-subtab-post"
+                    data-allow-viewonly="true"
+                    onclick="switchUpdatesAdminTab('post')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition"
+                  >
+                    Post Notice
+                  </button>
+                  <button
+                    type="button"
+                    id="upd-subtab-notifications"
+                    data-allow-viewonly="true"
+                    onclick="switchUpdatesAdminTab('notifications')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition"
+                  >
+                    Send Notification
+                  </button>
+                  <button
+                    type="button"
+                    id="upd-subtab-dashboard_notice"
+                    data-allow-viewonly="true"
+                    onclick="switchUpdatesAdminTab('dashboard_notice')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition"
+                  >
+                    Dashboard Notice
+                  </button>
+                  <button
+                    type="button"
+                    id="upd-subtab-gmail"
+                    data-allow-viewonly="true"
+                    onclick="switchUpdatesAdminTab('gmail')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1"
+                  >
+                    <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                    <span>Gmail Setup</span>
+                  </button>
+                </div>
+
+                <!-- SUB-VIEW: POST NOTICE / UPLOAD -->
+                <div id="upd-view-post" class="space-y-4">
+                  <h4
+                    class="text-sm font-bold text-emerald-950 flex items-center gap-2"
+                  >
+                    <i
+                      data-lucide="megaphone"
+                      class="w-4 h-4 text-amber-600"
+                    ></i>
+                    <span>Post Notice / Upload PDF or Photo</span>
+                  </h4>
+                  <form id="admin-post-update-form" class="space-y-3">
+                    <select
+                      id="upd-type"
+                      onchange="onUpdateTypeChange()"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <option value="notice">Important Notice</option>
+                      <option value="event">Event / Meeting Schedule</option>
+                      <option value="document">Document / PDF</option>
+                      <option value="photo">Photo</option>
+                      <option value="link">Important Link</option>
+                    </select>
+                    <input
+                      type="text"
+                      id="upd-title"
+                      required
+                      placeholder="Title (e.g. Monthly Meeting)"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <textarea
+                      id="upd-desc"
+                      rows="2"
+                      placeholder="Write details (optional) e.g. Monthly meeting will be held tomorrow at 8 PM..."
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    ></textarea>
+
+                    <div
+                      class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-1.5"
+                    >
+                      <label
+                        class="text-xs font-semibold text-emerald-900 flex items-center gap-1.5"
+                      >
+                        <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                        <span
+                          >Upload PDF or Image File (Max 700 KB for PDF)</span
+                        >
+                      </label>
+                      <input
+                        type="file"
+                        id="upd-file"
+                        accept="application/pdf,image/*"
+                        class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800"
+                      />
+                      <p
+                        id="upd-file-status"
+                        class="text-[11px] text-emerald-700 hidden"
+                      ></p>
+                    </div>
+
+                    <input
+                      type="url"
+                      id="upd-url"
+                      placeholder="Or paste external PDF / Drive / Web Link (optional)"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <label
+                      class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-900 cursor-pointer bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-2.5"
+                    >
+                      <input
+                        id="upd-send-email"
+                        type="checkbox"
+                        checked
+                        class="w-4 h-4 accent-emerald-600"
+                      />
+                      <i
+                        data-lucide="mail"
+                        class="w-4 h-4 text-emerald-600 shrink-0"
+                      ></i>
+                      <span>Also send this notice to all members' Gmail</span>
+                    </label>
+                    <button
+                      type="submit"
+                      class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition"
+                    >
+                      <i data-lucide="megaphone" class="w-4 h-4"></i>
+                      <span>Publish to Everyone</span>
+                    </button>
+                  </form>
+                </div>
+
+                <!-- SUB-VIEW: SEND INSTANT NOTIFICATION -->
+                <div id="upd-view-notifications" class="hidden space-y-4">
+                  <h4
+                    class="text-sm font-bold text-emerald-950 flex items-center gap-2"
+                  >
+                    <i
+                      data-lucide="bell-ring"
+                      class="w-4 h-4 text-emerald-600"
+                    ></i>
+                    <span
+                      >Send Instant Notification (To All Admins &amp;
+                      Members)</span
+                    >
+                  </h4>
+                  <form id="admin-broadcast-form" class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <input
+                        type="text"
+                        id="notif-title"
+                        required
+                        placeholder="Notification Title (e.g. Urgent Meeting Tonight)"
+                        class="md:col-span-2 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                      <select
+                        id="notif-target-tab"
+                        class="px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <option value="updates">
+                          Open Updates &amp; Notice
+                        </option>
+                        <option value="meeting">Open Online Meeting</option>
+                        <option value="chat">Open Group Chat</option>
+                        <option value="members">
+                          Open Members &amp; Status
+                        </option>
+                      </select>
+                    </div>
+                    <textarea
+                      id="notif-body"
+                      rows="2"
+                      required
+                      placeholder="Write alert message for all admins and members..."
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    ></textarea>
+                    <label
+                      class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-900 cursor-pointer bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-2.5"
+                    >
+                      <input
+                        id="notif-send-email"
+                        type="checkbox"
+                        checked
+                        class="w-4 h-4 accent-emerald-600"
+                      />
+                      <i
+                        data-lucide="mail"
+                        class="w-4 h-4 text-emerald-600 shrink-0"
+                      ></i>
+                      <span>Also send this alert to all members' Gmail</span>
+                    </label>
+                    <button
+                      type="submit"
+                      id="notif-send-btn"
+                      class="bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                    >
+                      <i data-lucide="send" class="w-4 h-4"></i>
+                      <span>Send Notification to Everyone</span>
+                    </button>
+                  </form>
+                </div>
+
+                <!-- SUB-VIEW: DASHBOARD SCROLLING NOTICE -->
+                <div id="upd-view-dashboard_notice" class="hidden space-y-4">
                   <div
-                    class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-1.5"
+                    id="live-title-card"
+                    class="p-4 sm:p-5 rounded-2xl space-y-3 border-2 border-red-300/60 bg-white/60"
+                  >
+                    <h4
+                      class="text-base font-bold text-emerald-950 border-b border-emerald-100 pb-2 flex items-center gap-2"
+                    >
+                      <i data-lucide="radio" class="w-5 h-5 text-red-600"></i>
+                      <span>Dashboard Notice (scrolling)</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">
+                      The notice you write here scrolls from right to left on
+                      every member's and admin's dashboard.
+                    </p>
+                    <form
+                      id="live-title-form"
+                      onsubmit="saveLiveTitle(event)"
+                      class="space-y-3"
+                    >
+                      <input
+                        id="lt-title"
+                        type="text"
+                        maxlength="300"
+                        placeholder="Write notice (e.g. Friday class will be held at 8 PM on Google Meet)"
+                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                      <label
+                        class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer"
+                      >
+                        <input
+                          id="lt-enabled"
+                          type="checkbox"
+                          checked
+                          class="w-4 h-4 accent-emerald-600"
+                        />
+                        <span>Show notice on dashboard</span>
+                      </label>
+                      <label
+                        class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-900 cursor-pointer bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-2.5"
+                      >
+                        <input
+                          id="lt-send-email"
+                          type="checkbox"
+                          checked
+                          class="w-4 h-4 accent-emerald-600"
+                        />
+                        <i
+                          data-lucide="mail"
+                          class="w-4 h-4 text-emerald-600 shrink-0"
+                        ></i>
+                        <span
+                          >Also send this dashboard notice to all members'
+                          Gmail</span
+                        >
+                      </label>
+                      <div class="flex gap-2">
+                        <button
+                          id="lt-save-btn"
+                          type="submit"
+                          class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition"
+                        >
+                          Save Notice
+                        </button>
+                        <button
+                          type="button"
+                          onclick="clearLiveTitle()"
+                          class="px-4 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 py-2.5 rounded-xl text-sm font-bold transition"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- SUB-VIEW: GMAIL NOTIFICATION SETUP -->
+                <div id="upd-view-gmail" class="hidden space-y-4">
+                  <div
+                    class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 space-y-2"
+                  >
+                    <div
+                      class="flex flex-wrap items-center justify-between gap-2"
+                    >
+                      <h4
+                        class="text-sm font-extrabold text-emerald-950 flex items-center gap-2"
+                      >
+                        <i
+                          data-lucide="mail-check"
+                          class="w-4 h-4 text-emerald-600"
+                        ></i>
+                        <span
+                          >Automatic Gmail Notifications to All Members</span
+                        >
+                      </h4>
+                      <span
+                        id="email-recipient-count"
+                        class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800"
+                        >0 active member emails</span
+                      >
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                      Connect a free
+                      <strong>Google Apps Script Web App URL</strong> (takes 2
+                      minutes, sends directly from your Gmail to every approved
+                      member's Gmail whenever a notice is posted or a live
+                      meeting starts).
+                    </p>
+                  </div>
+
+                  <form
+                    id="admin-email-settings-form"
+                    onsubmit="saveEmailSettings(event)"
+                    class="space-y-3"
                   >
                     <label
-                      class="text-xs font-semibold text-emerald-900 flex items-center gap-1.5"
+                      class="flex items-center gap-2 text-sm font-bold text-emerald-950 cursor-pointer"
                     >
-                      <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                      <span>Upload PDF or Image File (Max 700 KB for PDF)</span>
+                      <input
+                        id="email-enabled"
+                        type="checkbox"
+                        checked
+                        class="w-4 h-4 accent-emerald-600"
+                      />
+                      <span>Enable Automatic Gmail Notifications</span>
                     </label>
-                    <input
-                      type="file"
-                      id="upd-file"
-                      accept="application/pdf,image/*"
-                      class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800"
-                    />
-                    <p
-                      id="upd-file-status"
-                      class="text-[11px] text-emerald-700 hidden"
-                    ></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >Google Apps Script / Webhook URL *</label
+                        >
+                        <input
+                          type="url"
+                          id="email-webhook-url"
+                          placeholder="https://script.google.com/macros/s/.../exec"
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >Sender Display Name</label
+                        >
+                        <input
+                          type="text"
+                          id="email-sender-name"
+                          placeholder="Darber E Chandpurishah"
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >Optional Secret Key (must match script)</label
+                        >
+                        <input
+                          type="text"
+                          id="email-secret-key"
+                          placeholder="Optional security key"
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >App Link in Emails (optional)</label
+                        >
+                        <input
+                          type="url"
+                          id="email-app-url"
+                          placeholder="Auto-detected if left empty"
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <label
+                        class="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-white/75 border border-emerald-100 rounded-xl px-3 py-2 cursor-pointer"
+                      >
+                        <input
+                          id="email-on-update"
+                          type="checkbox"
+                          checked
+                          class="w-4 h-4 accent-emerald-600"
+                        />
+                        <span>Post Notice / Update</span>
+                      </label>
+                      <label
+                        class="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-white/75 border border-emerald-100 rounded-xl px-3 py-2 cursor-pointer"
+                      >
+                        <input
+                          id="email-on-broadcast"
+                          type="checkbox"
+                          checked
+                          class="w-4 h-4 accent-emerald-600"
+                        />
+                        <span>Instant Notification</span>
+                      </label>
+                      <label
+                        class="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-white/75 border border-emerald-100 rounded-xl px-3 py-2 cursor-pointer"
+                      >
+                        <input
+                          id="email-on-meeting"
+                          type="checkbox"
+                          checked
+                          class="w-4 h-4 accent-emerald-600"
+                        />
+                        <span>Live Meeting Start</span>
+                      </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        type="submit"
+                        id="email-save-btn"
+                        class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                      >
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Save Gmail Settings</span>
+                      </button>
+                      <button
+                        type="button"
+                        id="email-test-btn"
+                        onclick="sendTestEmailNotification()"
+                        class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                      >
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Send Test Email to Me</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-allow-viewonly="true"
+                        onclick="openManualGmailCompose()"
+                        class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                      >
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        <span>Open in Gmail (BCC All)</span>
+                      </button>
+                    </div>
+                  </form>
+
+                  <div
+                    id="email-last-status"
+                    class="hidden text-xs font-semibold px-3.5 py-2.5 rounded-xl border"
+                  ></div>
+
+                  <div
+                    class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2.5"
+                  >
+                    <div
+                      class="flex flex-wrap items-center justify-between gap-2"
+                    >
+                      <p class="text-xs font-extrabold text-slate-800">
+                        How to Set Up Free Gmail Sending (Google Apps Script):
+                      </p>
+                      <button
+                        type="button"
+                        data-allow-viewonly="true"
+                        onclick="copyGmailAppsScript()"
+                        class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center gap-1.5 transition"
+                      >
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span>Copy Apps Script Code</span>
+                      </button>
+                    </div>
+                    <ol
+                      class="text-[11px] text-slate-600 list-decimal pl-4 space-y-1"
+                    >
+                      <li>
+                        Open <strong>script.google.com</strong> while signed
+                        into your official Gmail account and click
+                        <strong>New project</strong>.
+                      </li>
+                      <li>
+                        Delete the default code, click
+                        <strong>Copy Apps Script Code</strong> above, and paste
+                        it in.
+                      </li>
+                      <li>
+                        Click
+                        <strong>Deploy → New deployment → Web app</strong>, set
+                        <em>Execute as: Me</em> and
+                        <em>Who has access: Anyone</em>, then authorize Gmail
+                        permission.
+                      </li>
+                      <li>
+                        Copy the generated Web App URL (ends with
+                        <code class="font-mono">/exec</code>), paste it above,
+                        and click <strong>Save Gmail Settings</strong>.
+                      </li>
+                    </ol>
                   </div>
-
-                  <input
-                    type="url"
-                    id="upd-url"
-                    placeholder="Or paste external PDF / Drive / Web Link (optional)"
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <button
-                    type="submit"
-                    class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition"
-                  >
-                    <i data-lucide="megaphone" class="w-4 h-4"></i>
-                    <span>Publish to Everyone</span>
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            <div id="admin-pane-live_meeting" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
-                <h3
-                  class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
-                >
-                  <i data-lucide="radio" class="w-5 h-5 text-emerald-600"></i>
-                  <span>Live Meeting Controls</span>
-                </h3>
-                <div class="flex flex-wrap gap-3 items-center">
-                  <input
-                    type="text"
-                    id="admin-meeting-title"
-                    placeholder="Meeting Title (e.g. Monthly Meeting - Oct)"
-                    class="flex-1 min-w-[220px] px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <button
-                    onclick="toggleGlobalMeeting(true)"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
-                  >
-                    <i data-lucide="play-circle" class="w-4 h-4"></i>
-                    <span>Start Live Meeting Alert</span>
-                  </button>
-                  <button
-                    onclick="toggleGlobalMeeting(false)"
-                    class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
-                  >
-                    <i data-lucide="stop-circle" class="w-4 h-4"></i>
-                    <span>End Meeting Notice</span>
-                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- SEND INSTANT BROADCAST NOTIFICATION -->
-            <div id="admin-pane-notifications" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
-                <h3
-                  class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
+            <!-- ===== LIVE MEETING (Controls + Attendance Records) ===== -->
+            <div id="admin-pane-live_meeting" class="admin-sector-pane hidden">
+              <div
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200/80"
+              >
+                <div
+                  class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3"
                 >
-                  <i
-                    data-lucide="bell-ring"
-                    class="w-5 h-5 text-emerald-600"
-                  ></i>
-                  <span
-                    >Send Instant Notification (To All Admins &amp;
-                    Members)</span
+                  <h3
+                    class="text-lg font-bold text-emerald-950 flex items-center gap-2"
                   >
-                </h3>
-                <form id="admin-broadcast-form" class="space-y-3">
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <i data-lucide="radio" class="w-5 h-5 text-red-600"></i>
+                    <span>Live Meeting &amp; Attendance Records</span>
+                  </h3>
+                </div>
+
+                <div
+                  class="grid grid-cols-2 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100"
+                >
+                  <button
+                    type="button"
+                    id="meet-subtab-controls"
+                    data-allow-viewonly="true"
+                    onclick="switchMeetingAdminTab('controls')"
+                    class="py-2 px-3 rounded-xl text-xs font-bold transition"
+                  >
+                    Meeting Controls
+                  </button>
+                  <button
+                    type="button"
+                    id="meet-subtab-attendance"
+                    data-allow-viewonly="true"
+                    onclick="switchMeetingAdminTab('attendance')"
+                    class="py-2 px-3 rounded-xl text-xs font-bold transition"
+                  >
+                    Attendance Records
+                  </button>
+                </div>
+
+                <!-- SUB-VIEW: MEETING CONTROLS -->
+                <div id="meet-view-controls" class="space-y-4">
+                  <div class="flex flex-wrap gap-3 items-center">
                     <input
                       type="text"
-                      id="notif-title"
-                      required
-                      placeholder="Notification Title (e.g. Urgent Meeting Tonight)"
-                      class="md:col-span-2 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      id="admin-meeting-title"
+                      placeholder="Meeting Title (e.g. Monthly Meeting - Oct)"
+                      class="flex-1 min-w-[220px] px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                     />
-                    <select
-                      id="notif-target-tab"
-                      class="px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    <button
+                      onclick="toggleGlobalMeeting(true)"
+                      class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
                     >
-                      <option value="updates">Open Updates &amp; Notice</option>
-                      <option value="meeting">Open Online Meeting</option>
-                      <option value="chat">Open Group Chat</option>
-                      <option value="members">Open Members &amp; Status</option>
-                    </select>
+                      <i data-lucide="play-circle" class="w-4 h-4"></i>
+                      <span>Start Live Meeting Alert</span>
+                    </button>
+                    <button
+                      onclick="toggleGlobalMeeting(false)"
+                      class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                    >
+                      <i data-lucide="stop-circle" class="w-4 h-4"></i>
+                      <span>End Meeting Notice</span>
+                    </button>
                   </div>
-                  <textarea
-                    id="notif-body"
-                    rows="2"
-                    required
-                    placeholder="Write alert message for all admins and members..."
-                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  ></textarea>
-                  <button
-                    type="submit"
-                    id="notif-send-btn"
-                    class="bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                  <label
+                    class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-emerald-900 cursor-pointer bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-2.5"
                   >
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                    <span>Send Notification to Everyone</span>
-                  </button>
-                </form>
+                    <input
+                      id="meeting-send-email"
+                      type="checkbox"
+                      checked
+                      class="w-4 h-4 accent-emerald-600"
+                    />
+                    <i
+                      data-lucide="mail"
+                      class="w-4 h-4 text-emerald-600 shrink-0"
+                    ></i>
+                    <span
+                      >Also send Live Meeting Start alert to all members'
+                      Gmail</span
+                    >
+                  </label>
+                </div>
+
+                <!-- SUB-VIEW: ATTENDANCE RECORDS -->
+                <div id="meet-view-attendance" class="hidden space-y-4">
+                  <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
+                  >
+                    <h4
+                      class="text-sm font-bold text-emerald-950 flex items-center gap-2"
+                    >
+                      <i
+                        data-lucide="clipboard-list"
+                        class="w-4 h-4 text-emerald-600"
+                      ></i>
+                      <span>Meeting Attendance Records</span>
+                    </h4>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <input
+                        type="date"
+                        id="attendance-date-filter"
+                        data-allow-viewonly="true"
+                        onchange="renderAdminAttendance()"
+                        class="px-3 py-1.5 bg-white border border-emerald-200 rounded-xl text-xs font-medium"
+                      />
+                      <button
+                        type="button"
+                        data-allow-viewonly="true"
+                        onclick="exportAttendancePDF('admin')"
+                        class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                      >
+                        <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                        <span>Save PDF</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-allow-viewonly="true"
+                        onclick="exportAttendanceCSV()"
+                        class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                      >
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Export CSV</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    id="admin-attendance-list"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-80 overflow-y-auto"
+                  ></div>
+                </div>
               </div>
             </div>
 
-            <!-- CSF HELP DESK (WHATSAPP) SETTINGS -->
+            <!-- ===== CSF HELP DESK (WhatsApp Setup + Advice & Complaints) ===== -->
             <div id="admin-pane-helpdesk" class="admin-sector-pane hidden">
               <div
-                class="glass p-6 rounded-2xl space-y-4 border border-emerald-200"
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200"
               >
                 <div
-                  class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-2.5"
+                  class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3"
                 >
                   <h3
                     class="text-lg font-bold text-emerald-950 flex items-center gap-2"
@@ -4037,209 +4388,341 @@
                       data-lucide="headphones"
                       class="w-5 h-5 text-[#128C7E]"
                     ></i>
-                    <span>CSF Help Desk (WhatsApp Link Setup)</span>
+                    <span>CSF Help Desk &amp; Member Feedback</span>
                   </h3>
-                  <label
-                    class="inline-flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200"
-                  >
-                    <input
-                      type="checkbox"
-                      id="hd-enabled"
-                      checked
-                      class="rounded border-emerald-300 text-emerald-700 focus:ring-emerald-500"
-                    />
-                    <span>Active in App</span>
-                  </label>
                 </div>
 
-                <form id="admin-helpdesk-form" class="space-y-3">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <label
-                        class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
-                        >WhatsApp Number or Group Invite Link *</label
-                      >
-                      <input
-                        type="text"
-                        id="hd-whatsapp"
-                        required
-                        oninput="updateHelpDeskPreview()"
-                        placeholder="e.g. +88017XXXXXXXX or https://chat.whatsapp.com/..."
-                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
-                        >Help Desk Title</label
-                      >
-                      <input
-                        type="text"
-                        id="hd-title"
-                        placeholder="CSF Help Desk (WhatsApp)"
-                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <label
-                        class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
-                        >Short Subtitle / Support Hours</label
-                      >
-                      <input
-                        type="text"
-                        id="hd-subtitle"
-                        placeholder="24/7 WhatsApp support for all CSF & Darber members"
-                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
-                        >Default Pre-filled Greeting</label
-                      >
-                      <input
-                        type="text"
-                        id="hd-default-msg"
-                        placeholder="Assalamu Alaikum, I need help from CSF Help Desk."
-                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    id="hd-preview-box"
-                    class="hidden bg-emerald-50/80 border border-emerald-200 rounded-xl px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs"
-                  >
-                    <span class="text-emerald-900 truncate">
-                      <strong>Generated Link:</strong>
-                      <span id="hd-preview-url" class="font-mono"></span>
-                    </span>
-                    <a
-                      id="hd-test-link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1 text-[#128C7E] font-bold hover:underline shrink-0"
-                    >
-                      <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-                      <span>Test Link</span>
-                    </a>
-                  </div>
-
+                <div
+                  class="grid grid-cols-2 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100"
+                >
                   <button
-                    type="submit"
-                    id="hd-save-btn"
-                    class="bg-[#128C7E] hover:bg-[#0e7367] disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                    type="button"
+                    id="hd-subtab-whatsapp"
+                    data-allow-viewonly="true"
+                    onclick="switchHelpDeskAdminTab('whatsapp')"
+                    class="py-2 px-3 rounded-xl text-xs font-bold transition"
                   >
-                    <i data-lucide="save" class="w-4 h-4"></i>
-                    <span>Save CSF Help Desk Settings</span>
+                    WhatsApp Setup
                   </button>
-                </form>
+                  <button
+                    type="button"
+                    id="hd-subtab-feedback"
+                    data-allow-viewonly="true"
+                    onclick="switchHelpDeskAdminTab('feedback')"
+                    class="py-2 px-3 rounded-xl text-xs font-bold transition relative"
+                  >
+                    <span>Advice &amp; Complaints</span>
+                    <span
+                      id="hd-feedback-badge"
+                      class="hidden ml-1 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full"
+                      >0</span
+                    >
+                  </button>
+                </div>
+
+                <!-- SUB-VIEW: WHATSAPP SETUP -->
+                <div id="hd-view-whatsapp" class="space-y-4">
+                  <div
+                    class="flex flex-wrap items-center justify-between gap-2"
+                  >
+                    <h4 class="text-sm font-bold text-emerald-950">
+                      WhatsApp Help Desk Link Setup
+                    </h4>
+                    <label
+                      class="inline-flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200"
+                    >
+                      <input
+                        type="checkbox"
+                        id="hd-enabled"
+                        checked
+                        class="rounded border-emerald-300 text-emerald-700 focus:ring-emerald-500"
+                      />
+                      <span>Active in App</span>
+                    </label>
+                  </div>
+
+                  <form id="admin-helpdesk-form" class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >WhatsApp Number or Group Invite Link *</label
+                        >
+                        <input
+                          type="text"
+                          id="hd-whatsapp"
+                          required
+                          oninput="updateHelpDeskPreview()"
+                          placeholder="e.g. +88017XXXXXXXX or https://chat.whatsapp.com/..."
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >Help Desk Title</label
+                        >
+                        <input
+                          type="text"
+                          id="hd-title"
+                          placeholder="CSF Help Desk (WhatsApp)"
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >Short Subtitle / Support Hours</label
+                        >
+                        <input
+                          type="text"
+                          id="hd-subtitle"
+                          placeholder="24/7 WhatsApp support for all CSF &amp; Darber members"
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1"
+                          >Default Pre-filled Greeting</label
+                        >
+                        <input
+                          type="text"
+                          id="hd-default-msg"
+                          placeholder="Assalamu Alaikum, I need help from CSF Help Desk."
+                          class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      id="hd-preview-box"
+                      class="hidden bg-emerald-50/80 border border-emerald-200 rounded-xl px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs"
+                    >
+                      <span class="text-emerald-900 truncate">
+                        <strong>Generated Link:</strong>
+                        <span id="hd-preview-url" class="font-mono"></span>
+                      </span>
+                      <a
+                        id="hd-test-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1 text-[#128C7E] font-bold hover:underline shrink-0"
+                      >
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                        <span>Test Link</span>
+                      </a>
+                    </div>
+
+                    <button
+                      type="submit"
+                      id="hd-save-btn"
+                      class="bg-[#128C7E] hover:bg-[#0e7367] disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition"
+                    >
+                      <i data-lucide="save" class="w-4 h-4"></i>
+                      <span>Save CSF Help Desk Settings</span>
+                    </button>
+                  </form>
+                </div>
+
+                <!-- SUB-VIEW: ADVICE & COMPLAINTS -->
+                <div id="hd-view-feedback" class="hidden space-y-4">
+                  <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
+                  >
+                    <h4
+                      class="text-sm font-bold text-emerald-950 flex items-center gap-2"
+                    >
+                      <i
+                        data-lucide="message-square-text"
+                        class="w-4 h-4 text-amber-600"
+                      ></i>
+                      <span
+                        >Member Advice, Complaints &amp; CSF ID
+                        Applications</span
+                      >
+                    </h4>
+                    <select
+                      id="feedback-filter"
+                      data-allow-viewonly="true"
+                      onchange="renderFeedbackSector()"
+                      class="px-3 py-1.5 bg-white/80 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <option value="all">All Submissions</option>
+                      <option value="new">New / Unread</option>
+                      <option value="reviewed">Reviewed</option>
+                      <option value="advice">Advice Only</option>
+                      <option value="complaint">Complaints Only</option>
+                      <option value="csf_id_application">
+                        CSF ID Applications
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    id="admin-feedback-list"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-3"
+                  ></div>
+                </div>
               </div>
             </div>
 
-            <div id="admin-pane-attendance" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
+            <!-- ===== MANAGE MEMBERS (Members List + New Registrations + Add Member) ===== -->
+            <div id="admin-pane-members" class="admin-sector-pane hidden">
+              <div
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200/80"
+              >
                 <div
-                  class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
+                  class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3"
                 >
                   <h3
                     class="text-lg font-bold text-emerald-950 flex items-center gap-2"
                   >
-                    <i
-                      data-lucide="clipboard-list"
-                      class="w-5 h-5 text-emerald-600"
-                    ></i>
-                    <span>Meeting Attendance Records</span>
+                    <i data-lucide="users" class="w-5 h-5 text-sky-600"></i>
+                    <span>Manage Members</span>
                   </h3>
-                  <div class="flex flex-wrap items-center gap-2">
-                    <input
-                      type="date"
-                      id="attendance-date-filter"
-                      data-allow-viewonly="true"
-                      onchange="renderAdminAttendance()"
-                      class="px-3 py-1.5 bg-white border border-emerald-200 rounded-xl text-xs font-medium"
-                    />
-                    <button
-                      type="button"
-                      data-allow-viewonly="true"
-                      onclick="exportAttendancePDF('admin')"
-                      class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                </div>
+
+                <div
+                  class="grid grid-cols-3 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100"
+                >
+                  <button
+                    type="button"
+                    id="mem-subtab-manage"
+                    data-allow-viewonly="true"
+                    onclick="switchMembersAdminTab('manage')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition"
+                  >
+                    Members List
+                  </button>
+                  <button
+                    type="button"
+                    id="mem-subtab-registrations"
+                    data-allow-viewonly="true"
+                    onclick="switchMembersAdminTab('registrations')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition relative"
+                  >
+                    <span>New Registrations</span>
+                    <span
+                      id="members-pending-badge"
+                      class="hidden ml-1 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full"
+                      >0</span
                     >
-                      <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                      <span>Save PDF</span>
-                    </button>
-                    <button
-                      type="button"
-                      data-allow-viewonly="true"
-                      onclick="exportAttendanceCSV()"
-                      class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                  </button>
+                  <button
+                    type="button"
+                    id="mem-subtab-add"
+                    data-allow-viewonly="true"
+                    onclick="switchMembersAdminTab('add')"
+                    class="py-2 px-2 rounded-xl text-xs font-bold transition"
+                  >
+                    Add Member
+                  </button>
+                </div>
+
+                <!-- SUB-VIEW: MANAGE / PROMOTE / DELETE MEMBERS -->
+                <div id="mem-view-manage" class="space-y-4">
+                  <h4
+                    class="text-sm font-bold text-emerald-950 flex items-center gap-2"
+                  >
+                    <i data-lucide="user-cog" class="w-4 h-4 text-sky-600"></i>
+                    <span>Manage, Promote &amp; Delete Members</span>
+                  </h4>
+                  <div
+                    id="admin-members-list"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+                  ></div>
+                </div>
+
+                <!-- SUB-VIEW: NEW REGISTRATIONS -->
+                <div id="mem-view-registrations" class="hidden space-y-4">
+                  <div
+                    id="pending-approvals-card"
+                    class="p-4 sm:p-5 rounded-2xl border-2 border-amber-300/80 bg-amber-50/30 space-y-4"
+                  >
+                    <h4
+                      class="text-base font-bold text-amber-900 flex items-center gap-2"
                     >
-                      <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                      <span>Export CSV</span>
-                    </button>
+                      <i
+                        data-lucide="user-check"
+                        class="w-5 h-5 text-amber-600"
+                      ></i>
+                      <span>Pending New Member Registrations</span>
+                    </h4>
+                    <div
+                      id="pending-approvals-list"
+                      class="grid grid-cols-1 md:grid-cols-2 gap-3"
+                    ></div>
                   </div>
                 </div>
-                <div
-                  id="admin-attendance-list"
-                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-64 overflow-y-auto"
-                ></div>
-              </div>
-            </div>
 
-            <div id="admin-pane-members" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
-                <h3
-                  class="text-lg font-bold text-emerald-950 border-b border-emerald-100 pb-2.5 flex items-center gap-2"
-                >
-                  <i data-lucide="user-x" class="w-5 h-5 text-red-600"></i>
-                  <span>Manage, Promote &amp; Delete Members</span>
-                </h3>
-                <div
-                  id="admin-members-list"
-                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
-                ></div>
-              </div>
-            </div>
-
-            <!-- ADVICE & COMPLAINTS SECTOR -->
-            <div id="admin-pane-feedback" class="admin-sector-pane hidden">
-              <div class="glass p-6 rounded-2xl space-y-4">
-                <div
-                  class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-2.5"
-                >
-                  <h3
-                    class="text-lg font-bold text-emerald-950 flex items-center gap-2"
+                <!-- SUB-VIEW: ADD NEW MEMBER -->
+                <div id="mem-view-add" class="hidden space-y-4">
+                  <h4
+                    class="text-sm font-bold text-emerald-950 flex items-center gap-2"
                   >
                     <i
-                      data-lucide="message-square-text"
-                      class="w-5 h-5 text-amber-600"
+                      data-lucide="user-plus"
+                      class="w-4 h-4 text-emerald-600"
                     ></i>
-                    <span>Member Advice &amp; Complaints</span>
-                  </h3>
-                  <select
-                    id="feedback-filter"
-                    data-allow-viewonly="true"
-                    onchange="renderFeedbackSector()"
-                    class="px-3 py-1.5 bg-white/80 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="all">All Submissions</option>
-                    <option value="new">New / Unread</option>
-                    <option value="reviewed">Reviewed</option>
-                    <option value="advice">Advice Only</option>
-                    <option value="complaint">Complaints Only</option>
-                    <option value="csf_id_application">
-                      CSF ID Applications
-                    </option>
-                  </select>
+                    <span>Add New Member Directly</span>
+                  </h4>
+                  <form id="admin-add-member-form" class="space-y-3">
+                    <input
+                      type="text"
+                      id="new-mem-name"
+                      required
+                      placeholder="Member Full Name"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <input
+                      type="email"
+                      id="new-mem-email"
+                      required
+                      placeholder="Email (for login)"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <input
+                      type="password"
+                      id="new-mem-pass"
+                      required
+                      minlength="6"
+                      placeholder="Password (min 6 characters)"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <div class="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        id="new-mem-desig"
+                        placeholder="Designation"
+                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                      <input
+                        type="text"
+                        id="new-mem-country"
+                        placeholder="Country"
+                        class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                    <select
+                      id="new-mem-role"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <option value="member">Regular Member</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    <button
+                      type="submit"
+                      class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition"
+                    >
+                      <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                      <span>Create Member Account</span>
+                    </button>
+                  </form>
                 </div>
-                <div
-                  id="admin-feedback-list"
-                  class="grid grid-cols-1 md:grid-cols-2 gap-3"
-                ></div>
               </div>
             </div>
 
@@ -4794,6 +5277,20 @@
         whatsappInput: "",
         defaultMessage: "Assalamu Alaikum, I need help from CSF Help Desk.",
       };
+      let emailSettings = {
+        enabled: true,
+        webhookUrl: "",
+        secretKey: "",
+        senderName: "Darber E Chandpurishah",
+        appUrl: "",
+        notifyOnUpdate: true,
+        notifyOnBroadcast: true,
+        notifyOnMeeting: true,
+      };
+      let membersAdminSubTab = "manage";
+      let updatesAdminSubTab = "post";
+      let meetingAdminSubTab = "controls";
+      let helpDeskAdminSubTab = "whatsapp";
       let lkRoom = null;
       let currentMeetingActive = false;
       let currentMeetingRoom = "DarberEChandpurishahOfficialRoom";
@@ -4836,49 +5333,25 @@
 
       const ADMIN_SECTORS = [
         {
-          id: "registrations",
-          title: "New Registrations",
-          subtitle: "Approve or reject new members",
-          icon: "user-check",
-          bg: "bg-amber-100",
-          tx: "text-amber-700",
-        },
-        {
-          id: "payments",
-          title: "Payment Requests",
-          subtitle: "Check & approve member payments",
-          icon: "wallet",
-          bg: "bg-emerald-100",
-          tx: "text-emerald-700",
-        },
-        {
-          id: "finance",
-          title: "Finance Dashboard",
-          subtitle: "Income, expense & ledger",
-          icon: "landmark",
-          bg: "bg-emerald-100",
-          tx: "text-emerald-700",
-        },
-        {
           id: "members",
           title: "Manage Members",
-          subtitle: "Promote, suspend or delete",
+          subtitle: "Approvals, add member & roles",
           icon: "users",
           bg: "bg-sky-100",
           tx: "text-sky-700",
         },
         {
-          id: "add_member",
-          title: "Add Member",
-          subtitle: "Create an account directly",
-          icon: "user-plus",
-          bg: "bg-blue-100",
-          tx: "text-blue-700",
+          id: "finance",
+          title: "Finance Dashboard",
+          subtitle: "Requests, income, expense & ledger",
+          icon: "landmark",
+          bg: "bg-emerald-100",
+          tx: "text-emerald-700",
         },
         {
           id: "updates",
           title: "Post Notice / Upload",
-          subtitle: "Notice, PDF, photo or link",
+          subtitle: "Updates, alerts, ticker & Gmail",
           icon: "send",
           bg: "bg-amber-100",
           tx: "text-amber-700",
@@ -4886,39 +5359,15 @@
         {
           id: "live_meeting",
           title: "Live Meeting",
-          subtitle: "Start or end the meeting alert",
+          subtitle: "Controls & attendance records",
           icon: "radio",
           bg: "bg-red-100",
           tx: "text-red-700",
         },
         {
-          id: "attendance",
-          title: "Attendance Records",
-          subtitle: "View, save PDF & CSV",
-          icon: "clipboard-list",
-          bg: "bg-purple-100",
-          tx: "text-purple-700",
-        },
-        {
-          id: "notifications",
-          title: "Send Notification",
-          subtitle: "Alert everyone instantly",
-          icon: "bell-ring",
-          bg: "bg-indigo-100",
-          tx: "text-indigo-700",
-        },
-        {
-          id: "dashboard_notice",
-          title: "Dashboard Notice",
-          subtitle: "Edit the notice bar text",
-          icon: "megaphone",
-          bg: "bg-red-100",
-          tx: "text-red-600",
-        },
-        {
           id: "helpdesk",
           title: "CSF Help Desk",
-          subtitle: "WhatsApp link setup",
+          subtitle: "WhatsApp link, advice & complaints",
           icon: "headphones",
           bg: "bg-emerald-100",
           tx: "text-emerald-700",
@@ -4932,14 +5381,6 @@
           tx: "text-amber-700",
         },
         {
-          id: "feedback",
-          title: "Advice & Complaints",
-          subtitle: "Read member advice & complaints",
-          icon: "message-square-text",
-          bg: "bg-amber-100",
-          tx: "text-amber-700",
-        },
-        {
           id: "subadmins",
           title: "Sub-Admin Roles",
           subtitle: "Assign sub-admins per sector",
@@ -4948,6 +5389,18 @@
           tx: "text-teal-700",
         },
       ];
+      const SECTOR_ALIASES = {
+        registrations: "members",
+        add_member: "members",
+        payments: "finance",
+        attendance: "live_meeting",
+        notifications: "updates",
+        dashboard_notice: "updates",
+        feedback: "helpdesk",
+      };
+      function normalizeSectorId(id) {
+        return SECTOR_ALIASES[id] || id;
+      }
       const VALID_ADMIN_SECTOR_IDS = new Set(
         ADMIN_SECTORS.map((s) => s.id).filter((id) => id !== "subadmins"),
       );
@@ -4959,6 +5412,7 @@
       let feedbackPermissionDenied = false;
       let appDataUnsubs = [];
       let liveTitleUnsub = null;
+      let emailUnsub = null;
       let pendingApprovalUnsub = null;
 
       function isMainAdmin(profile = currentUserProfile) {
@@ -4969,9 +5423,9 @@
         if (!Array.isArray(profile?.subAdminSectors)) return [];
         return [
           ...new Set(
-            profile.subAdminSectors.filter((id) =>
-              VALID_ADMIN_SECTOR_IDS.has(id),
-            ),
+            profile.subAdminSectors
+              .map((id) => normalizeSectorId(id))
+              .filter((id) => VALID_ADMIN_SECTOR_IDS.has(id)),
           ),
         ];
       }
@@ -4984,8 +5438,9 @@
 
       function canEditSector(sectorId, profile = currentUserProfile) {
         if (isMainAdmin(profile)) return true;
-        if (!sectorId || sectorId === "subadmins") return false;
-        return getUserSubAdminSectors(profile).includes(sectorId);
+        const norm = normalizeSectorId(sectorId);
+        if (!norm || norm === "subadmins") return false;
+        return getUserSubAdminSectors(profile).includes(norm);
       }
 
       function requireSectorEdit(sectorId) {
@@ -5198,6 +5653,7 @@
           renderAdminAttendance();
           renderAdminMembersList();
           fillHelpDeskAdminForm();
+          fillEmailSettingsForm();
           renderFinance();
           renderFeedbackSector();
           renderSubAdminsSector();
@@ -5271,19 +5727,14 @@
 
       function getSectorEffectiveEditable(sectorId) {
         if (!sectorId) return false;
-        if (sectorId === "payments" || sectorId === "finance") {
-          return financeSubTab === "requests"
-            ? canEditSector("payments")
-            : canEditSector("finance");
-        }
-        return canEditSector(sectorId);
+        return canEditSector(normalizeSectorId(sectorId));
       }
 
       window.applySectorReadOnlyState = (sectorId) => {
         if (!sectorId) return;
-        const paneId = sectorId === "payments" ? "finance" : sectorId;
+        const paneId = normalizeSectorId(sectorId);
         const pane = document.getElementById(`admin-pane-${paneId}`);
-        const editable = getSectorEffectiveEditable(sectorId);
+        const editable = getSectorEffectiveEditable(paneId);
 
         const roBanner = document.getElementById(
           "admin-sector-readonly-banner",
@@ -5337,9 +5788,9 @@
         const main = isMainAdmin();
 
         const counts = {
-          registrations: pendingRegCount,
-          payments: pendingPayCount,
-          feedback: newFeedbackCount,
+          members: pendingRegCount,
+          finance: pendingPayCount,
+          helpdesk: newFeedbackCount,
         };
 
         grid.innerHTML = ADMIN_SECTORS.map((s) => {
@@ -5379,8 +5830,103 @@
         lucide.createIcons();
       };
 
-      window.openAdminSector = (sectorId) => {
+      function applySubTabPillStyles(prefix, tabs, active) {
+        tabs.forEach((t) => {
+          const b = document.getElementById(`${prefix}-${t}`);
+          if (!b) return;
+          const isAct = t === active;
+          b.classList.toggle("bg-emerald-700", isAct);
+          b.classList.toggle("text-white", isAct);
+          b.classList.toggle("shadow", isAct);
+          b.classList.toggle("text-emerald-800", !isAct);
+        });
+      }
+
+      window.switchMembersAdminTab = (tab = "manage") => {
+        membersAdminSubTab = tab;
+        ["manage", "registrations", "add"].forEach((t) => {
+          document
+            .getElementById(`mem-view-${t}`)
+            ?.classList.toggle("hidden", t !== tab);
+        });
+        applySubTabPillStyles(
+          "mem-subtab",
+          ["manage", "registrations", "add"],
+          tab,
+        );
+        if (tab === "manage") renderAdminMembersList();
+        if (tab === "registrations") renderPendingApprovals();
+        if (activeTab === "admin" && activeAdminSector === "members") {
+          applySectorReadOnlyState("members");
+        }
+        lucide.createIcons();
+      };
+
+      window.switchUpdatesAdminTab = (tab = "post") => {
+        updatesAdminSubTab = tab;
+        ["post", "notifications", "dashboard_notice", "gmail"].forEach((t) => {
+          document
+            .getElementById(`upd-view-${t}`)
+            ?.classList.toggle("hidden", t !== tab);
+        });
+        applySubTabPillStyles(
+          "upd-subtab",
+          ["post", "notifications", "dashboard_notice", "gmail"],
+          tab,
+        );
+        if (tab === "dashboard_notice") fillLiveTitleForm();
+        if (tab === "gmail") fillEmailSettingsForm();
+        if (activeTab === "admin" && activeAdminSector === "updates") {
+          applySectorReadOnlyState("updates");
+        }
+        lucide.createIcons();
+      };
+
+      window.switchMeetingAdminTab = (tab = "controls") => {
+        meetingAdminSubTab = tab;
+        ["controls", "attendance"].forEach((t) => {
+          document
+            .getElementById(`meet-view-${t}`)
+            ?.classList.toggle("hidden", t !== tab);
+        });
+        applySubTabPillStyles("meet-subtab", ["controls", "attendance"], tab);
+        if (tab === "attendance") renderAdminAttendance();
+        if (activeTab === "admin" && activeAdminSector === "live_meeting") {
+          applySectorReadOnlyState("live_meeting");
+        }
+        lucide.createIcons();
+      };
+
+      window.switchHelpDeskAdminTab = (tab = "whatsapp") => {
+        helpDeskAdminSubTab = tab;
+        ["whatsapp", "feedback"].forEach((t) => {
+          document
+            .getElementById(`hd-view-${t}`)
+            ?.classList.toggle("hidden", t !== tab);
+        });
+        applySubTabPillStyles("hd-subtab", ["whatsapp", "feedback"], tab);
+        if (tab === "whatsapp") fillHelpDeskAdminForm();
+        if (tab === "feedback") renderFeedbackSector();
+        if (activeTab === "admin" && activeAdminSector === "helpdesk") {
+          applySectorReadOnlyState("helpdesk");
+        }
+        lucide.createIcons();
+      };
+
+      window.openAdminSector = (rawSectorId, preferredSubTab = null) => {
         if (!hasAdminPanelAccess()) return;
+        const legacySubTabDefaults = {
+          registrations: "registrations",
+          add_member: "add",
+          payments: "requests",
+          attendance: "attendance",
+          notifications: "notifications",
+          dashboard_notice: "dashboard_notice",
+          feedback: "feedback",
+        };
+        const sectorId = normalizeSectorId(rawSectorId);
+        const subTab =
+          preferredSubTab || legacySubTabDefaults[rawSectorId] || null;
         const valid = ADMIN_SECTORS.some((s) => s.id === sectorId);
         if (!valid) return;
         activeAdminSector = sectorId;
@@ -5395,8 +5941,7 @@
           el.classList.remove("section-enter");
         });
 
-        const paneId = sectorId === "payments" ? "finance" : sectorId;
-        const targetPane = document.getElementById(`admin-pane-${paneId}`);
+        const targetPane = document.getElementById(`admin-pane-${sectorId}`);
         if (targetPane) {
           targetPane.classList.remove("hidden");
           void targetPane.offsetWidth;
@@ -5405,25 +5950,26 @@
 
         updateAdminHeaderUI();
 
-        if (sectorId === "payments") {
-          switchFinanceTab("requests");
-        } else if (sectorId === "finance") {
-          switchFinanceTab("overview");
-        } else if (sectorId === "registrations") {
-          renderPendingApprovals();
+        if (sectorId === "finance") {
+          switchFinanceTab(subTab || "overview");
         } else if (sectorId === "members") {
+          switchMembersAdminTab(subTab || "manage");
+          renderPendingApprovals();
           renderAdminMembersList();
-        } else if (sectorId === "attendance") {
+        } else if (sectorId === "updates") {
+          switchUpdatesAdminTab(subTab || "post");
+          fillLiveTitleForm();
+          fillEmailSettingsForm();
+        } else if (sectorId === "live_meeting") {
+          switchMeetingAdminTab(subTab || "controls");
           renderAdminAttendance();
         } else if (sectorId === "helpdesk") {
+          switchHelpDeskAdminTab(subTab || "whatsapp");
           fillHelpDeskAdminForm();
+          renderFeedbackSector();
         } else if (sectorId === "homepage") {
           fillHomeEditor();
           updateHomeEditorPreviews();
-        } else if (sectorId === "dashboard_notice") {
-          fillLiveTitleForm();
-        } else if (sectorId === "feedback") {
-          renderFeedbackSector();
         } else if (sectorId === "subadmins") {
           renderSubAdminsSector();
         }
@@ -6303,12 +6849,29 @@
           } catch (_) {}
           liveTitleUnsub = null;
         }
+        if (emailUnsub) {
+          try {
+            emailUnsub();
+          } catch (_) {}
+          emailUnsub = null;
+        }
         if (pendingApprovalUnsub) {
           try {
             pendingApprovalUnsub();
           } catch (_) {}
           pendingApprovalUnsub = null;
         }
+        activeAdminSector = null;
+        emailSettings = {
+          enabled: true,
+          webhookUrl: "",
+          secretKey: "",
+          senderName: "Darber E Chandpurishah",
+          appUrl: "",
+          notifyOnUpdate: true,
+          notifyOnBroadcast: true,
+          notifyOnMeeting: true,
+        };
         allFeedback = [];
         allPayments = [];
         allFinance = [];
@@ -6535,11 +7098,42 @@
         });
       }
 
+      function listenEmailSettings() {
+        if (emailUnsub) {
+          try {
+            emailUnsub();
+          } catch (_) {}
+          emailUnsub = null;
+        }
+        if (!currentUser || !auth.currentUser || !hasAdminPanelAccess()) return;
+        emailUnsub = onSnapshot(
+          doc(db, "settings", "email"),
+          (snap) => {
+            if (snap.exists()) {
+              const data = snap.data();
+              emailSettings = {
+                enabled: data.enabled !== false,
+                webhookUrl: data.webhookUrl || "",
+                secretKey: data.secretKey || "",
+                senderName: data.senderName || "Darber E Chandpurishah",
+                appUrl: data.appUrl || "",
+                notifyOnUpdate: data.notifyOnUpdate !== false,
+                notifyOnBroadcast: data.notifyOnBroadcast !== false,
+                notifyOnMeeting: data.notifyOnMeeting !== false,
+              };
+            }
+            fillEmailSettingsForm();
+          },
+          () => {},
+        );
+      }
+
       function listenAllData() {
         cleanupAllDataListeners();
         listenFinance();
         listenFeedback();
         listenLiveTitle();
+        listenEmailSettings();
         appDataUnsubs.push(
           onSnapshot(doc(db, "deletedIds", currentUser.uid), (snap) => {
             if (snap.exists()) {
@@ -6572,6 +7166,7 @@
               ) {
                 listenFinance();
                 listenFeedback();
+                listenEmailSettings();
                 syncAdminRoleUI();
                 scheduleDashboard();
                 renderNotifications();
@@ -6605,6 +7200,7 @@
             renderAdminMembersList();
             renderSubAdminsSector();
             renderAdminSectorsGrid();
+            updateEmailRecipientStats();
             renderMeetingAttendanceSheet();
             scheduleDashboard();
           }),
@@ -7297,9 +7893,10 @@
       function renderPendingApprovals() {
         const pending = allMembers.filter((m) => m.approved === false);
         const badge = document.getElementById("admin-pending-badge");
+        const subBadge = document.getElementById("members-pending-badge");
         const list = document.getElementById("pending-approvals-list");
         const hasAccess = hasAdminPanelAccess();
-        const canEditReg = canEditSector("registrations");
+        const canEditReg = canEditSector("members");
 
         if (badge) {
           if (pending.length > 0 && hasAccess) {
@@ -7307,6 +7904,14 @@
             badge.classList.remove("hidden");
           } else {
             badge.classList.add("hidden");
+          }
+        }
+        if (subBadge) {
+          if (pending.length > 0 && hasAccess) {
+            subBadge.innerText = pending.length;
+            subBadge.classList.remove("hidden");
+          } else {
+            subBadge.classList.add("hidden");
           }
         }
 
@@ -7351,14 +7956,14 @@
         }
         updateHamburgerDot();
         renderAdminSectorsGrid();
-        if (activeTab === "admin" && activeAdminSector === "registrations") {
-          applySectorReadOnlyState("registrations");
+        if (activeTab === "admin" && activeAdminSector === "members") {
+          applySectorReadOnlyState("members");
         }
         lucide.createIcons();
       }
 
       window.approveMember = async (uid) => {
-        if (!requireSectorEdit("registrations")) return;
+        if (!requireSectorEdit("members")) return;
         await updateDoc(doc(db, "users", uid), { approved: true });
         showToast("Member approved!");
       };
@@ -7941,7 +8546,7 @@
         .getElementById("admin-add-member-form")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          if (!requireSectorEdit("add_member")) return;
+          if (!requireSectorEdit("members")) return;
           const name = document.getElementById("new-mem-name").value.trim();
           const email = document.getElementById("new-mem-email").value.trim();
           const pass = document.getElementById("new-mem-pass").value;
@@ -7983,6 +8588,348 @@
           }
         });
 
+      // ================= GMAIL NOTIFICATION ENGINE =================
+      const GMAIL_APPS_SCRIPT_CODE = `const SECRET_KEY = ""; // Optional: match Secret Key in Admin Panel
+
+function esc(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse((e && e.postData && e.postData.contents) || "{}");
+    if (SECRET_KEY && data.secret !== SECRET_KEY) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ ok: false, error: "Invalid secret key" })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    const recipients = Array.isArray(data.recipients)
+      ? data.recipients.filter((x) => typeof x === "string" && x.indexOf("@") > 0)
+      : [];
+    if (!recipients.length) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ ok: false, error: "No recipients" })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const senderName = data.senderName || "Darber E Chandpurishah";
+    const subject = data.subject || data.title || "CSF Notification";
+    const plainBody = [
+      data.typeLabel ? "[" + data.typeLabel + "]" : "",
+      data.title || "",
+      "",
+      data.body || "",
+      "",
+      data.appUrl ? "Open App: " + data.appUrl : "",
+    ].filter(Boolean).join(String.fromCharCode(10));
+
+    const htmlBody =
+      '<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;border:1px solid #d1fae5;border-radius:16px;overflow:hidden;">' +
+        '<div style="background:#065f46;color:#ffffff;padding:18px 22px;">' +
+          '<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">' + esc(senderName) + (data.typeLabel ? ' • ' + esc(data.typeLabel) : '') + '</div>' +
+          '<h2 style="margin:6px 0 0;font-size:18px;">' + esc(data.title || subject) + '</h2>' +
+        '</div>' +
+        '<div style="padding:20px 22px;color:#1e293b;font-size:14px;line-height:1.6;">' +
+          '<p style="margin:0 0 14px;white-space:pre-line;">' + esc(data.body || "") + '</p>' +
+          (data.appUrl ? '<a href="' + esc(data.appUrl) + '" style="display:inline-block;background:#059669;color:#ffffff;text-decoration:none;font-weight:bold;padding:10px 18px;border-radius:10px;">Open Official App</a>' : '') +
+        '</div>' +
+        '<div style="background:#f8fafc;padding:12px 22px;font-size:11px;color:#64748b;">' +
+          'Sent by ' + esc(data.sentBy || "Admin") + ' • ' + esc(senderName) +
+        '</div>' +
+      '</div>';
+
+    const me = Session.getActiveUser().getEmail() || recipients[0];
+    for (let i = 0; i < recipients.length; i += 45) {
+      const batch = recipients.slice(i, i + 45);
+      GmailApp.sendEmail(me, subject, plainBody, {
+        bcc: batch.join(","),
+        htmlBody: htmlBody,
+        name: senderName,
+      });
+    }
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ ok: true, count: recipients.length })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ ok: false, error: String(err) })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+
+      function getApprovedMemberEmails() {
+        const seen = new Set();
+        const emails = [];
+        allMembers.forEach((m) => {
+          if (m.approved === false || m.disabled) return;
+          const em = String(m.email || "").trim();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return;
+          const key = em.toLowerCase();
+          if (seen.has(key)) return;
+          seen.add(key);
+          emails.push(em);
+        });
+        return emails;
+      }
+
+      function updateEmailRecipientStats() {
+        const el = document.getElementById("email-recipient-count");
+        if (el) {
+          const count = getApprovedMemberEmails().length;
+          el.textContent = `${count} active member email${count === 1 ? "" : "s"}`;
+        }
+        const pill = document.getElementById("updates-gmail-pill");
+        if (pill) {
+          const connected = Boolean(
+            emailSettings.enabled !== false &&
+            String(emailSettings.webhookUrl || "").trim(),
+          );
+          pill.textContent = connected
+            ? "Gmail: Connected"
+            : "Gmail: Setup Needed";
+          pill.className = connected
+            ? "text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
+            : "text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
+        }
+      }
+
+      function fillEmailSettingsForm() {
+        const en = document.getElementById("email-enabled");
+        if (en) en.checked = emailSettings.enabled !== false;
+        const setVal = (id, v) => {
+          const el = document.getElementById(id);
+          if (el && document.activeElement !== el) el.value = v || "";
+        };
+        setVal("email-webhook-url", emailSettings.webhookUrl);
+        setVal(
+          "email-sender-name",
+          emailSettings.senderName || "Darber E Chandpurishah",
+        );
+        setVal("email-secret-key", emailSettings.secretKey);
+        setVal("email-app-url", emailSettings.appUrl);
+
+        const setChk = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.checked = val !== false;
+        };
+        setChk("email-on-update", emailSettings.notifyOnUpdate);
+        setChk("email-on-broadcast", emailSettings.notifyOnBroadcast);
+        setChk("email-on-meeting", emailSettings.notifyOnMeeting);
+
+        const updChk = document.getElementById("upd-send-email");
+        if (updChk) updChk.checked = emailSettings.notifyOnUpdate !== false;
+        const notifChk = document.getElementById("notif-send-email");
+        if (notifChk)
+          notifChk.checked = emailSettings.notifyOnBroadcast !== false;
+        const meetChk = document.getElementById("meeting-send-email");
+        if (meetChk) meetChk.checked = emailSettings.notifyOnMeeting !== false;
+
+        updateEmailRecipientStats();
+      }
+
+      function showEmailDeliveryStatus(msg, isOk = true) {
+        const box = document.getElementById("email-last-status");
+        if (!box) return;
+        box.textContent = msg;
+        box.className = isOk
+          ? "text-xs font-semibold px-3.5 py-2.5 rounded-xl border bg-emerald-50 text-emerald-800 border-emerald-200"
+          : "text-xs font-semibold px-3.5 py-2.5 rounded-xl border bg-amber-50 text-amber-900 border-amber-200";
+        box.classList.remove("hidden");
+      }
+
+      window.saveEmailSettings = async (e) => {
+        e.preventDefault();
+        if (!requireSectorEdit("updates")) return;
+        const btn = document.getElementById("email-save-btn");
+        if (btn) btn.disabled = true;
+        try {
+          const payload = {
+            enabled: document.getElementById("email-enabled").checked,
+            webhookUrl: document
+              .getElementById("email-webhook-url")
+              .value.trim(),
+            senderName:
+              document.getElementById("email-sender-name").value.trim() ||
+              "Darber E Chandpurishah",
+            secretKey: document.getElementById("email-secret-key").value.trim(),
+            appUrl: document.getElementById("email-app-url").value.trim(),
+            notifyOnUpdate: document.getElementById("email-on-update").checked,
+            notifyOnBroadcast:
+              document.getElementById("email-on-broadcast").checked,
+            notifyOnMeeting:
+              document.getElementById("email-on-meeting").checked,
+          };
+          await setDoc(doc(db, "settings", "email"), {
+            ...payload,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser.uid,
+          });
+          emailSettings = payload;
+          fillEmailSettingsForm();
+          showToast("Gmail notification settings saved!");
+          showEmailDeliveryStatus("Gmail notification settings saved.", true);
+        } catch (err) {
+          showToast("Failed to save Gmail settings: " + err.message, "error");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      window.copyGmailAppsScript = async () => {
+        try {
+          await navigator.clipboard.writeText(GMAIL_APPS_SCRIPT_CODE);
+          showToast(
+            "Google Apps Script copied! Paste it in script.google.com.",
+          );
+        } catch (_) {
+          showToast("Clipboard blocked — please copy manually.", "warn");
+        }
+      };
+
+      window.openManualGmailCompose = () => {
+        const emails = getApprovedMemberEmails();
+        if (!emails.length) {
+          showToast("No approved member emails found.", "warn");
+          return;
+        }
+        const subject = `[${emailSettings.senderName || "CSF Official"}] Notice / Update`;
+        const body = `Assalamu Alaikum,\n\nPlease check the official app for the latest notice/meeting details:\n${emailSettings.appUrl || window.location.origin + window.location.pathname}\n\nJazakAllahu Khairan,
+${emailSettings.senderName || "Darber E Chandpurishah"}`;
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&bcc=${encodeURIComponent(emails.join(","))}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const a = document.createElement("a");
+        a.href = gmailUrl;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.click();
+      };
+
+      async function sendEmailNotificationToAllMembers({
+        eventType = "notice",
+        typeLabel = "Official Notice",
+        subject = "",
+        title = "",
+        body = "",
+        extraUrl = "",
+        testOnlyEmail = "",
+      }) {
+        const webhookUrl = String(emailSettings.webhookUrl || "").trim();
+        if (!testOnlyEmail && emailSettings.enabled === false) {
+          return { skipped: true, reason: "disabled" };
+        }
+        if (!webhookUrl) {
+          showEmailDeliveryStatus(
+            "Gmail Webhook URL not configured yet. Set it up here in Gmail Setup.",
+            false,
+          );
+          return { skipped: true, reason: "no_webhook" };
+        }
+        const recipients = testOnlyEmail
+          ? [testOnlyEmail]
+          : getApprovedMemberEmails();
+        if (!recipients.length) {
+          return { skipped: true, reason: "no_recipients" };
+        }
+
+        const appUrl =
+          extraUrl ||
+          String(emailSettings.appUrl || "").trim() ||
+          window.location.origin + window.location.pathname;
+        const senderName =
+          String(emailSettings.senderName || "").trim() ||
+          "Darber E Chandpurishah";
+
+        try {
+          const res = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              secret: emailSettings.secretKey || "",
+              senderName,
+              eventType,
+              typeLabel,
+              subject: subject || `[${senderName}] ${title}`,
+              title,
+              body,
+              appUrl,
+              recipients,
+              sentBy: currentUserProfile?.name || "Admin",
+              sentAt: new Date().toISOString(),
+            }),
+          });
+          const data = await res.json().catch(() => ({ ok: res.ok }));
+          if (!res.ok || data.ok === false) {
+            throw new Error(data.error || `HTTP ${res.status}`);
+          }
+          const count = data.count || recipients.length;
+          showEmailDeliveryStatus(
+            `Last Gmail batch sent to ${count} recipient${count === 1 ? "" : "s"} (${new Date().toLocaleTimeString()}).`,
+            true,
+          );
+          return { ok: true, count };
+        } catch (err) {
+          console.warn("Gmail relay error:", err);
+          showEmailDeliveryStatus(
+            `Gmail relay error: ${err.message || err}`,
+            false,
+          );
+          return { ok: false, error: err.message || String(err) };
+        }
+      }
+
+      window.sendTestEmailNotification = async () => {
+        if (!requireSectorEdit("updates")) return;
+        const myEmail = currentUserProfile?.email || currentUser?.email || "";
+        if (!myEmail) {
+          showToast("Your account does not have an email address.", "error");
+          return;
+        }
+        const webhookUrl = document
+          .getElementById("email-webhook-url")
+          ?.value.trim();
+        if (webhookUrl && webhookUrl !== emailSettings.webhookUrl) {
+          emailSettings.webhookUrl = webhookUrl;
+          emailSettings.secretKey =
+            document.getElementById("email-secret-key")?.value.trim() || "";
+          emailSettings.senderName =
+            document.getElementById("email-sender-name")?.value.trim() ||
+            "Darber E Chandpurishah";
+        }
+        if (!emailSettings.webhookUrl) {
+          showToast(
+            "Paste your Google Apps Script Web App URL first.",
+            "error",
+          );
+          return;
+        }
+        const btn = document.getElementById("email-test-btn");
+        if (btn) btn.disabled = true;
+        try {
+          const result = await sendEmailNotificationToAllMembers({
+            eventType: "test",
+            typeLabel: "Test Alert",
+            subject: `[${emailSettings.senderName || "CSF Official"}] Gmail Notification Test`,
+            title: "Gmail Notifications Connected Successfully",
+            body: "Assalamu Alaikum! This is a test email from Chandpurisha Special Force Official App. Future notices and Live Meeting start alerts will be sent to all approved members.",
+            testOnlyEmail: myEmail,
+          });
+          if (result.ok) {
+            showToast(`Test email sent to ${myEmail}!`);
+          } else {
+            showToast(
+              "Test email failed: " + (result.error || result.reason),
+              "error",
+            );
+          }
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
       document
         .getElementById("admin-post-update-form")
         .addEventListener("submit", async (e) => {
@@ -7993,16 +8940,20 @@
             document.getElementById("upd-title").value.trim() ||
             (updType === "photo" ? "Photo" : "");
           const description = document.getElementById("upd-desc").value.trim();
+          const url = document.getElementById("upd-url").value.trim();
+          const alsoSendEmail = Boolean(
+            document.getElementById("upd-send-email")?.checked,
+          );
           if (!title) {
             showToast("Please write a title.", "error");
             return;
           }
           try {
             await addDoc(collection(db, "updates"), {
-              type: document.getElementById("upd-type").value,
+              type: updType,
               title,
               description,
-              url: document.getElementById("upd-url").value.trim(),
+              url,
               fileData: uploadedUpdateFile?.dataUrl || "",
               fileName: uploadedUpdateFile?.fileName || "",
               isImageFile: uploadedUpdateFile?.isImage || false,
@@ -8019,10 +8970,29 @@
               authorName: currentUserProfile.name,
               readBy: [currentUser.uid],
             });
+            let emailMsg = "";
+            if (alsoSendEmail) {
+              const emailRes = await sendEmailNotificationToAllMembers({
+                eventType: "update",
+                typeLabel:
+                  updType === "event" ? "Event / Schedule" : "Official Notice",
+                subject: `[${emailSettings.senderName || "CSF"}] New Notice: ${title}`,
+                title,
+                body: description || title,
+                extraUrl: url || "",
+              });
+              if (emailRes?.ok) {
+                emailMsg = ` (+ ${emailRes.count} Gmail${emailRes.count === 1 ? "" : "s"})`;
+              } else if (emailRes?.reason === "no_webhook") {
+                emailMsg = " (Setup Gmail tab to also send emails)";
+              }
+            }
             e.target.reset();
+            const updChk = document.getElementById("upd-send-email");
+            if (updChk) updChk.checked = emailSettings.notifyOnUpdate !== false;
             uploadedUpdateFile = null;
             document.getElementById("upd-file-status").classList.add("hidden");
-            showToast("Update published & notification sent to everyone!");
+            showToast(`Update published & notified!${emailMsg}`);
           } catch (err) {
             showToast("Failed to publish: " + err.message, "error");
           }
@@ -8032,10 +9002,13 @@
         .getElementById("admin-broadcast-form")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          if (!requireSectorEdit("notifications")) return;
+          if (!requireSectorEdit("updates")) return;
           const title = document.getElementById("notif-title").value.trim();
           const body = document.getElementById("notif-body").value.trim();
           const targetTab = document.getElementById("notif-target-tab").value;
+          const alsoSendEmail = Boolean(
+            document.getElementById("notif-send-email")?.checked,
+          );
           if (!title || !body) return;
           const btn = document.getElementById("notif-send-btn");
           btn.disabled = true;
@@ -8050,8 +9023,28 @@
               authorName: currentUserProfile.name,
               readBy: [currentUser.uid],
             });
+            let emailMsg = "";
+            if (alsoSendEmail) {
+              const emailRes = await sendEmailNotificationToAllMembers({
+                eventType: "announcement",
+                typeLabel: "Important Announcement",
+                subject: `[${emailSettings.senderName || "CSF"}] ${title}`,
+                title,
+                body,
+              });
+              if (emailRes?.ok) {
+                emailMsg = ` (+ ${emailRes.count} Gmail${emailRes.count === 1 ? "" : "s"})`;
+              } else if (emailRes?.reason === "no_webhook") {
+                emailMsg = " (Setup Gmail tab to also send emails)";
+              }
+            }
             e.target.reset();
-            showToast("Notification sent to all admins and members!");
+            const notifChk = document.getElementById("notif-send-email");
+            if (notifChk)
+              notifChk.checked = emailSettings.notifyOnBroadcast !== false;
+            showToast(`Notification sent to everyone!${emailMsg}`);
+          } catch (err) {
+            showToast("Failed to send: " + err.message, "error");
           } finally {
             btn.disabled = false;
           }
@@ -8638,7 +9631,7 @@
           el.innerHTML = `<p class="text-sm text-slate-500 col-span-full text-center py-6">No ${f === "all" ? "" : escapeHtml(f)} payment requests.</p>`;
           return;
         }
-        const canEditPay = canEditSector("payments");
+        const canEditPay = canEditSector("finance");
         const disAttr = canEditPay
           ? ""
           : 'disabled class="opacity-50 cursor-not-allowed ';
@@ -8682,7 +9675,7 @@
       };
 
       window.approvePayment = async (id) => {
-        if (!requireSectorEdit("payments")) return;
+        if (!requireSectorEdit("finance")) return;
         const p = allPayments.find((x) => x.id === id);
         if (!p) return;
         try {
@@ -8711,7 +9704,7 @@
       };
 
       window.rejectPayment = async (id) => {
-        if (!requireSectorEdit("payments")) return;
+        if (!requireSectorEdit("finance")) return;
         const p = allPayments.find((x) => x.id === id);
         if (!p) return;
         const reason = prompt(
@@ -9665,18 +10658,36 @@
 
       window.saveLiveTitle = async (e) => {
         e.preventDefault();
-        if (!requireSectorEdit("dashboard_notice")) return;
+        if (!requireSectorEdit("updates")) return;
         const btn = document.getElementById("lt-save-btn");
         btn.disabled = true;
         try {
+          const noticeText = document.getElementById("lt-title").value.trim();
+          const enabled = document.getElementById("lt-enabled").checked;
+          const alsoSendEmail = Boolean(
+            document.getElementById("lt-send-email")?.checked,
+          );
           await setDoc(doc(db, "settings", "dashboard"), {
-            title: document.getElementById("lt-title").value.trim(),
+            title: noticeText,
             subtitle: "",
-            enabled: document.getElementById("lt-enabled").checked,
+            enabled,
             updatedAt: serverTimestamp(),
             updatedBy: currentUser.uid,
           });
-          showToast("Notice saved!");
+          let emailMsg = "";
+          if (enabled && noticeText && alsoSendEmail) {
+            const emailRes = await sendEmailNotificationToAllMembers({
+              eventType: "dashboard_notice",
+              typeLabel: "Dashboard Notice",
+              subject: `[${emailSettings.senderName || "CSF"}] Important Notice`,
+              title: "New Dashboard Notice",
+              body: noticeText,
+            });
+            if (emailRes?.ok) {
+              emailMsg = ` (+ ${emailRes.count} Gmail${emailRes.count === 1 ? "" : "s"})`;
+            }
+          }
+          showToast(`Notice saved!${emailMsg}`);
         } catch (err) {
           showToast("Failed to save: " + err.message, "error");
         } finally {
@@ -9685,7 +10696,7 @@
       };
 
       window.clearLiveTitle = async () => {
-        if (!requireSectorEdit("dashboard_notice")) return;
+        if (!requireSectorEdit("updates")) return;
         try {
           await setDoc(doc(db, "settings", "dashboard"), {
             title: "",
@@ -9704,7 +10715,7 @@
       function renderDashNotice() {
         const el = document.getElementById("dash-notice");
         if (!el) return;
-        const isAdmin = canEditSector("dashboard_notice");
+        const isAdmin = canEditSector("updates");
         const text = (liveTitle.title || "").trim();
         const show = liveTitle.enabled !== false && text;
         const sig = `${isAdmin}|${show ? text : ""}`;
@@ -9878,18 +10889,27 @@
         if (!hasAdminPanelAccess()) return;
         switchTab("admin");
         const targetMap = {
-          post: "updates",
-          livetitle: "dashboard_notice",
-          "admin-members": "members",
-          registrations: "registrations",
-          finance: "finance",
-          requests: "payments",
-          feedback: "feedback",
-          subadmins: "subadmins",
+          post: ["updates", "post"],
+          notifications: ["updates", "notifications"],
+          livetitle: ["updates", "dashboard_notice"],
+          dashboard_notice: ["updates", "dashboard_notice"],
+          gmail: ["updates", "gmail"],
+          "admin-members": ["members", "manage"],
+          registrations: ["members", "registrations"],
+          add_member: ["members", "add"],
+          finance: ["finance", "overview"],
+          requests: ["finance", "requests"],
+          live_meeting: ["live_meeting", "controls"],
+          attendance: ["live_meeting", "attendance"],
+          helpdesk: ["helpdesk", "whatsapp"],
+          feedback: ["helpdesk", "feedback"],
+          subadmins: ["subadmins", null],
         };
-        const sector = targetMap[target] || target;
+        const mapped = targetMap[target];
+        const sector = mapped ? mapped[0] : normalizeSectorId(target);
+        const subTab = mapped ? mapped[1] : null;
         if (ADMIN_SECTORS.some((s) => s.id === sector)) {
-          openAdminSector(sector);
+          openAdminSector(sector, subTab);
         }
       };
 
@@ -10538,6 +11558,7 @@
           syncMeetingStageUI();
           scheduleDashboard();
 
+          let emailMsg = "";
           if (nextActive && currentUser && currentUserProfile) {
             await createAppNotification({
               type: "meeting",
@@ -10549,10 +11570,41 @@
               authorName: currentUserProfile.name,
               readBy: [currentUser.uid],
             });
+            const meetEmailChk = document.getElementById("meeting-send-email");
+            const shouldEmail = meetEmailChk
+              ? meetEmailChk.checked
+              : emailSettings.notifyOnMeeting !== false;
+            if (shouldEmail) {
+              const joinInfo =
+                currentMeetingProvider === "google_meet" && currentGoogleMeetUrl
+                  ? `Join via Google Meet: ${currentGoogleMeetUrl}`
+                  : "Open the official app and go to Online Meeting to join now.";
+              const emailRes = await sendEmailNotificationToAllMembers({
+                eventType: "meeting",
+                typeLabel: "Live Meeting Started",
+                subject: `[${emailSettings.senderName || "CSF"}] Live Meeting Started: ${title}`,
+                title: `Live Meeting Started: ${title}`,
+                body: `Assalamu Alaikum,
+
+"${title}" is LIVE now!
+${joinInfo}`,
+                extraUrl:
+                  currentMeetingProvider === "google_meet" &&
+                  currentGoogleMeetUrl
+                    ? currentGoogleMeetUrl
+                    : "",
+              });
+              if (emailRes?.ok) {
+                emailMsg = ` (+ ${emailRes.count} Gmail${emailRes.count === 1 ? "" : "s"})`;
+              } else if (emailRes?.reason === "no_webhook") {
+                emailMsg =
+                  " (Setup Gmail tab in Post Notice to also send emails)";
+              }
+            }
           }
           showToast(
             nextActive
-              ? "Live meeting started & everyone notified!"
+              ? `Live meeting started & everyone notified!${emailMsg}`
               : "Meeting notice ended",
           );
         } catch (err) {
@@ -11170,7 +12222,7 @@
           "match /feedback/{docId} {",
           "  allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;",
           "  allow read: if request.auth != null && (resource.data.uid == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' || (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors is list && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors.size() > 0));",
-          "  allow update, delete: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' || (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors is list && 'feedback' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors));",
+          "  allow update, delete: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' || (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors is list && ('helpdesk' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors || 'feedback' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors)));",
           "}",
         ].join("\n");
         try {
@@ -11187,6 +12239,14 @@
       };
 
       window.renderFeedbackSector = () => {
+        const newFbCount = allFeedback.filter(
+          (f) => f.status !== "reviewed",
+        ).length;
+        const hdFbBadge = document.getElementById("hd-feedback-badge");
+        if (hdFbBadge) {
+          hdFbBadge.textContent = newFbCount;
+          hdFbBadge.classList.toggle("hidden", newFbCount === 0);
+        }
         const list = document.getElementById("admin-feedback-list");
         if (!list || !hasAdminPanelAccess()) return;
         if (feedbackPermissionDenied) {
@@ -11212,7 +12272,8 @@
   allow update, delete: if request.auth != null &amp;&amp; (
     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
     (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors is list &amp;&amp;
-     'feedback' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors)
+     ('helpdesk' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors ||
+      'feedback' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subAdminSectors))
   );
 }</pre>
             </div>`;
@@ -11234,7 +12295,7 @@
           list.innerHTML = `<p class="text-sm text-slate-500 col-span-full text-center py-6">No advice, complaints, or CSF ID applications found for this filter.</p>`;
           return;
         }
-        const canEditFb = canEditSector("feedback");
+        const canEditFb = canEditSector("helpdesk");
         const mainAdmin = isMainAdmin();
         list.innerHTML = rows
           .map((f) => {
@@ -11290,14 +12351,14 @@
               </div>`;
           })
           .join("");
-        if (activeTab === "admin" && activeAdminSector === "feedback") {
-          applySectorReadOnlyState("feedback");
+        if (activeTab === "admin" && activeAdminSector === "helpdesk") {
+          applySectorReadOnlyState("helpdesk");
         }
         lucide.createIcons();
       };
 
       window.toggleFeedbackStatus = async (id, nextStatus) => {
-        if (!requireSectorEdit("feedback")) return;
+        if (!requireSectorEdit("helpdesk")) return;
         try {
           await updateDoc(doc(db, "feedback", id), {
             status: nextStatus,
@@ -11315,7 +12376,7 @@
       };
 
       window.deleteFeedback = async (id) => {
-        if (!requireSectorEdit("feedback")) return;
+        if (!requireSectorEdit("helpdesk")) return;
         if (!confirm("Delete this submission permanently?")) return;
         try {
           await deleteDoc(doc(db, "feedback", id));
