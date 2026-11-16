@@ -11237,7 +11237,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           ${classCard}
           ${dashCard("check-circle-2", "emerald", "Your Attendance", att.rate + "%", att.totalHeld ? `${att.attended}/${att.totalHeld} this month` : "This month", "dashGo('profile')")}
-          ${dashCard("star", "amber", "Total Events", events.length, "", "dashGo('updates')")}
+          ${dashCard("star", "amber", "Upcoming Events", events.length, "", "dashGo('updates')")}
           ${dashCard("wallet", "purple", "Donation", BDT(paid), pend ? `${pend} pending` : "Paid", "dashGo('payments')")}
         </div>
 
