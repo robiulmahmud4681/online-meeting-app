@@ -566,6 +566,26 @@
       html.dark [class~="divide-emerald-50"] > * + * {
         border-color: rgba(52, 211, 153, 0.2) !important;
       }
+      /* Keep Money Receipt crisp white like official paper even in Dark Mode */
+      .receipt-paper,
+      html.dark .receipt-paper {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        border-color: #065f46 !important;
+      }
+      html.dark .receipt-paper .receipt-emerald-text {
+        color: #065f46 !important;
+      }
+      html.dark .receipt-paper .receipt-muted-text {
+        color: #475569 !important;
+      }
+      html.dark .receipt-paper .receipt-dark-text {
+        color: #0f172a !important;
+      }
+      html.dark .receipt-paper .receipt-amount-box {
+        background-color: #ecfdf5 !important;
+        border-color: #065f46 !important;
+      }
     </style>
     <script>
       try {
@@ -901,6 +921,33 @@
           <div>
             <label
               class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+              >Education Level *</label
+            >
+            <input
+              type="text"
+              id="reg-education"
+              list="education-level-options"
+              required
+              placeholder="e.g. SSC / HSC / Honours / Masters / Hafez"
+              class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+            />
+            <datalist id="education-level-options">
+              <option value="PSC / Primary"></option>
+              <option value="JSC / Class 8"></option>
+              <option value="SSC / Dakhil"></option>
+              <option value="HSC / Alim"></option>
+              <option value="Diploma / Vocational"></option>
+              <option value="Honours / Fazil / Bachelor"></option>
+              <option value="Masters / Kamil"></option>
+              <option value="Hafez / Qawmi / Dawra-e-Hadith"></option>
+              <option value="PhD / Research"></option>
+              <option value="Other"></option>
+            </datalist>
+          </div>
+
+          <div>
+            <label
+              class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
               >Present Address *</label
             >
             <textarea
@@ -1147,6 +1194,31 @@
                 class="hidden absolute -top-1 -right-1 w-3 h-3 bg-amber-400 border-2 border-emerald-900 rounded-full"
               ></span>
             </button>
+
+            <div class="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                id="nav-prev-btn"
+                onclick="navBack()"
+                disabled
+                title="Previous Page"
+                aria-label="Previous Page"
+                class="bg-white/15 hover:bg-white/25 disabled:opacity-35 disabled:cursor-not-allowed border border-white/25 p-2 rounded-xl transition flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button
+                type="button"
+                id="nav-next-btn"
+                onclick="navForward()"
+                disabled
+                title="Next Page"
+                aria-label="Next Page"
+                class="bg-white/15 hover:bg-white/25 disabled:opacity-35 disabled:cursor-not-allowed border border-white/25 p-2 rounded-xl transition flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
 
             <button
               type="button"
@@ -2488,6 +2560,20 @@
                 </div>
               </div>
 
+              <div>
+                <label
+                  class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                  >Education Level</label
+                >
+                <input
+                  type="text"
+                  id="prof-education"
+                  list="education-level-options"
+                  placeholder="e.g. SSC / HSC / Honours / Masters / Hafez"
+                  class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label
@@ -2679,6 +2765,32 @@
           </div>
 
           <div class="glass p-5 rounded-2xl space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="font-bold text-emerald-950 flex items-center gap-2">
+                <i
+                  data-lucide="hand-heart"
+                  class="w-4 h-4 text-emerald-600"
+                ></i>
+                <span>Request a Donation</span>
+              </h3>
+              <span
+                class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
+              >
+                Step 1: Send Request
+              </span>
+            </div>
+            <div
+              class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1"
+            >
+              <p class="font-bold">How Donation &amp; Money Receipt Works:</p>
+              <p>
+                1. Submit your donation request below. 2. When Admin approves
+                your request, send the amount to the Collector's receiving
+                number above. 3. Once the Collector confirms with the
+                Transaction ID / URL, you can download your signed official
+                English Money Receipt.
+              </p>
+            </div>
             <form
               id="payment-form"
               onsubmit="submitPayment(event)"
@@ -2688,33 +2800,48 @@
                 id="pay-category"
                 class="hidden w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
               ></select>
-              <input
-                id="pay-amount"
-                type="number"
-                min="1"
-                step="any"
-                required
-                placeholder="Amount (৳)"
-                class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-              <input
-                id="pay-trx"
-                type="text"
-                required
-                placeholder="Transaction ID / URL"
-                class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input
+                  id="pay-amount"
+                  type="number"
+                  min="1"
+                  step="any"
+                  required
+                  placeholder="Donation Amount (BDT ৳) *"
+                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <input
+                  id="pay-month"
+                  type="text"
+                  placeholder="Month / Period (e.g. November 2026)"
+                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <select
+                  id="pay-method"
+                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="bKash">bKash</option>
+                  <option value="Nagad">Nagad</option>
+                  <option value="Rocket">Rocket</option>
+                  <option value="Bank Transfer">Bank Transfer</option>
+                  <option value="Cash">Cash / Hand-to-Hand</option>
+                </select>
+                <input
+                  id="pay-note"
+                  type="text"
+                  placeholder="Note / Purpose (Optional)"
+                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
               <button
                 id="pay-submit-btn"
                 type="submit"
                 class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 transition"
               >
-                Submit
+                Send Donation Request
               </button>
-              <p class="text-[11px] text-slate-400 text-center">
-                Admin will check your transaction and approve it. You can see
-                the status below.
-              </p>
             </form>
           </div>
 
@@ -3543,8 +3670,16 @@
                       onchange="renderFinanceRequests()"
                       class="px-3 py-2 bg-white/80 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
                     >
-                      <option value="pending">Pending</option>
-                      <option value="approved">Approved</option>
+                      <option value="action_needed">
+                        Needs Action (All Pending)
+                      </option>
+                      <option value="requested">
+                        New Requests (Approve First)
+                      </option>
+                      <option value="awaiting_collector">
+                        Waiting Collector Confirm
+                      </option>
+                      <option value="approved">Confirmed / Paid</option>
                       <option value="rejected">Rejected</option>
                       <option value="all">All</option>
                     </select>
@@ -3705,12 +3840,139 @@
                       placeholder="Instructions for members (e.g. monthly subscription amount, how to send, deadline)"
                       class="w-full px-3.5 py-2.5 bg-white border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                     ></textarea>
+
+                    <div class="pt-3 border-t border-emerald-100 space-y-3">
+                      <div>
+                        <h4
+                          class="text-sm font-bold text-emerald-950 flex items-center gap-2"
+                        >
+                          <i
+                            data-lucide="pen-tool"
+                            class="w-4 h-4 text-emerald-700"
+                          ></i>
+                          <span
+                            >Money Receipt &amp; Collector Signature
+                            Settings</span
+                          >
+                        </h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">
+                          This signature and collector name will ONLY appear on
+                          official Money Receipts after a Collector confirms the
+                          Transaction ID / URL.
+                        </p>
+                      </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label
+                            class="block text-xs font-semibold text-slate-600 mb-1"
+                            >Receipt Subtitle / Address</label
+                          >
+                          <input
+                            id="fin-set-receipt-sub"
+                            type="text"
+                            placeholder="e.g. Ashrafnagar Darbar Sharif, Laksam, Cumilla"
+                            class="w-full px-3.5 py-2.5 bg-white border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            class="block text-xs font-semibold text-slate-600 mb-1"
+                            >Default Collector / Signer Name</label
+                          >
+                          <input
+                            id="fin-set-signer-name"
+                            type="text"
+                            placeholder="e.g. Golam Mostafa Rayhan"
+                            class="w-full px-3.5 py-2.5 bg-white border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div
+                          class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3 space-y-2"
+                        >
+                          <label
+                            class="block text-xs font-bold text-emerald-900"
+                            >Draw Collector Signature</label
+                          >
+                          <canvas
+                            id="fin-sig-canvas"
+                            width="320"
+                            height="110"
+                            class="w-full h-28 bg-white border border-emerald-200 rounded-lg cursor-crosshair touch-none"
+                          ></canvas>
+                          <div class="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onclick="clearSignaturePad()"
+                              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+                            >
+                              Clear Pad
+                            </button>
+                            <button
+                              type="button"
+                              onclick="applySignaturePad()"
+                              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-700 hover:bg-emerald-800 text-white transition"
+                            >
+                              Use Drawn Signature
+                            </button>
+                          </div>
+                        </div>
+
+                        <div
+                          class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3 space-y-2 flex flex-col justify-between"
+                        >
+                          <div>
+                            <label
+                              class="block text-xs font-bold text-emerald-900 mb-1"
+                              >Or Upload Signature Image (PNG / JPG)</label
+                            >
+                            <input
+                              id="fin-set-sig-file"
+                              type="file"
+                              accept="image/*"
+                              onchange="handleSignatureFileUpload(event)"
+                              class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200"
+                            />
+                          </div>
+                          <div
+                            class="bg-white border border-emerald-100 rounded-lg p-2.5 flex items-center justify-between gap-2 min-h-[76px]"
+                          >
+                            <div
+                              class="flex-1 flex items-center justify-center"
+                            >
+                              <img
+                                id="fin-sig-preview"
+                                src=""
+                                alt="Collector Signature Preview"
+                                class="hidden max-h-14 object-contain"
+                              />
+                              <span
+                                id="fin-sig-empty"
+                                class="text-xs text-slate-400"
+                                >No signature uploaded yet</span
+                              >
+                            </div>
+                            <button
+                              type="button"
+                              id="fin-sig-remove-btn"
+                              onclick="removeSavedSignature()"
+                              class="hidden shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <button
                       id="fin-set-btn"
                       type="submit"
                       class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition"
                     >
-                      Save Payment Settings
+                      Save Payment &amp; Receipt Settings
                     </button>
                   </form>
                 </div>
@@ -5019,6 +5281,19 @@
                 ><strong>Age:</strong> <span id="modal-mem-age"></span
               ></span>
             </div>
+            <div
+              id="modal-mem-education-row"
+              class="hidden flex items-center gap-3"
+            >
+              <i
+                data-lucide="graduation-cap"
+                class="w-4 h-4 text-emerald-600 shrink-0"
+              ></i>
+              <span class="text-slate-700 text-xs sm:text-sm"
+                ><strong>Education:</strong>
+                <span id="modal-mem-education"></span
+              ></span>
+            </div>
             <div class="flex items-center gap-3">
               <i
                 data-lucide="map-pin"
@@ -5151,6 +5426,55 @@
         </div>
       </div>
     </div>
+    <!-- ================= MONEY RECEIPT MODAL ================= -->
+    <div
+      id="receipt-modal"
+      class="hidden fixed inset-0 z-[75] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+      onclick="if (event.target === this) closeReceiptModal();"
+    >
+      <div
+        id="receipt-modal-card"
+        class="bg-slate-50 border border-emerald-200 rounded-3xl shadow-2xl max-w-2xl w-full p-4 sm:p-6 space-y-4 my-auto"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <h3
+            class="text-sm sm:text-base font-extrabold text-emerald-950 flex items-center gap-2"
+          >
+            <i data-lucide="receipt" class="w-4 h-4 text-emerald-700"></i>
+            <span>Official Money Receipt (English)</span>
+          </h3>
+          <button
+            type="button"
+            onclick="closeReceiptModal()"
+            class="p-2 rounded-xl bg-slate-200/80 hover:bg-slate-300 text-slate-700 transition"
+            aria-label="Close Receipt"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div id="receipt-preview-area"></div>
+
+        <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
+          <button
+            type="button"
+            onclick="closeReceiptModal()"
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            id="receipt-download-pdf-btn"
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow flex items-center gap-1.5 transition"
+          >
+            <i data-lucide="file-down" class="w-4 h-4"></i>
+            <span>Download PDF Receipt</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ================= GALLERY LIGHTBOX ================= -->
     <div
       id="gallery-modal"
@@ -5779,9 +6103,7 @@
         const pendingRegCount = allMembers.filter(
           (m) => m.approved === false,
         ).length;
-        const pendingPayCount = allPayments.filter(
-          (p) => p.status === "pending",
-        ).length;
+        const pendingPayCount = allPayments.filter(isPaymentPending).length;
         const newFeedbackCount = allFeedback.filter(
           (f) => f.status !== "reviewed",
         ).length;
@@ -6057,6 +6379,7 @@
         title,
         body,
         targetRole = "all",
+        targetUid = "",
         targetTab = "updates",
         createdByUid = "",
         authorName = "",
@@ -6068,6 +6391,7 @@
             title,
             body,
             targetRole,
+            targetUid,
             targetTab,
             createdByUid,
             authorName,
@@ -6099,10 +6423,13 @@
 
       function getVisibleNotifications() {
         const hasAdmin = hasAdminPanelAccess();
-        return allNotifications.filter(
-          (n) =>
-            n.targetRole === "all" || (n.targetRole === "admin" && hasAdmin),
-        );
+        const myUid = currentUser?.uid || "";
+        return allNotifications.filter((n) => {
+          if (n.targetUid) return n.targetUid === myUid;
+          return (
+            n.targetRole === "all" || (n.targetRole === "admin" && hasAdmin)
+          );
+        });
       }
 
       function updateNotifPermUI() {
@@ -6517,13 +6844,60 @@
             history.pushState({ tab: tabName, i: navIndex }, "");
           } catch (_) {}
         }
+        syncNavHistoryButtons();
         closeNavMenu();
         lucide.createIcons();
+      };
+
+      function syncNavHistoryButtons() {
+        const prevBtn = document.getElementById("nav-prev-btn");
+        const nextBtn = document.getElementById("nav-next-btn");
+        if (prevBtn) prevBtn.disabled = navIndex <= 0;
+        if (nextBtn) nextBtn.disabled = navIndex >= navStack.length - 1;
+      }
+
+      window.navBack = () => {
+        if (navIndex <= 0) return;
+        let nextIdx = navIndex - 1;
+        while (
+          nextIdx >= 0 &&
+          navStack[nextIdx] === "admin" &&
+          !hasAdminPanelAccess()
+        ) {
+          nextIdx--;
+        }
+        if (nextIdx < 0) return;
+        navIndex = nextIdx;
+        const targetTab = navStack[navIndex];
+        try {
+          history.replaceState({ tab: targetTab, i: navIndex }, "");
+        } catch (_) {}
+        switchTab(targetTab, true);
+      };
+
+      window.navForward = () => {
+        if (navIndex >= navStack.length - 1) return;
+        let nextIdx = navIndex + 1;
+        while (
+          nextIdx < navStack.length &&
+          navStack[nextIdx] === "admin" &&
+          !hasAdminPanelAccess()
+        ) {
+          nextIdx++;
+        }
+        if (nextIdx >= navStack.length) return;
+        navIndex = nextIdx;
+        const targetTab = navStack[navIndex];
+        try {
+          history.replaceState({ tab: targetTab, i: navIndex }, "");
+        } catch (_) {}
+        switchTab(targetTab, true);
       };
 
       try {
         history.replaceState({ tab: "dashboard", i: 0 }, "");
       } catch (_) {}
+      syncNavHistoryButtons();
       window.addEventListener("popstate", (e) => {
         const i = e.state && typeof e.state.i === "number" ? e.state.i : 0;
         const tab = navStack[i];
@@ -6747,6 +7121,9 @@
             .getElementById("reg-parents-phone")
             .value.trim();
           const designation = document.getElementById("reg-desig").value.trim();
+          const educationLevel = document
+            .getElementById("reg-education")
+            .value.trim();
           const presentAddress = document
             .getElementById("reg-present-addr")
             .value.trim();
@@ -6766,6 +7143,7 @@
             !motherName ||
             !parentsPhone ||
             !designation ||
+            !educationLevel ||
             !presentAddress ||
             !permanentAddress ||
             !email ||
@@ -6789,6 +7167,7 @@
             permanentAddress,
             country,
             designation,
+            educationLevel,
             email,
             role: "member",
             bio: "",
@@ -7336,9 +7715,10 @@
 
               const hasAdmin = hasAdminPanelAccess();
               for (const n of newItems) {
-                const isForMe =
-                  n.targetRole === "all" ||
-                  (n.targetRole === "admin" && hasAdmin);
+                const isForMe = n.targetUid
+                  ? n.targetUid === currentUser.uid
+                  : n.targetRole === "all" ||
+                    (n.targetRole === "admin" && hasAdmin);
                 if (isForMe && n.createdByUid !== currentUser.uid) {
                   showToast(
                     `${n.title}: ${n.body}`,
@@ -7935,6 +8315,7 @@
               <div class="text-[11px] text-slate-600 pt-1 space-y-0.5">
                 ${m.csfId ? `<p><strong>CSF ID:</strong> ${escapeHtml(m.csfId)}</p>` : ""}
                 ${m.age ? `<p><strong>Age:</strong> ${escapeHtml(m.age)} • <strong>Phone:</strong> ${escapeHtml(m.phone || "N/A")}</p>` : ""}
+                ${m.educationLevel ? `<p><strong>Education:</strong> ${escapeHtml(m.educationLevel)}</p>` : ""}
                 ${m.fatherName ? `<p><strong>Father:</strong> ${escapeHtml(m.fatherName)}</p>` : ""}
                 ${m.motherName ? `<p><strong>Mother:</strong> ${escapeHtml(m.motherName)}</p>` : ""}
                 ${m.parentsPhone ? `<p><strong>Parents' Phone:</strong> ${escapeHtml(m.parentsPhone)}</p>` : ""}
@@ -8085,6 +8466,17 @@
           document.getElementById("modal-mem-age").innerText = m.age;
         } else {
           ageRow.classList.add("hidden");
+        }
+
+        const eduRow = document.getElementById("modal-mem-education-row");
+        if (eduRow) {
+          if (m.educationLevel) {
+            eduRow.classList.remove("hidden");
+            document.getElementById("modal-mem-education").innerText =
+              m.educationLevel;
+          } else {
+            eduRow.classList.add("hidden");
+          }
         }
 
         document.getElementById("modal-mem-country").innerText =
@@ -8480,6 +8872,8 @@
           currentUserProfile.designation || "";
         document.getElementById("prof-country").value =
           currentUserProfile.country || "";
+        const eduInput = document.getElementById("prof-education");
+        if (eduInput) eduInput.value = currentUserProfile.educationLevel || "";
         document.getElementById("prof-phone").value =
           currentUserProfile.phone || "";
         document.getElementById("prof-parents-phone").value =
@@ -8520,6 +8914,9 @@
               .getElementById("prof-designation")
               .value.trim(),
             country: document.getElementById("prof-country").value.trim(),
+            educationLevel: (
+              document.getElementById("prof-education")?.value || ""
+            ).trim(),
             phone: document.getElementById("prof-phone").value.trim(),
             parentsPhone: document
               .getElementById("prof-parents-phone")
@@ -9098,10 +9495,24 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         bank: "",
         note: "",
         categories: [],
+        receiptOrgSub: "",
+        receiptSignerName: "",
+        receiptSignature: "",
+        receiptSeq: 0,
       };
+      let pendingSignatureDataUrl = "";
+      let sigPadInited = false;
+      let sigPadHasStroke = false;
       let financeUnsubs = [];
       let financeSubTab = "overview";
       let financeErrorShown = false;
+
+      const isPaymentPending = (p) =>
+        p?.status === "requested" ||
+        p?.status === "awaiting_collector" ||
+        p?.status === "pending";
+      const isPaymentConfirmed = (p) =>
+        p?.status === "approved" && p?.collectorConfirmed !== false;
 
       const INCOME_CATEGORIES = [
         "Monthly Subscription",
@@ -9145,6 +9556,86 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           " " +
           d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         );
+      }
+      function fmtEnglishReceiptDate(ts) {
+        const d = tsToDate(ts);
+        return d.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        });
+      }
+      function numberToEnglishWords(amount) {
+        const ones = [
+          "",
+          "One",
+          "Two",
+          "Three",
+          "Four",
+          "Five",
+          "Six",
+          "Seven",
+          "Eight",
+          "Nine",
+          "Ten",
+          "Eleven",
+          "Twelve",
+          "Thirteen",
+          "Fourteen",
+          "Fifteen",
+          "Sixteen",
+          "Seventeen",
+          "Eighteen",
+          "Nineteen",
+        ];
+        const tens = [
+          "",
+          "",
+          "Twenty",
+          "Thirty",
+          "Forty",
+          "Fifty",
+          "Sixty",
+          "Seventy",
+          "Eighty",
+          "Ninety",
+        ];
+        const convertUnder1000 = (n) => {
+          let str = "";
+          if (n >= 100) {
+            str += ones[Math.floor(n / 100)] + " Hundred";
+            n %= 100;
+            if (n > 0) str += " ";
+          }
+          if (n >= 20) {
+            str += tens[Math.floor(n / 10)];
+            if (n % 10 > 0) str += " " + ones[n % 10];
+          } else if (n > 0) {
+            str += ones[n];
+          }
+          return str;
+        };
+        const num = Number(amount || 0);
+        if (!Number.isFinite(num) || num <= 0) return "Zero Taka Only";
+        const intPart = Math.floor(num);
+        const paisaPart = Math.round((num - intPart) * 100);
+        const parts = [];
+        let rem = intPart;
+        const crore = Math.floor(rem / 10000000);
+        rem %= 10000000;
+        const lakh = Math.floor(rem / 100000);
+        rem %= 100000;
+        const thousand = Math.floor(rem / 1000);
+        rem %= 1000;
+        if (crore) parts.push(convertUnder1000(crore) + " Crore");
+        if (lakh) parts.push(convertUnder1000(lakh) + " Lakh");
+        if (thousand) parts.push(convertUnder1000(thousand) + " Thousand");
+        if (rem) parts.push(convertUnder1000(rem));
+        let res = (parts.join(" ") || "Zero") + " Taka";
+        if (paisaPart > 0) {
+          res += " and " + convertUnder1000(paisaPart) + " Paisa";
+        }
+        return res + " Only";
       }
 
       function listenFinance(forcePersonalOnly = false) {
@@ -9239,22 +9730,41 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
       }
 
       // ---------- MEMBER SIDE ----------
-      function statusBadge(status) {
+      function statusBadge(p) {
+        const status = typeof p === "string" ? p : p?.status;
+        if (
+          status === "approved" &&
+          typeof p === "object" &&
+          p.collectorConfirmed === false
+        ) {
+          return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-sky-100 text-sky-800 border-sky-300">Awaiting Collector Confirm</span>`;
+        }
         const map = {
+          requested: "bg-amber-100 text-amber-800 border-amber-300",
+          awaiting_collector: "bg-sky-100 text-sky-800 border-sky-300",
           pending: "bg-amber-100 text-amber-800 border-amber-300",
           approved: "bg-emerald-100 text-emerald-800 border-emerald-300",
           rejected: "bg-red-100 text-red-700 border-red-300",
         };
         const label = {
-          pending: "Pending",
-          approved: "Approved",
+          requested: "Requested (Pending Admin)",
+          awaiting_collector: "Approved • Send to Collector",
+          pending: "Waiting Collector Confirm",
+          approved: "Paid & Confirmed",
           rejected: "Rejected",
         };
-        return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${map[status] || map.pending}">${label[status] || "Pending"}</span>`;
+        return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${map[status] || map.requested}">${label[status] || "Pending"}</span>`;
       }
 
       function renderPaymentInfo() {
         renderPayCategories();
+        const monthEl = document.getElementById("pay-month");
+        if (monthEl && !monthEl.value && document.activeElement !== monthEl) {
+          monthEl.value = new Date().toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          });
+        }
         const list = document.getElementById("pay-info-list");
         if (!list) return;
         const rows = [
@@ -9333,33 +9843,63 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         if (!listEl) return;
         const mine = allPayments.filter((p) => p.uid === currentUser?.uid);
         const total = mine
-          .filter((p) => p.status === "approved")
+          .filter(isPaymentConfirmed)
           .reduce((s, p) => s + Number(p.amount || 0), 0);
         const pending = mine
-          .filter((p) => p.status === "pending")
+          .filter(isPaymentPending)
           .reduce((s, p) => s + Number(p.amount || 0), 0);
         document.getElementById("mypay-total").textContent = BDT(total);
         document.getElementById("mypay-pending").textContent = BDT(pending);
         document.getElementById("mypay-count").textContent = mine.length;
 
         if (!mine.length) {
-          listEl.innerHTML = `<p class="text-sm text-slate-500 text-center py-4">No payments yet.</p>`;
+          listEl.innerHTML = `<p class="text-sm text-slate-500 text-center py-4">No donation requests yet.</p>`;
           return;
         }
         listEl.innerHTML = mine
-          .map(
-            (p) => `
-          <div class="bg-white/70 border border-emerald-100 rounded-xl p-3 flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <p class="font-bold text-slate-800">${BDT(p.amount)}${p.category ? ` <span class="text-xs font-semibold text-slate-500">• ${escapeHtml(p.category)}</span>` : ""}</p>
-              <p class="text-xs text-slate-500 mt-0.5 break-all">${p.trxId ? "Transaction: " + trxHtml(p.trxId) : ""}</p>
-              <p class="text-[11px] text-slate-400">${escapeHtml(fmtDateTime(p.createdAt))}</p>
-              ${p.status === "rejected" && p.adminNote ? `<p class="text-xs text-red-600 mt-1">Reason: ${escapeHtml(p.adminNote)}</p>` : ""}
+          .map((p) => {
+            const confirmed = isPaymentConfirmed(p);
+            const stepHint =
+              p.status === "awaiting_collector"
+                ? `<div class="mt-2 bg-sky-50 border border-sky-200 rounded-lg px-2.5 py-2 text-[11px] text-sky-900">
+                    <strong>Approved by Admin!</strong> Please send <strong>${BDT(p.amount)}</strong> (${escapeHtml(p.paymentMethod || "Collector Account")}) using the Collector numbers above. Collector will confirm with your Transaction ID / URL.
+                   </div>`
+                : p.status === "requested"
+                  ? `<p class="text-[11px] text-amber-700 mt-1">Step 1 submitted — waiting for Admin to approve your request.</p>`
+                  : "";
+            return `
+          <div class="bg-white/75 border ${confirmed ? "border-emerald-200" : p.status === "awaiting_collector" ? "border-sky-200" : "border-emerald-100"} rounded-xl p-3.5 space-y-2">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="font-bold text-slate-800">${BDT(p.amount)}${p.category ? ` <span class="text-xs font-semibold text-slate-500">• ${escapeHtml(p.category)}</span>` : ""}</p>
+                <p class="text-xs text-slate-500 mt-0.5">${p.month ? `Period: ${escapeHtml(p.month)} • ` : ""}Method: ${escapeHtml(p.paymentMethod || "N/A")}</p>
+                ${p.receiptNo ? `<p class="text-xs font-semibold text-emerald-700 mt-0.5">Receipt No: ${escapeHtml(p.receiptNo)}</p>` : ""}
+                ${p.trxId ? `<p class="text-xs text-slate-600 mt-0.5 break-all">Transaction: ${trxHtml(p.trxId)}</p>` : ""}
+                ${p.note ? `<p class="text-xs text-slate-500 mt-0.5">Note: ${escapeHtml(p.note)}</p>` : ""}
+                <p class="text-[11px] text-slate-400 mt-0.5">${escapeHtml(fmtDateTime(p.createdAt))}</p>
+                ${p.status === "rejected" && p.adminNote ? `<p class="text-xs text-red-600 mt-1">Reason: ${escapeHtml(p.adminNote)}</p>` : ""}
+              </div>
+              ${statusBadge(p)}
             </div>
-            ${statusBadge(p.status)}
-          </div>`,
-          )
+            ${stepHint}
+            <div class="flex items-center justify-end pt-1">
+              <button
+                type="button"
+                onclick="openReceiptModal('${p.id}')"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                  confirmed
+                    ? "bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                }"
+              >
+                <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+                <span>${confirmed ? "Download Money Receipt" : "Preview Receipt (Pending)"}</span>
+              </button>
+            </div>
+          </div>`;
+          })
           .join("");
+        lucide.createIcons();
       }
 
       window.submitPayment = async (e) => {
@@ -9367,7 +9907,12 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         if (!currentUser || !currentUserProfile) return;
         const btn = document.getElementById("pay-submit-btn");
         const amount = Number(document.getElementById("pay-amount").value);
-        const trxId = document.getElementById("pay-trx").value.trim();
+        const month = (
+          document.getElementById("pay-month")?.value || ""
+        ).trim();
+        const paymentMethod =
+          document.getElementById("pay-method")?.value || "bKash";
+        const note = (document.getElementById("pay-note")?.value || "").trim();
 
         const catSel = document.getElementById("pay-category");
         const category =
@@ -9375,42 +9920,44 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         if (catSel && !catSel.classList.contains("hidden") && !category)
           return showToast("Please select a category.", "error");
         if (!(amount > 0)) return showToast("Enter a valid amount.", "error");
-        if (!trxId)
-          return showToast("Transaction ID / URL is required.", "error");
-        if (
-          allPayments.some(
-            (p) =>
-              p.uid === currentUser.uid &&
-              p.trxId &&
-              p.trxId.toLowerCase() === trxId.toLowerCase(),
-          )
-        )
-          return showToast("You already submitted this transaction.", "error");
 
         btn.disabled = true;
         try {
           await addDoc(collection(db, "payments"), {
             uid: currentUser.uid,
             name: currentUserProfile.name || "Member",
+            csfId: (currentUserProfile.csfId || "").trim(),
             phone: currentUserProfile.phone || "",
             amount,
-            trxId,
-            category: category || "Member Payment",
-            purpose: category || "Member Payment",
-            status: "pending",
+            month:
+              month ||
+              new Date().toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              }),
+            paymentMethod,
+            note,
+            trxId: "",
+            collectorName: "",
+            receiptNo: "",
+            collectorConfirmed: false,
+            category: category || "Donation",
+            purpose: category || "Donation",
+            status: "requested",
             createdAt: serverTimestamp(),
           });
           createAppNotification({
             type: "payment",
-            title: "New Payment Submitted",
-            body: `${currentUserProfile.name || "A member"} submitted ${BDT(amount)}${category ? " (" + category + ")" : ""}.`,
+            title: "New Donation Request",
+            body: `${currentUserProfile.name || "A member"} requested to donate ${BDT(amount)}${category ? " (" + category + ")" : ""}.`,
             targetRole: "admin",
             targetTab: "admin",
             createdByUid: currentUser.uid,
             authorName: currentUserProfile.name || "",
           });
           document.getElementById("payment-form").reset();
-          showToast("Submitted! Waiting for admin approval.");
+          renderPaymentInfo();
+          showToast("Donation request sent! Wait for Admin approval.");
         } catch (err) {
           showToast("Failed to submit: " + err.message, "error");
         } finally {
@@ -9457,6 +10004,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           }
         });
         if (tab === "ledger") fillFinanceCategories();
+        if (tab === "settings") {
+          initSignaturePad();
+          fillPaymentSettingsForm();
+        }
         renderFinance();
         if (
           activeTab === "admin" &&
@@ -9494,15 +10045,13 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         if (monthEl && scopeEl)
           monthEl.classList.toggle("hidden", scopeEl.value === "all");
 
-        // pending badge
-        const pendingList = allPayments.filter((p) => p.status === "pending");
+        const pendingList = allPayments.filter(isPaymentPending);
         const badge = document.getElementById("fin-pending-badge");
         if (badge) {
           badge.textContent = pendingList.length;
           badge.classList.toggle("hidden", pendingList.length === 0);
         }
 
-        // tab styling on first render
         ["overview", "requests", "ledger", "settings"].forEach((t) => {
           const b = document.getElementById(`fin-tab-${t}`);
           if (b) {
@@ -9530,7 +10079,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const expense = sumBy(scoped, "expense");
         const allIncome = sumBy(allFinance, "income");
         const allExpense = sumBy(allFinance, "expense");
-        const pendingList = allPayments.filter((p) => p.status === "pending");
+        const pendingList = allPayments.filter(isPaymentPending);
         const pendingAmt = pendingList.reduce(
           (s, p) => s + Number(p.amount || 0),
           0,
@@ -9551,7 +10100,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           pendingList.length +
           (pendingList.length === 1 ? " request" : " requests");
 
-        // 6-month chart ending at selected month
         const base =
           document.getElementById("fin-month").value || currentMonthStr();
         const [by, bm] = base.split("-").map(Number);
@@ -9625,18 +10173,28 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
       window.renderFinanceRequests = () => {
         const el = document.getElementById("fin-requests-list");
         if (!el) return;
-        const f = document.getElementById("fin-req-filter").value;
-        const rows = allPayments.filter((p) => f === "all" || p.status === f);
+        const f =
+          document.getElementById("fin-req-filter")?.value || "action_needed";
+        const rows = allPayments.filter((p) => {
+          if (f === "all") return true;
+          if (f === "action_needed") return isPaymentPending(p);
+          if (f === "awaiting_collector")
+            return p.status === "awaiting_collector" || p.status === "pending";
+          return p.status === f;
+        });
         if (!rows.length) {
-          el.innerHTML = `<p class="text-sm text-slate-500 col-span-full text-center py-6">No ${f === "all" ? "" : escapeHtml(f)} payment requests.</p>`;
+          el.innerHTML = `<p class="text-sm text-slate-500 col-span-full text-center py-6">No matching donation requests.</p>`;
           return;
         }
         const canEditPay = canEditSector("finance");
-        const disAttr = canEditPay
-          ? ""
-          : 'disabled class="opacity-50 cursor-not-allowed ';
+        const defaultSigner =
+          paymentSettings.receiptSignerName || currentUserProfile?.name || "";
+
         el.innerHTML = rows
           .map((p) => {
+            const member = allMembers.find((m) => m.id === p.uid);
+            const csfIdDisplay =
+              (p.csfId || member?.csfId || "").trim() || "N/A";
             const dup =
               p.trxId &&
               allPayments.some(
@@ -9645,46 +10203,172 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                   o.trxId &&
                   o.trxId.toLowerCase() === p.trxId.toLowerCase(),
               );
-            const actions = canEditPay
-              ? p.status === "pending"
-                ? `<button onclick="approvePayment('${p.id}')" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 rounded-lg transition">Approve</button>
-                   <button onclick="rejectPayment('${p.id}')" class="flex-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold py-2 rounded-lg transition">Reject</button>`
-                : p.status === "approved"
-                  ? `<button onclick="rejectPayment('${p.id}')" class="flex-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold py-2 rounded-lg transition">Cancel &amp; Reject</button>`
-                  : `<button onclick="approvePayment('${p.id}')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold py-2 rounded-lg transition">Approve Anyway</button>`
-              : `<span class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">View-Only Mode</span>`;
+            let actionArea = "";
+            if (!canEditPay) {
+              actionArea = `<div class="flex items-center justify-between gap-2 pt-1">
+                <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">View-Only Mode</span>
+                <button type="button" data-allow-viewonly="true" onclick="openReceiptModal('${p.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700">View Receipt</button>
+              </div>`;
+            } else if (p.status === "requested") {
+              actionArea = `<div class="flex flex-wrap gap-2 pt-1">
+                <button type="button" onclick="approveDonationRequest('${p.id}')" class="flex-1 bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition">Approve Request</button>
+                <button type="button" onclick="openReceiptModal('${p.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 px-3 rounded-lg transition">Preview</button>
+                <button type="button" onclick="rejectPayment('${p.id}')" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold py-2 px-3 rounded-lg transition">Reject</button>
+              </div>`;
+            } else if (
+              p.status === "awaiting_collector" ||
+              p.status === "pending"
+            ) {
+              const curMethod = p.paymentMethod || "bKash";
+              const methodOpts = [
+                "bKash",
+                "Nagad",
+                "Rocket",
+                "Bank Transfer",
+                "Cash",
+              ]
+                .map(
+                  (m) =>
+                    `<option value="${m}" ${m === curMethod ? "selected" : ""}>${m}</option>`,
+                )
+                .join("");
+              actionArea = `
+              <div class="bg-sky-50/80 border border-sky-200 rounded-xl p-2.5 space-y-2 mt-1">
+                <p class="text-[11px] font-bold text-sky-900">Collector Confirmation (Required to unlock Signature &amp; Green Seal)</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <select id="col-method-${p.id}" class="px-2.5 py-1.5 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500">
+                    ${methodOpts}
+                  </select>
+                  <input id="col-name-${p.id}" type="text" value="${escapeHtml(p.collectorName || defaultSigner)}" placeholder="Collector / Signer Name" class="px-2.5 py-1.5 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+                <input id="col-trx-${p.id}" type="text" value="${escapeHtml(p.trxId || "")}" placeholder="Enter Transaction ID or Payment Proof URL *" class="w-full px-2.5 py-1.5 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" onclick="confirmCollectorPayment('${p.id}')" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition">Confirm Payment &amp; Issue Receipt</button>
+                  <button type="button" onclick="openReceiptModal('${p.id}')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold py-2 px-3 rounded-lg transition">Preview</button>
+                  <button type="button" onclick="rejectPayment('${p.id}')" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold py-2 px-3 rounded-lg transition">Reject</button>
+                </div>
+              </div>`;
+            } else if (p.status === "approved") {
+              actionArea = `<div class="flex flex-wrap gap-2 pt-1">
+                <button type="button" onclick="openReceiptModal('${p.id}')" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition">View / Download Receipt</button>
+                <button type="button" onclick="rejectPayment('${p.id}')" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold py-2 px-3 rounded-lg transition">Cancel &amp; Reject</button>
+              </div>`;
+            } else {
+              actionArea = `<div class="flex flex-wrap gap-2 pt-1">
+                <button type="button" onclick="approveDonationRequest('${p.id}')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold py-2 px-3 rounded-lg transition">Re-open for Collector</button>
+                <button type="button" onclick="openReceiptModal('${p.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 px-3 rounded-lg transition">Preview</button>
+              </div>`;
+            }
+
             return `
-            <div class="bg-white/80 border ${p.status === "pending" ? "border-amber-300" : "border-emerald-100"} rounded-xl p-3 space-y-2">
+            <div class="bg-white/80 border ${p.status === "requested" ? "border-amber-300" : p.status === "awaiting_collector" || p.status === "pending" ? "border-sky-300" : "border-emerald-100"} rounded-xl p-3.5 space-y-2">
               <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
-                  <p class="font-bold text-slate-800 truncate">${escapeHtml(p.name || "Member")}</p>
-                  <p class="text-[11px] text-slate-500">${escapeHtml(p.phone || "")}</p>
+                  <p class="font-bold text-slate-800 truncate">${escapeHtml(p.name || "Member")} <span class="text-[11px] font-semibold text-slate-500">(CSF ID: ${escapeHtml(csfIdDisplay)})</span></p>
+                  <p class="text-[11px] text-slate-500">${escapeHtml(p.phone || "No phone")}</p>
                 </div>
-                ${statusBadge(p.status)}
+                ${statusBadge(p)}
               </div>
               <p class="text-lg font-extrabold text-emerald-800">${BDT(p.amount)} ${p.category ? `<span class="text-xs font-semibold text-slate-500">${escapeHtml(p.category)}</span>` : ""}</p>
               <div class="text-xs text-slate-600 space-y-0.5">
+                <p><strong>Month:</strong> ${escapeHtml(p.month || "N/A")} • <strong>Method:</strong> ${escapeHtml(p.paymentMethod || "N/A")}</p>
+                ${p.receiptNo ? `<p class="text-emerald-700 font-semibold"><strong>Receipt No:</strong> ${escapeHtml(p.receiptNo)}${p.collectorName ? ` • <strong>Collector:</strong> ${escapeHtml(p.collectorName)}` : ""}</p>` : ""}
                 ${p.trxId ? `<p class="break-all"><strong>Transaction:</strong> ${trxHtml(p.trxId)} ${dup ? '<span class="text-red-600 font-bold">⚠ duplicate</span>' : ""}</p>` : ""}
+                ${p.note ? `<p><strong>Member Note:</strong> ${escapeHtml(p.note)}</p>` : ""}
                 ${p.adminNote ? `<p class="text-red-600"><strong>Admin note:</strong> ${escapeHtml(p.adminNote)}</p>` : ""}
                 <p class="text-[11px] text-slate-400">${escapeHtml(fmtDateTime(p.createdAt))}</p>
               </div>
-              <div class="flex gap-2 pt-1">${actions}</div>
+              ${actionArea}
             </div>`;
           })
           .join("");
+        lucide.createIcons();
       };
 
-      window.approvePayment = async (id) => {
+      window.approveDonationRequest = async (id) => {
         if (!requireSectorEdit("finance")) return;
         const p = allPayments.find((x) => x.id === id);
         if (!p) return;
         try {
+          await updateDoc(doc(db, "payments", id), {
+            status: "awaiting_collector",
+            collectorConfirmed: false,
+            adminNote: "",
+            approvedAt: serverTimestamp(),
+            approvedBy: currentUser.uid,
+          });
+          if (p.uid) {
+            createAppNotification({
+              type: "payment",
+              title: "Donation Request Approved",
+              body: `Your donation request (${BDT(p.amount)}) is approved! Please send the amount to the Collector's receiving account.`,
+              targetRole: "all",
+              targetUid: p.uid,
+              targetTab: "payments",
+              createdByUid: currentUser.uid,
+              authorName: currentUserProfile?.name || "Admin",
+            });
+          }
+          showToast(
+            `Approved request from ${p.name || "Member"}. Waiting for Collector confirmation.`,
+          );
+        } catch (err) {
+          showToast("Approval failed: " + err.message, "error");
+        }
+      };
+
+      window.confirmCollectorPayment = async (id) => {
+        if (!requireSectorEdit("finance")) return;
+        const p = allPayments.find((x) => x.id === id);
+        if (!p) return;
+        const trxInput = document.getElementById(`col-trx-${id}`);
+        const methodInput = document.getElementById(`col-method-${id}`);
+        const nameInput = document.getElementById(`col-name-${id}`);
+        const trxId = (trxInput?.value || p.trxId || "").trim();
+        const paymentMethod = (
+          methodInput?.value ||
+          p.paymentMethod ||
+          "bKash"
+        ).trim();
+        const collectorName = (
+          nameInput?.value ||
+          paymentSettings.receiptSignerName ||
+          currentUserProfile?.name ||
+          "Collector"
+        ).trim();
+
+        if (!trxId) {
+          showToast(
+            "Please enter the Transaction ID or Payment Proof URL to confirm.",
+            "error",
+          );
+          if (trxInput) trxInput.focus();
+          return;
+        }
+
+        try {
+          const existingCount = allPayments.filter((x) => x.receiptNo).length;
+          const nextSeq =
+            Math.max(Number(paymentSettings.receiptSeq || 0), existingCount) +
+            1;
+          const receiptNo =
+            p.receiptNo || `CSF-MR-${String(nextSeq).padStart(5, "0")}`;
+
+          if (!p.receiptNo) {
+            await setDoc(
+              doc(db, "settings", "payment"),
+              { receiptSeq: nextSeq },
+              { merge: true },
+            );
+            paymentSettings.receiptSeq = nextSeq;
+          }
+
           await setDoc(doc(db, "finance", "pay_" + id), {
             type: "income",
-            category: p.category || p.purpose || "Member Payment",
+            category: p.category || p.purpose || "Donation",
             amount: Number(p.amount),
             date: localDateStr(),
-            note: `${p.name || "Member"}${p.trxId ? " • " + p.trxId : ""}`,
+            note: `${p.name || "Member"} • ${receiptNo} • ${trxId}`,
             source: "payment",
             paymentId: id,
             memberUid: p.uid,
@@ -9693,15 +10377,38 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           });
           await updateDoc(doc(db, "payments", id), {
             status: "approved",
+            collectorConfirmed: true,
+            trxId,
+            paymentMethod,
+            collectorName,
+            receiptNo,
             adminNote: "",
+            confirmedAt: serverTimestamp(),
+            confirmedBy: currentUser.uid,
             reviewedAt: serverTimestamp(),
             reviewedBy: currentUser.uid,
           });
-          showToast(`Approved ${BDT(p.amount)} from ${p.name}.`);
+          if (p.uid) {
+            createAppNotification({
+              type: "payment",
+              title: "Donation Confirmed & Receipt Ready",
+              body: `Collector confirmed your ${BDT(p.amount)} donation (Receipt: ${receiptNo}). Download your signed Money Receipt now.`,
+              targetRole: "all",
+              targetUid: p.uid,
+              targetTab: "payments",
+              createdByUid: currentUser.uid,
+              authorName: collectorName,
+            });
+          }
+          showToast(
+            `Confirmed! Money Receipt ${receiptNo} with signature & seal is now ready.`,
+          );
         } catch (err) {
-          showToast("Approve failed: " + err.message, "error");
+          showToast("Confirmation failed: " + err.message, "error");
         }
       };
+
+      window.approvePayment = window.confirmCollectorPayment;
 
       window.rejectPayment = async (id) => {
         if (!requireSectorEdit("finance")) return;
@@ -9715,15 +10422,432 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         try {
           await updateDoc(doc(db, "payments", id), {
             status: "rejected",
+            collectorConfirmed: false,
             adminNote: reason.trim(),
             reviewedAt: serverTimestamp(),
             reviewedBy: currentUser.uid,
           });
-          await deleteDoc(doc(db, "finance", "pay_" + id));
+          await deleteDoc(doc(db, "finance", "pay_" + id)).catch(() => {});
           showToast("Payment rejected.", "warn");
         } catch (err) {
           showToast("Reject failed: " + err.message, "error");
         }
+      };
+
+      // ---------- MONEY RECEIPT (MODAL PREVIEW + ENGLISH PDF) ----------
+      function getReceiptData(paymentId) {
+        const p = allPayments.find((x) => x.id === paymentId);
+        if (!p) return null;
+        const member = allMembers.find((m) => m.id === p.uid);
+        const confirmed = isPaymentConfirmed(p);
+        const amountNum = Number(p.amount || 0);
+        const csfIdVal = (p.csfId || member?.csfId || "").trim() || "N/A";
+        const phoneVal = (p.phone || member?.phone || "").trim() || "N/A";
+        const createdD = tsToDate(p.createdAt);
+        const receiptNo = confirmed
+          ? p.receiptNo || `CSF-MR-${p.id.slice(0, 6).toUpperCase()}`
+          : "PENDING";
+        const dateStr = fmtEnglishReceiptDate(
+          confirmed
+            ? p.confirmedAt || p.reviewedAt || p.createdAt
+            : p.createdAt,
+        );
+        const monthStr =
+          (p.month || "").trim() ||
+          createdD.toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          });
+        const orgSubtitle =
+          (paymentSettings.receiptOrgSub || "").trim() ||
+          "Official Member Portal & Community Welfare";
+        const signerName = confirmed
+          ? (
+              p.collectorName ||
+              paymentSettings.receiptSignerName ||
+              "Authorized Collector"
+            ).trim()
+          : "";
+        const signatureImg = confirmed
+          ? paymentSettings.receiptSignature || ""
+          : "";
+        return {
+          p,
+          confirmed,
+          amountNum,
+          formattedAmount: amountNum.toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+          }),
+          amountWords: numberToEnglishWords(amountNum),
+          memberName: p.name || member?.name || "Member",
+          csfId: csfIdVal,
+          phone: phoneVal,
+          category: p.category || p.purpose || "Donation",
+          month: monthStr,
+          method:
+            p.paymentMethod || (p.trxId ? "Verified Transfer" : "Pending"),
+          trxId: (p.trxId || "").trim(),
+          receiptNo,
+          dateStr,
+          orgSubtitle,
+          signerName,
+          signatureImg,
+          logoSrc: homeImages?.logo || "./csf-logo.png",
+        };
+      }
+
+      window.openReceiptModal = (paymentId) => {
+        const r = getReceiptData(paymentId);
+        if (!r) return;
+        const previewEl = document.getElementById("receipt-preview-area");
+        const pdfBtn = document.getElementById("receipt-download-pdf-btn");
+        if (!previewEl) return;
+
+        const rowHtml = (label, val) => `
+          <div class="flex items-baseline gap-4 py-1.5 border-b border-dotted border-slate-300 text-xs sm:text-sm">
+            <span class="receipt-muted-text w-32 sm:w-40 shrink-0 font-medium">${escapeHtml(label)}</span>
+            <span class="receipt-dark-text font-bold break-all flex-1">${escapeHtml(val)}</span>
+          </div>`;
+
+        const sealAndSigHtml = r.confirmed
+          ? `
+            <div class="mt-6 pt-3 flex items-end justify-between gap-4 flex-wrap">
+              <div class="border-2 border-emerald-700 rounded-lg px-4 py-1.5 -rotate-6 inline-block select-none">
+                <span class="receipt-emerald-text text-sm sm:text-base font-extrabold tracking-widest uppercase">PAID</span>
+              </div>
+              <div class="text-center min-w-[170px] ml-auto">
+                ${
+                  r.signatureImg
+                    ? `<img src="${r.signatureImg}" alt="Collector Signature" class="h-12 max-w-[160px] mx-auto object-contain mb-1" />`
+                    : `<div class="h-9"></div>`
+                }
+                <div class="border-t border-slate-700 pt-1">
+                  <p class="receipt-dark-text text-xs sm:text-sm font-bold">${escapeHtml(r.signerName)}</p>
+                  <p class="receipt-muted-text text-[11px]">Collector's Signature</p>
+                </div>
+              </div>
+            </div>`
+          : `
+            <div class="mt-6 pt-3 text-center">
+              <p class="receipt-muted-text text-xs italic bg-slate-100 border border-slate-200 rounded-xl px-3 py-2">
+                Pending Collector Confirmation — Official green PAID seal &amp; Collector's signature will appear here once the Collector confirms the Transaction ID / URL.
+              </p>
+            </div>`;
+
+        previewEl.innerHTML = `
+          <div class="receipt-paper rounded-2xl border-2 border-emerald-800 shadow-lg overflow-hidden">
+            <div class="h-2.5 bg-emerald-800"></div>
+            <div class="p-4 sm:p-6 space-y-3">
+              <div class="flex items-center gap-3 pb-3 border-b-2 border-emerald-800">
+                <img
+                  src="${escapeHtml(r.logoSrc)}"
+                  onerror="if(!this.dataset.t){this.dataset.t=1;this.src='./darber-logo.jpg';}"
+                  alt="CSF Logo"
+                  class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-emerald-700 bg-white shrink-0"
+                />
+                <div class="min-w-0">
+                  <h4 class="receipt-emerald-text text-lg sm:text-2xl font-extrabold tracking-tight leading-tight">Chandpurisha Special Force</h4>
+                  <p class="receipt-muted-text text-[11px] sm:text-xs mt-0.5">${escapeHtml(r.orgSubtitle)}</p>
+                </div>
+              </div>
+
+              <div class="flex justify-center pt-1">
+                <span class="bg-emerald-800 text-white text-xs sm:text-sm font-bold tracking-wider uppercase px-6 py-1.5 rounded-full shadow-sm">
+                  MONEY RECEIPT
+                </span>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-bold pt-1">
+                <span class="receipt-dark-text">No: ${escapeHtml(r.receiptNo)}</span>
+                <span class="receipt-dark-text">Date: ${escapeHtml(r.dateStr)}</span>
+              </div>
+
+              <div class="pt-1">
+                ${rowHtml("Name", r.memberName)}
+                ${rowHtml("CSF ID", r.csfId)}
+                ${rowHtml("Mobile", r.phone)}
+                ${rowHtml("Category", r.category)}
+                ${rowHtml("Month / Period", r.month)}
+                ${rowHtml("Payment Method", r.method)}
+                ${r.confirmed && r.trxId ? rowHtml("Transaction Ref", r.trxId) : ""}
+              </div>
+
+              <div class="receipt-amount-box mt-3 border-2 border-emerald-800 bg-emerald-50 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                <span class="receipt-muted-text text-xs sm:text-sm font-bold uppercase tracking-wider">Amount</span>
+                <span class="receipt-emerald-text text-xl sm:text-2xl font-extrabold">৳ ${escapeHtml(r.formattedAmount)}</span>
+              </div>
+
+              <p class="receipt-dark-text text-xs sm:text-sm pt-1">
+                <span class="receipt-muted-text font-medium">In Words:</span>
+                <strong class="ml-1">${escapeHtml(r.amountWords)}</strong>
+              </p>
+
+              ${sealAndSigHtml}
+
+              <p class="receipt-muted-text text-center text-[11px] pt-3 border-t border-slate-200">
+                Thank you for your generous cooperation.
+              </p>
+            </div>
+            <div class="h-2 bg-emerald-800"></div>
+          </div>`;
+
+        if (pdfBtn) {
+          pdfBtn.onclick = () => downloadReceiptPDF(paymentId);
+        }
+
+        const modal = document.getElementById("receipt-modal");
+        const card = document.getElementById("receipt-modal-card");
+        if (modal) {
+          modal.classList.remove("hidden", "backdrop-exit");
+          modal.classList.add("backdrop-enter");
+        }
+        if (card) {
+          card.classList.remove("modal-card-exit", "modal-card-enter");
+          void card.offsetWidth;
+          card.classList.add("modal-card-enter");
+        }
+        lucide.createIcons();
+      };
+
+      window.closeReceiptModal = () => {
+        const modal = document.getElementById("receipt-modal");
+        const card = document.getElementById("receipt-modal-card");
+        if (!modal || modal.classList.contains("hidden")) return;
+        modal.classList.remove("backdrop-enter");
+        modal.classList.add("backdrop-exit");
+        if (card) {
+          card.classList.remove("modal-card-enter");
+          card.classList.add("modal-card-exit");
+        }
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          modal.classList.remove("backdrop-exit");
+          if (card) card.classList.remove("modal-card-exit");
+        }, 190);
+      };
+
+      async function loadImageAsPngDataUrl(src) {
+        if (!src) return null;
+        if (String(src).startsWith("data:image/png")) return src;
+        return new Promise((resolve) => {
+          try {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+              try {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.naturalWidth || 160;
+                canvas.height = img.naturalHeight || 160;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+              } catch (_) {
+                resolve(null);
+              }
+            };
+            img.onerror = () => resolve(null);
+            img.src = src;
+          } catch (_) {
+            resolve(null);
+          }
+        });
+      }
+
+      window.downloadReceiptPDF = async (paymentId) => {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          return showToast(
+            "PDF library not loaded. Check internet connection.",
+            "error",
+          );
+        }
+        const r = getReceiptData(paymentId);
+        if (!r) return;
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+        });
+
+        const pageW = 210;
+        const left = 14;
+        const boxW = pageW - 28;
+        const top = 14;
+        const boxH = 154;
+
+        // Crisp paper frame
+        pdf.setFillColor(255, 255, 255);
+        pdf.setDrawColor(6, 95, 70);
+        pdf.setLineWidth(0.7);
+        pdf.rect(left, top, boxW, boxH, "FD");
+
+        // Top & bottom green bars
+        pdf.setFillColor(6, 95, 70);
+        pdf.rect(left, top, boxW, 3.5, "F");
+        pdf.rect(left, top + boxH - 3, boxW, 3, "F");
+
+        // Logo
+        const logoPng = await loadImageAsPngDataUrl(r.logoSrc);
+        if (logoPng) {
+          try {
+            pdf.addImage(logoPng, "PNG", left + 8, top + 7.5, 16, 16);
+          } catch (_) {}
+        }
+
+        const titleX = logoPng ? left + 28 : left + 8;
+        pdf.setTextColor(6, 95, 70);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(17);
+        pdf.text("Chandpurisha Special Force", titleX, top + 14.5);
+
+        pdf.setTextColor(71, 85, 105);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9);
+        pdf.text(r.orgSubtitle, titleX, top + 20.5, { maxWidth: boxW - 36 });
+
+        // Header divider
+        pdf.setDrawColor(6, 95, 70);
+        pdf.setLineWidth(0.6);
+        pdf.line(left + 6, top + 26.5, left + boxW - 6, top + 26.5);
+
+        // MONEY RECEIPT pill
+        const pillW = 46;
+        const pillX = left + (boxW - pillW) / 2;
+        pdf.setFillColor(6, 95, 70);
+        pdf.roundedRect(pillX, top + 30, pillW, 8.5, 4, 4, "F");
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(10.5);
+        pdf.text("MONEY RECEIPT", left + boxW / 2, top + 35.8, {
+          align: "center",
+        });
+
+        // No & Date
+        pdf.setTextColor(15, 23, 42);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(9.5);
+        pdf.text(`No: ${r.receiptNo}`, left + 8, top + 46);
+        pdf.text(`Date: ${r.dateStr}`, left + boxW - 8, top + 46, {
+          align: "right",
+        });
+
+        // Rows
+        const rows = [
+          ["Name", r.memberName],
+          ["CSF ID", r.csfId],
+          ["Mobile", r.phone],
+          ["Category", r.category],
+          ["Month / Period", r.month],
+          ["Payment Method", r.method],
+        ];
+        if (r.confirmed && r.trxId) {
+          rows.push(["Transaction Ref", r.trxId]);
+        }
+
+        let y = top + 54;
+        rows.forEach(([label, val]) => {
+          pdf.setTextColor(71, 85, 105);
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(9.5);
+          pdf.text(label, left + 8, y);
+
+          pdf.setTextColor(15, 23, 42);
+          pdf.setFont("helvetica", "bold");
+          pdf.text(String(val || "N/A").slice(0, 68), left + 52, y);
+
+          pdf.setDrawColor(203, 213, 225);
+          pdf.setLineWidth(0.2);
+          pdf.line(left + 8, y + 2, left + boxW - 8, y + 2);
+          y += 7.5;
+        });
+
+        // Amount Box
+        const amtBoxY = y + 2;
+        pdf.setFillColor(236, 253, 245);
+        pdf.setDrawColor(6, 95, 70);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(left + 8, amtBoxY, boxW - 16, 12, 2.5, 2.5, "FD");
+        pdf.setTextColor(71, 85, 105);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(10);
+        pdf.text("AMOUNT", left + 12, amtBoxY + 7.5);
+        pdf.setTextColor(6, 95, 70);
+        pdf.setFontSize(14);
+        pdf.text(`BDT ${r.formattedAmount}`, left + boxW - 12, amtBoxY + 8, {
+          align: "right",
+        });
+
+        // In Words
+        const wordsY = amtBoxY + 18;
+        pdf.setTextColor(71, 85, 105);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9.5);
+        pdf.text("In Words:", left + 8, wordsY);
+        pdf.setTextColor(15, 23, 42);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(r.amountWords, left + 26, wordsY, { maxWidth: boxW - 36 });
+
+        // STRICT RULE: Green seal + Collector signature ONLY appear when Collector has confirmed with Trx ID / URL
+        if (r.confirmed) {
+          const sealY = top + boxH - 25;
+          // Green PAID seal
+          pdf.setDrawColor(6, 95, 70);
+          pdf.setLineWidth(0.7);
+          pdf.roundedRect(left + 12, sealY, 28, 10, 2, 2, "D");
+          pdf.setTextColor(6, 95, 70);
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(12);
+          pdf.text("PAID", left + 26, sealY + 6.7, { align: "center" });
+
+          // Collector Signature image + line + signer name
+          const sigCenterX = left + boxW - 34;
+          if (r.signatureImg) {
+            const sigPng = await loadImageAsPngDataUrl(r.signatureImg);
+            if (sigPng) {
+              try {
+                pdf.addImage(sigPng, "PNG", sigCenterX - 18, sealY - 9, 36, 12);
+              } catch (_) {}
+            }
+          }
+          pdf.setDrawColor(51, 65, 85);
+          pdf.setLineWidth(0.4);
+          pdf.line(sigCenterX - 24, sealY + 4, sigCenterX + 24, sealY + 4);
+          pdf.setTextColor(15, 23, 42);
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(9.5);
+          pdf.text(r.signerName, sigCenterX, sealY + 9, { align: "center" });
+          pdf.setTextColor(100, 116, 139);
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(8);
+          pdf.text("Collector's Signature", sigCenterX, sealY + 13, {
+            align: "center",
+          });
+        } else {
+          pdf.setTextColor(100, 116, 139);
+          pdf.setFont("helvetica", "italic");
+          pdf.setFontSize(8.5);
+          pdf.text(
+            "Pending Collector Confirmation — Official seal & signature not yet issued.",
+            left + boxW / 2,
+            top + boxH - 17,
+            { align: "center" },
+          );
+        }
+
+        // Footer
+        pdf.setTextColor(100, 116, 139);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(8.5);
+        pdf.text(
+          "Thank you for your generous cooperation.",
+          left + boxW / 2,
+          top + boxH - 6.5,
+          { align: "center" },
+        );
+
+        pdf.save(`CSF_Money_Receipt_${r.receiptNo}.pdf`);
+        showToast("English Money Receipt PDF downloaded!");
       };
 
       window.addFinanceEntry = async (e) => {
@@ -9889,6 +11013,134 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         pdf.save(`finance-${scopeLabel().replace(/\s+/g, "-")}.pdf`);
       };
 
+      // ---------- SIGNATURE PAD & UPLOAD HELPERS ----------
+      function updateSignaturePreviewUI(dataUrl) {
+        pendingSignatureDataUrl = dataUrl || "";
+        const img = document.getElementById("fin-sig-preview");
+        const empty = document.getElementById("fin-sig-empty");
+        const remBtn = document.getElementById("fin-sig-remove-btn");
+        if (!img || !empty || !remBtn) return;
+        if (pendingSignatureDataUrl) {
+          img.src = pendingSignatureDataUrl;
+          img.classList.remove("hidden");
+          empty.classList.add("hidden");
+          remBtn.classList.remove("hidden");
+        } else {
+          img.src = "";
+          img.classList.add("hidden");
+          empty.classList.remove("hidden");
+          remBtn.classList.add("hidden");
+        }
+      }
+
+      function initSignaturePad() {
+        if (sigPadInited) return;
+        const canvas = document.getElementById("fin-sig-canvas");
+        if (!canvas) return;
+        sigPadInited = true;
+        const ctx = canvas.getContext("2d");
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        let drawing = false;
+
+        const getPos = (ev) => {
+          const rect = canvas.getBoundingClientRect();
+          const clientX =
+            ev.touches && ev.touches.length
+              ? ev.touches[0].clientX
+              : ev.clientX;
+          const clientY =
+            ev.touches && ev.touches.length
+              ? ev.touches[0].clientY
+              : ev.clientY;
+          return {
+            x: ((clientX - rect.left) / rect.width) * canvas.width,
+            y: ((clientY - rect.top) / rect.height) * canvas.height,
+          };
+        };
+
+        const start = (ev) => {
+          ev.preventDefault();
+          drawing = true;
+          sigPadHasStroke = true;
+          const pos = getPos(ev);
+          ctx.beginPath();
+          ctx.moveTo(pos.x, pos.y);
+        };
+        const move = (ev) => {
+          if (!drawing) return;
+          ev.preventDefault();
+          const pos = getPos(ev);
+          ctx.lineTo(pos.x, pos.y);
+          ctx.stroke();
+        };
+        const end = () => {
+          drawing = false;
+        };
+
+        canvas.addEventListener("mousedown", start);
+        canvas.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", end);
+        canvas.addEventListener("touchstart", start, { passive: false });
+        canvas.addEventListener("touchmove", move, { passive: false });
+        canvas.addEventListener("touchend", end);
+      }
+
+      window.clearSignaturePad = () => {
+        const canvas = document.getElementById("fin-sig-canvas");
+        if (!canvas) return;
+        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        sigPadHasStroke = false;
+      };
+
+      window.applySignaturePad = () => {
+        const canvas = document.getElementById("fin-sig-canvas");
+        if (!canvas || !sigPadHasStroke) {
+          return showToast(
+            "Please draw your signature on the pad first.",
+            "warn",
+          );
+        }
+        updateSignaturePreviewUI(canvas.toDataURL("image/png"));
+        showToast("Drawn signature applied! Click Save to store it.");
+      };
+
+      window.handleSignatureFileUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const maxW = 460;
+            const maxH = 180;
+            let w = img.width;
+            let h = img.height;
+            const scale = Math.min(1, maxW / w, maxH / h);
+            w = Math.max(1, Math.round(w * scale));
+            h = Math.max(1, Math.round(h * scale));
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+            updateSignaturePreviewUI(canvas.toDataURL("image/png"));
+            showToast("Signature image loaded! Click Save to store it.");
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+
+      window.removeSavedSignature = () => {
+        clearSignaturePad();
+        const fileEl = document.getElementById("fin-set-sig-file");
+        if (fileEl) fileEl.value = "";
+        updateSignaturePreviewUI("");
+        showToast("Signature removed. Click Save to apply changes.", "warn");
+      };
+
       function fillPaymentSettingsForm() {
         const set = (id, v) => {
           const el = document.getElementById(id);
@@ -9899,6 +11151,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         set("fin-set-rocket", paymentSettings.rocket);
         set("fin-set-bank", paymentSettings.bank);
         set("fin-set-note", paymentSettings.note);
+        set("fin-set-receipt-sub", paymentSettings.receiptOrgSub);
+        set("fin-set-signer-name", paymentSettings.receiptSignerName);
         set(
           "fin-set-cats",
           (Array.isArray(paymentSettings.categories)
@@ -9906,6 +11160,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             : []
           ).join("\n"),
         );
+        updateSignaturePreviewUI(paymentSettings.receiptSignature || "");
       }
 
       window.savePaymentSettings = async (e) => {
@@ -9914,12 +11169,23 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const btn = document.getElementById("fin-set-btn");
         btn.disabled = true;
         try {
+          if (!pendingSignatureDataUrl && sigPadHasStroke) {
+            const c = document.getElementById("fin-sig-canvas");
+            if (c) pendingSignatureDataUrl = c.toDataURL("image/png");
+          }
           const payload = {
             bkash: document.getElementById("fin-set-bkash").value.trim(),
             nagad: document.getElementById("fin-set-nagad").value.trim(),
             rocket: document.getElementById("fin-set-rocket").value.trim(),
             bank: document.getElementById("fin-set-bank").value.trim(),
             note: document.getElementById("fin-set-note").value.trim(),
+            receiptOrgSub: (
+              document.getElementById("fin-set-receipt-sub")?.value || ""
+            ).trim(),
+            receiptSignerName: (
+              document.getElementById("fin-set-signer-name")?.value || ""
+            ).trim(),
+            receiptSignature: pendingSignatureDataUrl || "",
             categories: [
               ...new Set(
                 document
@@ -9930,11 +11196,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               ),
             ].slice(0, 20),
           };
-          await setDoc(doc(db, "settings", "payment"), {
-            ...payload,
-            updatedAt: serverTimestamp(),
-          });
-          showToast("Payment settings saved!");
+          await setDoc(
+            doc(db, "settings", "payment"),
+            {
+              ...payload,
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+          showToast("Payment & Receipt settings saved!");
         } catch (err) {
           showToast("Failed to save: " + err.message, "error");
         } finally {
@@ -11070,7 +12340,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const mFin = allFinance.filter((f) => (f.date || "").startsWith(month));
         const inc = sumBy(mFin, "income");
         const exp = sumBy(mFin, "expense");
-        const pendPay = allPayments.filter((p) => p.status === "pending");
+        const pendPay = allPayments.filter(isPaymentPending);
         const pendAmt = pendPay.reduce((s, p) => s + Number(p.amount || 0), 0);
 
         const acts = [];
@@ -11180,9 +12450,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const nextEvent = events[0];
         const mine = allPayments.filter((p) => p.uid === currentUser.uid);
         const paid = mine
-          .filter((p) => p.status === "approved")
+          .filter(isPaymentConfirmed)
           .reduce((s, p) => s + Number(p.amount || 0), 0);
-        const pend = mine.filter((p) => p.status === "pending").length;
+        const pend = mine.filter(isPaymentPending).length;
         const typeLabel = {
           notice: "Notice",
           event: "Event",
@@ -11807,10 +13077,36 @@ ${joinInfo}`,
 
         const joinBtn = document.getElementById("join-meeting-btn");
         joinBtn.disabled = true;
-        joinBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Connecting...</span>`;
+        joinBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Requesting Mic &amp; Camera...</span>`;
         lucide.createIcons();
 
         try {
+          // Automatically prompt browser for both Microphone and Camera permissions right on join click
+          if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+              const probe = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true,
+              });
+              probe.getTracks().forEach((t) => t.stop());
+            } catch (_) {
+              try {
+                const aProbe = await navigator.mediaDevices.getUserMedia({
+                  audio: true,
+                });
+                aProbe.getTracks().forEach((t) => t.stop());
+              } catch (__) {}
+              try {
+                const vProbe = await navigator.mediaDevices.getUserMedia({
+                  video: true,
+                });
+                vProbe.getTracks().forEach((t) => t.stop());
+              } catch (___) {}
+            }
+          }
+          joinBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Connecting...</span>`;
+          lucide.createIcons();
+
           const res = await fetch(LIVEKIT_TOKEN_API, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
