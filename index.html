@@ -661,6 +661,123 @@
         background-color: #ecfdf5 !important;
         border-color: #065f46 !important;
       }
+      /* Annual 12-Month Fund Sheet Styles */
+      .annual-sheet-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1120px;
+      }
+      .annual-sheet-table th,
+      .annual-sheet-table td {
+        padding: 8px 6px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: center;
+        font-size: 0.82rem;
+      }
+      .annual-sheet-table thead th {
+        background: #f8fafc;
+        color: #334155;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      .annual-sheet-table tfoot td {
+        background: #f1f5f9;
+        font-weight: 800;
+        color: #0f172a;
+        border-top: 2px solid #cbd5e1;
+      }
+      .annual-sheet-table .annual-member-col {
+        text-align: left;
+        min-width: 175px;
+        position: sticky;
+        left: 0;
+        background: #ffffff;
+        z-index: 1;
+        box-shadow: 2px 0 6px -2px rgba(15, 23, 42, 0.08);
+      }
+      .annual-sheet-table thead .annual-member-col {
+        background: #f8fafc;
+        z-index: 3;
+      }
+      .annual-sheet-table tfoot .annual-member-col {
+        background: #f1f5f9;
+        z-index: 3;
+      }
+      .annual-month-input {
+        width: 60px;
+        padding: 5px 4px;
+        text-align: center;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: #ffffff;
+        color: #0f172a;
+        outline: none;
+        transition:
+          border-color 0.15s ease,
+          background-color 0.15s ease;
+      }
+      .annual-month-input:focus {
+        border-color: #059669;
+        box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.18);
+      }
+      .annual-month-input.annual-paid-exact {
+        background-color: #dcfce7;
+        border-color: #86efac;
+        color: #166534;
+      }
+      .annual-month-input.annual-paid-extra {
+        background-color: #fef3c7;
+        border-color: #fcd34d;
+        color: #92400e;
+      }
+      .annual-month-input.annual-paid-partial {
+        background-color: #e0f2fe;
+        border-color: #7dd3fc;
+        color: #075985;
+      }
+      html.dark .annual-sheet-table th,
+      html.dark .annual-sheet-table td {
+        border-bottom-color: rgba(148, 163, 184, 0.2);
+      }
+      html.dark .annual-sheet-table thead th,
+      html.dark .annual-sheet-table thead .annual-member-col {
+        background: #0f172a !important;
+        color: #e2e8f0 !important;
+      }
+      html.dark .annual-sheet-table .annual-member-col {
+        background: #111c2e !important;
+        box-shadow: 2px 0 8px -2px rgba(0, 0, 0, 0.45);
+      }
+      html.dark .annual-sheet-table tfoot td,
+      html.dark .annual-sheet-table tfoot .annual-member-col {
+        background: #162238 !important;
+        color: #ecfdf5 !important;
+        border-top-color: rgba(52, 211, 153, 0.28);
+      }
+      html.dark .annual-month-input {
+        background: rgba(15, 23, 42, 0.85);
+        border-color: rgba(148, 163, 184, 0.35);
+        color: #f1f5f9;
+      }
+      html.dark .annual-month-input.annual-paid-exact {
+        background-color: rgba(16, 185, 129, 0.24) !important;
+        border-color: rgba(52, 211, 153, 0.55) !important;
+        color: #6ee7b7 !important;
+      }
+      html.dark .annual-month-input.annual-paid-extra {
+        background-color: rgba(245, 158, 11, 0.24) !important;
+        border-color: rgba(251, 191, 36, 0.55) !important;
+        color: #fcd34d !important;
+      }
+      html.dark .annual-month-input.annual-paid-partial {
+        background-color: rgba(56, 189, 248, 0.2) !important;
+        border-color: rgba(56, 189, 248, 0.5) !important;
+        color: #7dd3fc !important;
+      }
     </style>
     <script>
       try {
@@ -3563,7 +3680,7 @@
                 </div>
 
                 <div
-                  class="grid grid-cols-4 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100"
+                  class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100"
                 >
                   <button
                     type="button"
@@ -3573,6 +3690,15 @@
                     class="py-2 rounded-xl text-xs font-bold transition"
                   >
                     Overview
+                  </button>
+                  <button
+                    type="button"
+                    id="fin-tab-annual"
+                    data-allow-viewonly="true"
+                    onclick="switchFinanceTab('annual')"
+                    class="py-2 rounded-xl text-xs font-bold transition"
+                  >
+                    Annual Sheet
                   </button>
                   <button
                     type="button"
@@ -3602,7 +3728,7 @@
                     id="fin-tab-settings"
                     data-allow-viewonly="true"
                     onclick="switchFinanceTab('settings')"
-                    class="py-2 rounded-xl text-xs font-bold transition"
+                    class="col-span-2 sm:col-span-1 py-2 rounded-xl text-xs font-bold transition"
                   >
                     Settings
                   </button>
@@ -4067,6 +4193,281 @@
                       Save Payment &amp; Receipt Settings
                     </button>
                   </form>
+                </div>
+
+                <!-- 12-MONTH ANNUAL EXCEL SHEET -->
+                <div id="fin-view-annual" class="hidden space-y-4">
+                  <div
+                    class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-700 text-white rounded-2xl p-4 sm:p-5 shadow-md flex flex-wrap items-center justify-between gap-3"
+                  >
+                    <div>
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <h4 class="text-base sm:text-lg font-extrabold">
+                          ১২ মাসের ফান্ড ম্যানেজমেন্ট শিট (Annual Excel Sheet)
+                        </h4>
+                        <span
+                          id="fin-annual-status-badge"
+                          class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900"
+                        >
+                          Active Year
+                        </span>
+                      </div>
+                      <p class="text-xs text-emerald-100 mt-1">
+                        মাসিক নির্ধারিত চাঁদা
+                        <strong id="fin-annual-fee-label">৳11</strong>। এর বেশি
+                        জমা দিলে অতিরিক্ত অংশ স্বয়ংক্রিয়ভাবে
+                        <strong>Extra</strong> কলামে যোগ হবে এবং বছর শেষে হিসাব
+                        বন্ধ করে নতুন বছর শুরু করা যাবে।
+                      </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <select
+                        id="fin-annual-year"
+                        data-allow-viewonly="true"
+                        onchange="changeAnnualYear(this.value)"
+                        class="px-3 py-2 rounded-xl bg-white text-emerald-950 text-xs font-extrabold outline-none shadow-sm"
+                      ></select>
+                      <button
+                        type="button"
+                        id="fin-annual-close-btn"
+                        onclick="closeAnnualYearAndRollover()"
+                        class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm flex items-center gap-1.5 transition"
+                      >
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                        <span id="fin-annual-close-label"
+                          >Close Year &amp; Start Next</span
+                        >
+                      </button>
+                      <button
+                        type="button"
+                        id="fin-annual-reopen-btn"
+                        onclick="reopenAnnualYear()"
+                        class="hidden px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/30 text-xs font-bold flex items-center gap-1.5 transition"
+                      >
+                        <i data-lucide="unlock" class="w-3.5 h-3.5"></i>
+                        <span>Re-open Year</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div
+                    id="fin-annual-closed-banner"
+                    class="hidden bg-amber-50 border border-amber-300 text-amber-900 rounded-2xl px-4 py-3 text-xs font-semibold flex items-center justify-between gap-2 flex-wrap"
+                  >
+                    <span id="fin-annual-closed-text"></span>
+                    <span
+                      class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-950"
+                      >Read-Only Archive</span
+                    >
+                  </div>
+
+                  <div
+                    class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"
+                  >
+                    <div
+                      class="bg-white/80 border border-emerald-100 rounded-2xl p-3.5"
+                    >
+                      <p class="text-[11px] font-semibold text-slate-500">
+                        Total Members
+                      </p>
+                      <p
+                        id="fin-annual-total-members"
+                        class="text-xl font-extrabold text-emerald-800 mt-0.5"
+                      >
+                        0
+                      </p>
+                    </div>
+                    <div
+                      class="bg-white/80 border border-emerald-100 rounded-2xl p-3.5"
+                    >
+                      <p class="text-[11px] font-semibold text-slate-500">
+                        Monthly Fixed Fee
+                      </p>
+                      <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="text-lg font-extrabold text-emerald-800"
+                          >৳</span
+                        >
+                        <input
+                          id="fin-annual-fee-input"
+                          type="number"
+                          min="1"
+                          step="1"
+                          value="11"
+                          onchange="updateAnnualMonthlyFee(this.value)"
+                          class="w-16 px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded-lg text-base font-extrabold text-emerald-900 outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="bg-white/80 border border-emerald-100 rounded-2xl p-3.5"
+                    >
+                      <p class="text-[11px] font-semibold text-slate-500">
+                        Regular Fund Collected
+                      </p>
+                      <p
+                        id="fin-annual-regular"
+                        class="text-xl font-extrabold text-emerald-700 mt-0.5"
+                      >
+                        ৳0
+                      </p>
+                    </div>
+                    <div
+                      class="bg-amber-50/90 border border-amber-200 rounded-2xl p-3.5"
+                    >
+                      <p class="text-[11px] font-semibold text-amber-800">
+                        Total Extra Fund
+                      </p>
+                      <p
+                        id="fin-annual-extra"
+                        class="text-xl font-extrabold text-amber-700 mt-0.5"
+                      >
+                        ৳0
+                      </p>
+                    </div>
+                    <div
+                      class="bg-slate-900 text-white rounded-2xl p-3.5 col-span-2 sm:col-span-1"
+                    >
+                      <p class="text-[11px] font-semibold text-emerald-300">
+                        Grand Total Fund
+                      </p>
+                      <p
+                        id="fin-annual-grand"
+                        class="text-xl font-extrabold mt-0.5"
+                      >
+                        ৳0
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="bg-white/75 border border-emerald-100 rounded-2xl p-3.5 space-y-3"
+                  >
+                    <div
+                      class="flex flex-wrap items-center justify-between gap-2.5"
+                    >
+                      <form
+                        id="fin-annual-add-form"
+                        onsubmit="addAnnualMember(event)"
+                        class="flex flex-wrap items-center gap-2"
+                      >
+                        <input
+                          id="fin-annual-member-name"
+                          type="text"
+                          required
+                          placeholder="নতুন সদস্যের নাম / Member Name"
+                          class="px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-emerald-500 min-w-[190px]"
+                        />
+                        <input
+                          id="fin-annual-member-csfid"
+                          type="text"
+                          placeholder="CSF ID (optional)"
+                          class="px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-emerald-500 w-32"
+                        />
+                        <button
+                          id="fin-annual-add-btn"
+                          type="submit"
+                          class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1"
+                        >
+                          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                          <span>+ Add Member</span>
+                        </button>
+                      </form>
+
+                      <div class="flex flex-wrap items-center gap-2">
+                        <input
+                          id="fin-annual-search"
+                          type="search"
+                          data-allow-viewonly="true"
+                          oninput="renderAnnualSheetTableOnly()"
+                          placeholder="Search member / ID..."
+                          class="px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 w-40 sm:w-44"
+                        />
+                        <button
+                          type="button"
+                          id="fin-annual-sync-members-btn"
+                          onclick="syncAnnualPortalMembers()"
+                          class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs px-3 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                        >
+                          <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                          <span>Sync Members</span>
+                        </button>
+                        <button
+                          type="button"
+                          id="fin-annual-sync-pay-btn"
+                          onclick="syncAnnualConfirmedPayments()"
+                          class="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs px-3 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                        >
+                          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                          <span>Sync Donations</span>
+                        </button>
+                        <button
+                          type="button"
+                          id="fin-annual-pdf-btn"
+                          data-allow-viewonly="true"
+                          onclick="exportAnnualPDF()"
+                          class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs px-3 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                        >
+                          <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                          <span>Save PDF</span>
+                        </button>
+                        <button
+                          type="button"
+                          id="fin-annual-csv-btn"
+                          data-allow-viewonly="true"
+                          onclick="exportAnnualExcelCSV()"
+                          class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition"
+                        >
+                          <i
+                            data-lucide="file-spreadsheet"
+                            class="w-3.5 h-3.5"
+                          ></i>
+                          <span>Download Excel (.csv)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div
+                      class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"
+                    >
+                      <div class="flex flex-wrap items-center gap-3">
+                        <span class="inline-flex items-center gap-1.5"
+                          ><span
+                            class="w-3 h-3 rounded bg-emerald-100 border border-emerald-300 inline-block"
+                          ></span>
+                          Fixed Fee Paid (11৳)</span
+                        >
+                        <span class="inline-flex items-center gap-1.5"
+                          ><span
+                            class="w-3 h-3 rounded bg-amber-100 border border-amber-300 inline-block"
+                          ></span>
+                          Paid with Extra (&gt;11৳)</span
+                        >
+                        <span class="inline-flex items-center gap-1.5"
+                          ><span
+                            class="w-3 h-3 rounded bg-sky-100 border border-sky-300 inline-block"
+                          ></span>
+                          Partial (&lt;11৳)</span
+                        >
+                      </div>
+                      <span
+                        id="fin-annual-save-status"
+                        class="font-semibold text-emerald-700"
+                        >Synced with Cloud</span
+                      >
+                    </div>
+                  </div>
+
+                  <div
+                    class="bg-white/90 border border-emerald-200 rounded-2xl overflow-x-auto shadow-sm"
+                  >
+                    <table class="annual-sheet-table">
+                      <thead>
+                        <tr id="fin-annual-thead-row"></tr>
+                      </thead>
+                      <tbody id="fin-annual-tbody"></tbody>
+                      <tfoot id="fin-annual-tfoot"></tfoot>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -6179,6 +6580,11 @@
         pane
           .querySelectorAll("input, textarea, select, button")
           .forEach((el) => {
+            if (el.dataset.annualLocked === "true") {
+              el.disabled = true;
+              el.classList.add("opacity-60", "cursor-not-allowed");
+              return;
+            }
             if (el.dataset.allowViewonly === "true") {
               el.disabled = false;
               return;
@@ -7378,6 +7784,8 @@
         allFeedback = [];
         allPayments = [];
         allFinance = [];
+        annualSheets = {};
+        activeAnnualYear = new Date().getFullYear();
         allMembers = [];
         allUpdates = [];
         allMessages = [];
@@ -7705,6 +8113,9 @@
             renderAdminSectorsGrid();
             updateEmailRecipientStats();
             renderMeetingAttendanceSheet();
+            if (financeSubTab === "annual" && hasAdminPanelAccess()) {
+              renderAnnualSheet();
+            }
             scheduleDashboard();
           }),
         );
@@ -9630,6 +10041,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
       let financeUnsubs = [];
       let financeSubTab = "overview";
       let financeErrorShown = false;
+      let annualSheets = {};
+      let activeAnnualYear = new Date().getFullYear();
+      let annualSaveTimer = null;
 
       const isPaymentPending = (p) =>
         p?.status === "requested" ||
@@ -9841,7 +10255,31 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             onSnapshot(
               collection(db, "finance"),
               (snap) => {
-                allFinance = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                const raw = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                allFinance = raw.filter(
+                  (d) => !String(d.id || "").startsWith("annual_"),
+                );
+                const nextAnnual = {};
+                raw.forEach((d) => {
+                  const docId = String(d.id || "");
+                  if (docId.startsWith("annual_")) {
+                    const yr =
+                      Number(d.year) ||
+                      Number(docId.replace("annual_", "")) ||
+                      0;
+                    if (yr >= 2000 && yr <= 2100) {
+                      nextAnnual[yr] = {
+                        ...d,
+                        year: yr,
+                        monthlyFee:
+                          Number(d.monthlyFee) > 0 ? Number(d.monthlyFee) : 11,
+                        status: d.status === "closed" ? "closed" : "open",
+                        members: Array.isArray(d.members) ? d.members : [],
+                      };
+                    }
+                  }
+                });
+                annualSheets = nextAnnual;
                 renderFinance();
                 scheduleDashboard();
               },
@@ -9850,6 +10288,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           );
         } else {
           allFinance = [];
+          annualSheets = {};
         }
       }
 
@@ -10125,7 +10564,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                     </select>
                     <input id="mem-pay-sender-${p.id}" type="text" value="${escapeHtml(defaultSender)}" placeholder="Your Sender No. (e.g. 017...) *" class="px-2.5 py-2 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
                   </div>
-                  <input id="mem-pay-trx-${p.id}" type="text" value="${escapeHtml(existingTrx)}" placeholder="Transaction ID (TrxID)*" class="w-full px-2.5 py-2 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input id="mem-pay-trx-${p.id}" type="text" value="${escapeHtml(existingTrx)}" placeholder="Transaction ID (TrxID) or Proof Screenshot Link *" class="w-full px-2.5 py-2 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
                   <button type="button" id="mem-proof-btn-${p.id}" onclick="submitMemberPaymentProof('${p.id}')" class="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white text-xs font-bold py-2 px-3 rounded-lg transition shadow-sm">
                     I Have Sent Money • Submit Proof
                   </button>
@@ -10334,18 +10773,20 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
       window.switchFinanceTab = (tab) => {
         financeSubTab = tab;
-        ["overview", "requests", "ledger", "settings"].forEach((t) => {
-          document
-            .getElementById(`fin-view-${t}`)
-            ?.classList.toggle("hidden", t !== tab);
-          const b = document.getElementById(`fin-tab-${t}`);
-          if (b) {
-            b.classList.toggle("bg-emerald-700", t === tab);
-            b.classList.toggle("text-white", t === tab);
-            b.classList.toggle("shadow", t === tab);
-            b.classList.toggle("text-emerald-800", t !== tab);
-          }
-        });
+        ["overview", "annual", "requests", "ledger", "settings"].forEach(
+          (t) => {
+            document
+              .getElementById(`fin-view-${t}`)
+              ?.classList.toggle("hidden", t !== tab);
+            const b = document.getElementById(`fin-tab-${t}`);
+            if (b) {
+              b.classList.toggle("bg-emerald-700", t === tab);
+              b.classList.toggle("text-white", t === tab);
+              b.classList.toggle("shadow", t === tab);
+              b.classList.toggle("text-emerald-800", t !== tab);
+            }
+          },
+        );
         if (tab === "ledger") fillFinanceCategories();
         if (tab === "settings") {
           initSignaturePad();
@@ -10395,17 +10836,20 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           badge.classList.toggle("hidden", pendingList.length === 0);
         }
 
-        ["overview", "requests", "ledger", "settings"].forEach((t) => {
-          const b = document.getElementById(`fin-tab-${t}`);
-          if (b) {
-            const active = t === financeSubTab;
-            b.classList.toggle("bg-emerald-700", active);
-            b.classList.toggle("text-white", active);
-            b.classList.toggle("text-emerald-800", !active);
-          }
-        });
+        ["overview", "annual", "requests", "ledger", "settings"].forEach(
+          (t) => {
+            const b = document.getElementById(`fin-tab-${t}`);
+            if (b) {
+              const active = t === financeSubTab;
+              b.classList.toggle("bg-emerald-700", active);
+              b.classList.toggle("text-white", active);
+              b.classList.toggle("text-emerald-800", !active);
+            }
+          },
+        );
 
         if (financeSubTab === "overview") renderFinanceOverview();
+        if (financeSubTab === "annual") renderAnnualSheet();
         if (financeSubTab === "requests") renderFinanceRequests();
         if (financeSubTab === "ledger") renderFinanceLedger();
         if (
@@ -11555,6 +11999,913 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         } finally {
           btn.disabled = false;
         }
+      };
+
+      // ---------- 12-MONTH ANNUAL FUND EXCEL SHEET ----------
+      const ANNUAL_MONTH_NAMES = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      function normalizeAnnualMonths(arr) {
+        const out = Array(12).fill(0);
+        if (!Array.isArray(arr)) return out;
+        for (let i = 0; i < 12; i++) {
+          const v = Number(arr[i]);
+          out[i] = Number.isFinite(v) && v > 0 ? v : 0;
+        }
+        return out;
+      }
+
+      function buildSeedMembersFromPortal() {
+        return allMembers
+          .filter((m) => m.approved !== false && (m.name || "").trim())
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || "")),
+          )
+          .map((m) => ({
+            id: m.uid || m.id || "m_" + Math.random().toString(36).slice(2, 9),
+            uid: m.uid || m.id || "",
+            csfId: (m.csfId || "").trim(),
+            name: (m.name || "Member").trim(),
+            months: Array(12).fill(0),
+          }));
+      }
+
+      function getOrCreateAnnualSheet(year = activeAnnualYear) {
+        const yr = Number(year) || new Date().getFullYear();
+        if (!annualSheets[yr]) {
+          annualSheets[yr] = {
+            id: `annual_${yr}`,
+            type: "annual_sheet",
+            year: yr,
+            monthlyFee: 11,
+            status: "open",
+            _draft: true,
+            members: buildSeedMembersFromPortal(),
+          };
+        }
+        const sheet = annualSheets[yr];
+        if (
+          sheet._draft &&
+          (!Array.isArray(sheet.members) || !sheet.members.length) &&
+          allMembers.length
+        ) {
+          sheet.members = buildSeedMembersFromPortal();
+        }
+        sheet.monthlyFee =
+          Number(sheet.monthlyFee) > 0 ? Number(sheet.monthlyFee) : 11;
+        sheet.status = sheet.status === "closed" ? "closed" : "open";
+        sheet.members = (Array.isArray(sheet.members) ? sheet.members : []).map(
+          (m, idx) => ({
+            id: m.id || m.uid || `row_${idx}_${Date.now()}`,
+            uid: m.uid || "",
+            csfId: (m.csfId || "").trim(),
+            name: (m.name || "Member").trim(),
+            months: normalizeAnnualMonths(m.months),
+          }),
+        );
+        return sheet;
+      }
+
+      function computeAnnualTotals(sheet) {
+        const fixed =
+          Number(sheet.monthlyFee) > 0 ? Number(sheet.monthlyFee) : 11;
+        let regularTotal = 0;
+        let extraTotal = 0;
+        let grandTotal = 0;
+        const monthTotals = Array(12).fill(0);
+        const rowStats = sheet.members.map((m) => {
+          let rowReg = 0;
+          let rowExtra = 0;
+          let rowTotal = 0;
+          const months = normalizeAnnualMonths(m.months);
+          months.forEach((val, idx) => {
+            if (val > 0) {
+              monthTotals[idx] += val;
+              rowTotal += val;
+              if (val > fixed) {
+                rowReg += fixed;
+                rowExtra += val - fixed;
+              } else {
+                rowReg += val;
+              }
+            }
+          });
+          regularTotal += rowReg;
+          extraTotal += rowExtra;
+          grandTotal += rowTotal;
+          return { rowReg, rowExtra, rowTotal };
+        });
+        return {
+          fixed,
+          regularTotal,
+          extraTotal,
+          grandTotal,
+          monthTotals,
+          rowStats,
+        };
+      }
+
+      function setAnnualSaveStatus(text, isWarn = false) {
+        const el = document.getElementById("fin-annual-save-status");
+        if (!el) return;
+        el.textContent = text;
+        el.classList.toggle("text-amber-600", isWarn);
+        el.classList.toggle("text-emerald-700", !isWarn);
+      }
+
+      async function saveAnnualSheetToCloud(sheet, extraFields = {}) {
+        if (!canEditSector("finance")) return;
+        const yr = Number(sheet.year);
+        setAnnualSaveStatus("Saving to cloud...", true);
+        try {
+          await setDoc(
+            doc(db, "finance", `annual_${yr}`),
+            {
+              type: "annual_sheet",
+              year: yr,
+              monthlyFee: Number(sheet.monthlyFee) || 11,
+              status: sheet.status === "closed" ? "closed" : "open",
+              members: sheet.members.map((m) => ({
+                id: m.id,
+                uid: m.uid || "",
+                csfId: m.csfId || "",
+                name: m.name || "",
+                months: normalizeAnnualMonths(m.months),
+              })),
+              updatedAt: serverTimestamp(),
+              updatedBy: currentUserProfile?.name || "Admin",
+              ...extraFields,
+            },
+            { merge: true },
+          );
+          setAnnualSaveStatus("Saved to Cloud ✓", false);
+        } catch (err) {
+          setAnnualSaveStatus("Save failed!", true);
+          showToast("Failed to save annual sheet: " + err.message, "error");
+        }
+      }
+
+      function scheduleAnnualSheetSave(sheet) {
+        clearTimeout(annualSaveTimer);
+        setAnnualSaveStatus("Unsaved changes...", true);
+        annualSaveTimer = setTimeout(() => {
+          saveAnnualSheetToCloud(sheet);
+        }, 450);
+      }
+
+      function annualInputColorClass(val, fixed) {
+        if (!(val > 0)) return "";
+        if (val === fixed) return "annual-paid-exact";
+        if (val > fixed) return "annual-paid-extra";
+        return "annual-paid-partial";
+      }
+
+      function populateAnnualYearSelector() {
+        const sel = document.getElementById("fin-annual-year");
+        if (!sel) return;
+        const currentYr = new Date().getFullYear();
+        const yearSet = new Set([currentYr, activeAnnualYear]);
+        Object.keys(annualSheets).forEach((k) => {
+          const y = Number(k);
+          if (y >= 2000 && y <= 2100) yearSet.add(y);
+        });
+        const sortedYears = [...yearSet].sort((a, b) => b - a);
+        sel.innerHTML = sortedYears
+          .map((y) => {
+            const st =
+              annualSheets[y]?.status === "closed" ? "Closed" : "Active";
+            return `<option value="${y}" ${y === activeAnnualYear ? "selected" : ""}>Year ${y} (${st})</option>`;
+          })
+          .join("");
+      }
+
+      function updateAnnualSummaryCardsAndFooter(sheet) {
+        const stats = computeAnnualTotals(sheet);
+        const setTxt = (id, v) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = v;
+        };
+        setTxt("fin-annual-total-members", String(sheet.members.length));
+        setTxt("fin-annual-fee-label", `৳${stats.fixed}`);
+        setTxt("fin-annual-regular", BDT(stats.regularTotal));
+        setTxt("fin-annual-extra", BDT(stats.extraTotal));
+        setTxt("fin-annual-grand", BDT(stats.grandTotal));
+
+        const tfoot = document.getElementById("fin-annual-tfoot");
+        if (tfoot) {
+          const isClosed = sheet.status === "closed";
+          const canEdit = canEditSector("finance");
+          tfoot.innerHTML = `
+            <tr>
+              <td class="annual-member-col">মোট হিসাব (Total)</td>
+              ${stats.monthTotals
+                .map((mt) => `<td>৳${mt.toLocaleString("en-US")}</td>`)
+                .join("")}
+              <td class="text-amber-700">৳${stats.extraTotal.toLocaleString("en-US")}</td>
+              <td class="text-emerald-700">৳${stats.grandTotal.toLocaleString("en-US")}</td>
+              ${!isClosed && canEdit ? "<td></td>" : ""}
+            </tr>`;
+        }
+      }
+
+      window.renderAnnualSheetTableOnly = () => {
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        const fixed = Number(sheet.monthlyFee) || 11;
+        const isClosed = sheet.status === "closed";
+        const canEdit = canEditSector("finance");
+        const editable = !isClosed && canEdit;
+        const q = (document.getElementById("fin-annual-search")?.value || "")
+          .trim()
+          .toLowerCase();
+
+        const theadRow = document.getElementById("fin-annual-thead-row");
+        if (theadRow) {
+          theadRow.innerHTML = `
+            <th class="annual-member-col">সদস্য / Member</th>
+            ${ANNUAL_MONTH_NAMES.map(
+              (m) =>
+                `<th>${m}<br><span class="text-[10px] font-medium text-slate-400">(${fixed}৳)</span></th>`,
+            ).join("")}
+            <th class="text-amber-700">Extra (৳)</th>
+            <th class="text-emerald-800">Total (৳)</th>
+            ${editable ? "<th>Action</th>" : ""}
+          `;
+        }
+
+        const tbody = document.getElementById("fin-annual-tbody");
+        if (!tbody) return;
+
+        const stats = computeAnnualTotals(sheet);
+        const indexed = sheet.members
+          .map((m, idx) => ({ m, idx, rowStat: stats.rowStats[idx] }))
+          .filter(({ m }) => {
+            if (!q) return true;
+            return (
+              (m.name || "").toLowerCase().includes(q) ||
+              (m.csfId || "").toLowerCase().includes(q)
+            );
+          });
+
+        if (!indexed.length) {
+          tbody.innerHTML = `<tr><td colspan="${editable ? 16 : 15}" class="py-8 text-center text-slate-500 text-xs">${sheet.members.length ? "No matching members found." : "No members in this year's sheet yet. Click '+ Add Member' or 'Sync Members'."}</td></tr>`;
+          updateAnnualSummaryCardsAndFooter(sheet);
+          return;
+        }
+
+        tbody.innerHTML = indexed
+          .map(({ m, idx, rowStat }) => {
+            const monthsHtml = m.months
+              .map((val, mIdx) => {
+                const cls = annualInputColorClass(val, fixed);
+                return `<td>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    value="${val > 0 ? val : ""}"
+                    ${editable ? "" : 'disabled data-annual-locked="true"'}
+                    oninput="onAnnualCellInput(${idx}, ${mIdx}, this)"
+                    onblur="flushAnnualCellSave()"
+                    class="annual-month-input ${cls}"
+                  />
+                </td>`;
+              })
+              .join("");
+
+            return `
+              <tr data-annual-row="${idx}">
+                <td class="annual-member-col">
+                  <div class="font-bold text-slate-800 leading-tight">${escapeHtml(m.name)}</div>
+                  ${m.csfId ? `<div class="text-[10px] font-semibold text-emerald-700">${escapeHtml(m.csfId)}</div>` : ""}
+                </td>
+                ${monthsHtml}
+                <td id="fin-annual-row-extra-${idx}" class="font-bold text-amber-700">৳${rowStat.rowExtra.toLocaleString("en-US")}</td>
+                <td id="fin-annual-row-total-${idx}" class="font-extrabold text-emerald-800">৳${rowStat.rowTotal.toLocaleString("en-US")}</td>
+                ${
+                  editable
+                    ? `<td>
+                        <button
+                          type="button"
+                          onclick="removeAnnualMember(${idx})"
+                          title="Remove member from this year's sheet"
+                          class="px-2 py-1 rounded-lg text-[11px] font-bold text-red-600 hover:bg-red-50 transition"
+                        >✕</button>
+                      </td>`
+                    : ""
+                }
+              </tr>`;
+          })
+          .join("");
+
+        updateAnnualSummaryCardsAndFooter(sheet);
+      };
+
+      window.renderAnnualSheet = () => {
+        const activeEl = document.activeElement;
+        if (
+          activeEl &&
+          activeEl.classList &&
+          activeEl.classList.contains("annual-month-input") &&
+          financeSubTab === "annual"
+        ) {
+          populateAnnualYearSelector();
+          return;
+        }
+
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        const isClosed = sheet.status === "closed";
+        const canEdit = canEditSector("finance");
+        const editable = !isClosed && canEdit;
+
+        populateAnnualYearSelector();
+
+        const badge = document.getElementById("fin-annual-status-badge");
+        if (badge) {
+          badge.textContent = isClosed
+            ? `Closed & Locked (${sheet.year})`
+            : `Active Year (${sheet.year})`;
+          badge.className = isClosed
+            ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900"
+            : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900";
+        }
+
+        const closeBtn = document.getElementById("fin-annual-close-btn");
+        const closeLabel = document.getElementById("fin-annual-close-label");
+        const reopenBtn = document.getElementById("fin-annual-reopen-btn");
+        const closedBanner = document.getElementById(
+          "fin-annual-closed-banner",
+        );
+        const closedText = document.getElementById("fin-annual-closed-text");
+
+        if (closeLabel) {
+          closeLabel.textContent = `Close ${sheet.year} & Start ${sheet.year + 1}`;
+        }
+        if (closeBtn) {
+          closeBtn.classList.toggle("hidden", isClosed);
+          closeBtn.dataset.annualLocked = isClosed ? "true" : "false";
+        }
+        if (reopenBtn) {
+          reopenBtn.classList.toggle("hidden", !(isClosed && isMainAdmin()));
+        }
+        if (closedBanner && closedText) {
+          closedBanner.classList.toggle("hidden", !isClosed);
+          if (isClosed) {
+            closedText.textContent = `Year ${sheet.year} accounts are closed and locked${sheet.closedBy ? " by " + sheet.closedBy : ""}. You can view or export this archive anytime.`;
+          }
+        }
+
+        const feeInput = document.getElementById("fin-annual-fee-input");
+        if (feeInput) {
+          if (document.activeElement !== feeInput) {
+            feeInput.value = Number(sheet.monthlyFee) || 11;
+          }
+          feeInput.dataset.annualLocked = isClosed ? "true" : "false";
+          feeInput.disabled = !editable;
+        }
+
+        [
+          "fin-annual-member-name",
+          "fin-annual-member-csfid",
+          "fin-annual-add-btn",
+          "fin-annual-sync-members-btn",
+          "fin-annual-sync-pay-btn",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.dataset.annualLocked = isClosed ? "true" : "false";
+            el.disabled = !editable;
+          }
+        });
+
+        renderAnnualSheetTableOnly();
+      };
+
+      window.onAnnualCellInput = (memberIdx, monthIdx, inputEl) => {
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed" || !canEditSector("finance")) return;
+        const member = sheet.members[memberIdx];
+        if (!member) return;
+
+        let val = Math.floor(Number(inputEl.value));
+        if (!Number.isFinite(val) || val < 0) val = 0;
+        member.months[monthIdx] = val;
+
+        const fixed = Number(sheet.monthlyFee) || 11;
+        inputEl.classList.remove(
+          "annual-paid-exact",
+          "annual-paid-extra",
+          "annual-paid-partial",
+        );
+        const cls = annualInputColorClass(val, fixed);
+        if (cls) inputEl.classList.add(cls);
+
+        let rowExtra = 0;
+        let rowTotal = 0;
+        member.months.forEach((v) => {
+          rowTotal += v;
+          if (v > fixed) rowExtra += v - fixed;
+        });
+
+        const extraEl = document.getElementById(
+          `fin-annual-row-extra-${memberIdx}`,
+        );
+        const totalEl = document.getElementById(
+          `fin-annual-row-total-${memberIdx}`,
+        );
+        if (extraEl)
+          extraEl.textContent = `৳${rowExtra.toLocaleString("en-US")}`;
+        if (totalEl)
+          totalEl.textContent = `৳${rowTotal.toLocaleString("en-US")}`;
+
+        updateAnnualSummaryCardsAndFooter(sheet);
+        scheduleAnnualSheetSave(sheet);
+      };
+
+      window.flushAnnualCellSave = () => {
+        if (annualSaveTimer) {
+          clearTimeout(annualSaveTimer);
+          annualSaveTimer = null;
+          const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+          if (sheet.status !== "closed") saveAnnualSheetToCloud(sheet);
+        }
+      };
+
+      window.changeAnnualYear = (yrVal) => {
+        flushAnnualCellSave();
+        const yr = Number(yrVal);
+        if (yr >= 2000 && yr <= 2100) {
+          activeAnnualYear = yr;
+          renderFinance();
+        }
+      };
+
+      window.updateAnnualMonthlyFee = async (feeVal) => {
+        if (!requireSectorEdit("finance")) return;
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") {
+          return showToast("Closed year cannot be modified.", "warn");
+        }
+        const fee = Math.max(1, Math.floor(Number(feeVal) || 11));
+        sheet.monthlyFee = fee;
+        renderAnnualSheet();
+        await saveAnnualSheetToCloud(sheet);
+        showToast(`Monthly fixed fee updated to ৳${fee} for ${sheet.year}.`);
+      };
+
+      window.addAnnualMember = async (e) => {
+        e.preventDefault();
+        if (!requireSectorEdit("finance")) return;
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") {
+          return showToast(
+            "This year is closed. Switch to the active year.",
+            "warn",
+          );
+        }
+        const nameEl = document.getElementById("fin-annual-member-name");
+        const csfEl = document.getElementById("fin-annual-member-csfid");
+        const name = (nameEl?.value || "").trim();
+        const csfId = (csfEl?.value || "").trim();
+        if (!name) return;
+
+        const duplicate = sheet.members.some(
+          (m) =>
+            m.name.toLowerCase() === name.toLowerCase() &&
+            (!csfId || (m.csfId || "").toLowerCase() === csfId.toLowerCase()),
+        );
+        if (duplicate) {
+          return showToast("This member already exists in the sheet.", "warn");
+        }
+
+        sheet.members.push({
+          id: "m_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+          uid: "",
+          csfId,
+          name,
+          months: Array(12).fill(0),
+        });
+        if (nameEl) nameEl.value = "";
+        if (csfEl) csfEl.value = "";
+        renderAnnualSheet();
+        await saveAnnualSheetToCloud(sheet);
+        showToast(`${name} added to ${sheet.year} fund sheet.`);
+      };
+
+      window.removeAnnualMember = async (memberIdx) => {
+        if (!requireSectorEdit("finance")) return;
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") return;
+        const m = sheet.members[memberIdx];
+        if (!m) return;
+        if (!confirm(`Remove "${m.name}" from ${sheet.year} fund sheet?`))
+          return;
+        sheet.members.splice(memberIdx, 1);
+        renderAnnualSheet();
+        await saveAnnualSheetToCloud(sheet);
+      };
+
+      window.syncAnnualPortalMembers = async () => {
+        if (!requireSectorEdit("finance")) return;
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") {
+          return showToast("Closed year cannot be modified.", "warn");
+        }
+        const approved = allMembers.filter(
+          (m) => m.approved !== false && (m.name || "").trim(),
+        );
+        let added = 0;
+        let updated = 0;
+        approved.forEach((pm) => {
+          const uid = pm.uid || pm.id || "";
+          const csfId = (pm.csfId || "").trim();
+          const name = (pm.name || "Member").trim();
+          const existing = sheet.members.find(
+            (row) =>
+              (uid && (row.uid === uid || row.id === uid)) ||
+              (csfId &&
+                (row.csfId || "").toLowerCase() === csfId.toLowerCase()) ||
+              row.name.toLowerCase() === name.toLowerCase(),
+          );
+          if (existing) {
+            if (uid && !existing.uid) {
+              existing.uid = uid;
+              updated++;
+            }
+            if (csfId && !existing.csfId) {
+              existing.csfId = csfId;
+              updated++;
+            }
+          } else {
+            sheet.members.push({
+              id: uid || "m_" + Math.random().toString(36).slice(2, 9),
+              uid,
+              csfId,
+              name,
+              months: Array(12).fill(0),
+            });
+            added++;
+          }
+        });
+        if (!added && !updated) {
+          return showToast("All portal members are already synced.");
+        }
+        renderAnnualSheet();
+        await saveAnnualSheetToCloud(sheet);
+        showToast(
+          `Synced portal members (${added} added, ${updated} updated).`,
+        );
+      };
+
+      function parseAnnualMonthIndexForYear(monthStr, createdAt, targetYear) {
+        const s = String(monthStr || "")
+          .trim()
+          .toLowerCase();
+        if (s) {
+          const yearMatch = s.match(/\b(20\d{2})\b/);
+          if (yearMatch && Number(yearMatch[1]) !== targetYear) return -1;
+          const tokens = [
+            ["jan", "january", "জানুয়ারি", "জানুয়ারি"],
+            ["feb", "february", "ফেব্রুয়ারি", "ফেব্রুয়ারি"],
+            ["mar", "march", "মার্চ"],
+            ["apr", "april", "এপ্রিল"],
+            ["may", "মে"],
+            ["jun", "june", "জুন"],
+            ["jul", "july", "জুলাই"],
+            ["aug", "august", "আগস্ট"],
+            ["sep", "sept", "september", "সেপ্টেম্বর"],
+            ["oct", "october", "অক্টোবর"],
+            ["nov", "november", "নভেম্বর"],
+            ["dec", "december", "ডিসেম্বর"],
+          ];
+          for (let i = 0; i < tokens.length; i++) {
+            if (tokens[i].some((t) => s.includes(t))) {
+              if (yearMatch) return i;
+              const dt = tsToDate(createdAt);
+              if (dt.getFullYear() === targetYear) return i;
+            }
+          }
+        }
+        const dt = tsToDate(createdAt);
+        if (dt.getFullYear() === targetYear) return dt.getMonth();
+        return -1;
+      }
+
+      window.syncAnnualConfirmedPayments = async () => {
+        if (!requireSectorEdit("finance")) return;
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") {
+          return showToast("Closed year cannot be modified.", "warn");
+        }
+        const confirmed = allPayments.filter(isPaymentConfirmed);
+        const aggregated = {};
+
+        confirmed.forEach((p) => {
+          const mIdx = parseAnnualMonthIndexForYear(
+            p.month,
+            p.createdAt,
+            sheet.year,
+          );
+          if (mIdx < 0 || mIdx > 11) return;
+          const uid = p.uid || "";
+          const csfId = (p.csfId || "").trim();
+          const name = (p.name || "Member").trim();
+          let row = sheet.members.find(
+            (r) =>
+              (uid && (r.uid === uid || r.id === uid)) ||
+              (csfId &&
+                (r.csfId || "").toLowerCase() === csfId.toLowerCase()) ||
+              r.name.toLowerCase() === name.toLowerCase(),
+          );
+          if (!row) {
+            row = {
+              id: uid || "m_" + Math.random().toString(36).slice(2, 9),
+              uid,
+              csfId,
+              name,
+              months: Array(12).fill(0),
+            };
+            sheet.members.push(row);
+          }
+          if (!aggregated[row.id]) aggregated[row.id] = Array(12).fill(0);
+          aggregated[row.id][mIdx] += Math.round(Number(p.amount || 0));
+        });
+
+        let updatedCells = 0;
+        sheet.members.forEach((row) => {
+          const sums = aggregated[row.id];
+          if (!sums) return;
+          for (let i = 0; i < 12; i++) {
+            if (sums[i] > 0 && row.months[i] === 0) {
+              row.months[i] = sums[i];
+              updatedCells++;
+            }
+          }
+        });
+
+        if (!updatedCells) {
+          return showToast(
+            `No new empty cells to fill from confirmed donations in ${sheet.year}.`,
+          );
+        }
+        renderAnnualSheet();
+        await saveAnnualSheetToCloud(sheet);
+        showToast(
+          `Filled ${updatedCells} empty month cell(s) from confirmed donations!`,
+        );
+      };
+
+      window.closeAnnualYearAndRollover = async () => {
+        if (!requireSectorEdit("finance")) return;
+        flushAnnualCellSave();
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") {
+          return showToast(`Year ${sheet.year} is already closed.`, "warn");
+        }
+        const stats = computeAnnualTotals(sheet);
+        const nextYear = sheet.year + 1;
+        const msg =
+          `Close Year ${sheet.year} & Start New Year ${nextYear}?\n\n` +
+          `• Members: ${sheet.members.length}\n` +
+          `• Regular Fund: ৳${stats.regularTotal.toLocaleString("en-US")}\n` +
+          `• Extra Fund: ৳${stats.extraTotal.toLocaleString("en-US")}\n` +
+          `• Grand Total: ৳${stats.grandTotal.toLocaleString("en-US")}\n\n` +
+          `Year ${sheet.year} will be locked as an archive, and ${nextYear} will start fresh with ৳0 for all members.`;
+        if (!confirm(msg)) return;
+
+        const btn = document.getElementById("fin-annual-close-btn");
+        if (btn) btn.disabled = true;
+        try {
+          sheet.status = "closed";
+          sheet.closedBy = currentUserProfile?.name || "Admin";
+          await saveAnnualSheetToCloud(sheet, {
+            status: "closed",
+            closedAt: serverTimestamp(),
+            closedBy: currentUserProfile?.name || "Admin",
+            closedByUid: currentUser?.uid || "",
+            closedSummary: {
+              membersCount: sheet.members.length,
+              regularTotal: stats.regularTotal,
+              extraTotal: stats.extraTotal,
+              grandTotal: stats.grandTotal,
+            },
+          });
+
+          const existingNext = annualSheets[nextYear];
+          const carryMembers = sheet.members.map((m) => ({
+            id: m.id,
+            uid: m.uid || "",
+            csfId: m.csfId || "",
+            name: m.name || "",
+            months: Array(12).fill(0),
+          }));
+
+          if (!existingNext) {
+            const freshSheet = {
+              id: `annual_${nextYear}`,
+              type: "annual_sheet",
+              year: nextYear,
+              monthlyFee: sheet.monthlyFee || 11,
+              status: "open",
+              members: carryMembers,
+            };
+            annualSheets[nextYear] = freshSheet;
+            await saveAnnualSheetToCloud(freshSheet, {
+              rolledOverFrom: sheet.year,
+            });
+          }
+
+          activeAnnualYear = nextYear;
+          renderFinance();
+          showToast(
+            `Year ${sheet.year} closed! Started fresh sheet for ${nextYear}.`,
+          );
+        } catch (err) {
+          showToast("Year close failed: " + err.message, "error");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      window.reopenAnnualYear = async () => {
+        if (!isMainAdmin()) {
+          return showToast(
+            "Only Main Admin can re-open a closed year.",
+            "error",
+          );
+        }
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status !== "closed") return;
+        if (
+          !confirm(
+            `Re-open Year ${sheet.year} for editing? (Main Admin override)`,
+          )
+        ) {
+          return;
+        }
+        sheet.status = "open";
+        await saveAnnualSheetToCloud(sheet, {
+          status: "open",
+          reopenedAt: serverTimestamp(),
+          reopenedBy: currentUserProfile?.name || "Main Admin",
+        });
+        renderAnnualSheet();
+        showToast(`Year ${sheet.year} is now open for editing.`);
+      };
+
+      window.exportAnnualExcelCSV = () => {
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (!sheet.members.length) {
+          return showToast("No member rows to export.", "warn");
+        }
+        const stats = computeAnnualTotals(sheet);
+        const q = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+        const lines = [
+          [
+            "SL",
+            "Member Name",
+            "CSF ID",
+            ...ANNUAL_MONTH_NAMES.map((m) => `${m} (${stats.fixed} BDT)`),
+            "Regular Total (BDT)",
+            "Extra Total (BDT)",
+            "Grand Total (BDT)",
+          ]
+            .map(q)
+            .join(","),
+        ];
+
+        sheet.members.forEach((m, i) => {
+          const rs = stats.rowStats[i];
+          lines.push(
+            [
+              i + 1,
+              m.name,
+              m.csfId || "-",
+              ...m.months.map((v) => v || 0),
+              rs.rowReg,
+              rs.rowExtra,
+              rs.rowTotal,
+            ]
+              .map(q)
+              .join(","),
+          );
+        });
+
+        lines.push(
+          [
+            "",
+            "TOTAL",
+            `Year ${sheet.year} (${sheet.status.toUpperCase()})`,
+            ...stats.monthTotals,
+            stats.regularTotal,
+            stats.extraTotal,
+            stats.grandTotal,
+          ]
+            .map(q)
+            .join(","),
+        );
+
+        const blob = new Blob(["\ufeff" + lines.join("\n")], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `CSF-Fund-Sheet-${sheet.year}.csv`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        showToast(`Excel sheet CSF-Fund-Sheet-${sheet.year}.csv downloaded!`);
+      };
+
+      window.exportAnnualPDF = () => {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          return showToast(
+            "PDF library not loaded. Check internet connection.",
+            "error",
+          );
+        }
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (!sheet.members.length) {
+          return showToast("No member rows to export.", "warn");
+        }
+        const stats = computeAnnualTotals(sheet);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4",
+        });
+
+        pdf.setFillColor(6, 78, 59);
+        pdf.rect(0, 0, 297, 24, "F");
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(15);
+        pdf.text("CHANDPURISHA SPECIAL FORCE (CSF)", 14, 11);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(
+          `12-Month Annual Fund Sheet - Year ${sheet.year} (${sheet.status.toUpperCase()})`,
+          14,
+          18,
+        );
+
+        pdf.setTextColor(30, 41, 59);
+        pdf.setFontSize(9.5);
+        pdf.text(`Members: ${sheet.members.length}`, 14, 31);
+        pdf.text(`Monthly Fee: BDT ${stats.fixed}`, 55, 31);
+        pdf.text(`Regular Fund: BDT ${stats.regularTotal}`, 110, 31);
+        pdf.text(`Extra Fund: BDT ${stats.extraTotal}`, 175, 31);
+        pdf.text(`Grand Total: BDT ${stats.grandTotal}`, 235, 31);
+
+        const bodyRows = sheet.members.map((m, i) => {
+          const rs = stats.rowStats[i];
+          return [
+            i + 1,
+            m.name + (m.csfId ? ` (${m.csfId})` : ""),
+            ...m.months.map((v) => v || 0),
+            rs.rowExtra,
+            rs.rowTotal,
+          ];
+        });
+        bodyRows.push([
+          "",
+          "TOTAL",
+          ...stats.monthTotals,
+          stats.extraTotal,
+          stats.grandTotal,
+        ]);
+
+        pdf.autoTable({
+          startY: 36,
+          head: [["#", "Member", ...ANNUAL_MONTH_NAMES, "Extra", "Total"]],
+          body: bodyRows,
+          headStyles: { fillColor: [6, 95, 70], fontSize: 8 },
+          styles: { fontSize: 7.5, halign: "center", cellPadding: 2 },
+          columnStyles: {
+            0: { cellWidth: 8 },
+            1: { halign: "left", cellWidth: 42 },
+          },
+          didParseCell: (data) => {
+            if (data.row.index === bodyRows.length - 1) {
+              data.cell.styles.fontStyle = "bold";
+              data.cell.styles.fillColor = [241, 245, 249];
+            }
+          },
+        });
+
+        pdf.save(`CSF-Fund-Sheet-${sheet.year}.pdf`);
       };
 
       // ================= THEME (DARK / LIGHT) & UPDATE FORM =================
