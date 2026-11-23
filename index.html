@@ -2946,6 +2946,39 @@
             </div>
           </div>
 
+          <div id="mypay-due-alert" class="hidden"></div>
+
+          <div
+            id="mypay-monthly-card"
+            class="glass p-4 sm:p-5 rounded-2xl space-y-3 border border-emerald-200"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3
+                class="font-bold text-emerald-950 flex items-center gap-2 text-sm sm:text-base"
+              >
+                <i
+                  data-lucide="calendar-check-2"
+                  class="w-4 h-4 text-emerald-600"
+                ></i>
+                <span id="mypay-monthly-title">Monthly 11tk Fund Status</span>
+              </h3>
+              <span
+                id="mypay-monthly-summary-pill"
+                class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
+              >
+                0 / 12 Paid
+              </span>
+            </div>
+            <div
+              id="mypay-monthly-grid"
+              class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2"
+            ></div>
+            <p class="text-[11px] text-slate-500">
+              যেকোনো বকেয়া (Not Paid) মাসের ঘরে ক্লিক করলে আপনি সেই মাসের জন্য
+              ডোনেশন রিকোয়েস্ট পাঠাতে পারবেন।
+            </p>
+          </div>
+
           <div
             id="pay-info-card"
             class="hidden glass p-5 rounded-2xl space-y-3 border border-emerald-200"
@@ -7785,6 +7818,7 @@
         allPayments = [];
         allFinance = [];
         annualSheets = {};
+        publicAnnualFund = { activeYear: new Date().getFullYear(), years: {} };
         activeAnnualYear = new Date().getFullYear();
         allMembers = [];
         allUpdates = [];
@@ -10042,6 +10076,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
       let financeSubTab = "overview";
       let financeErrorShown = false;
       let annualSheets = {};
+      let publicAnnualFund = {
+        activeYear: new Date().getFullYear(),
+        years: {},
+      };
       let activeAnnualYear = new Date().getFullYear();
       let annualSaveTimer = null;
 
@@ -10250,6 +10288,28 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           ),
         );
 
+        financeUnsubs.push(
+          onSnapshot(
+            doc(db, "settings", "annual_fund"),
+            (snap) => {
+              if (snap.exists()) {
+                const d = snap.data() || {};
+                publicAnnualFund = {
+                  activeYear: Number(d.activeYear) || new Date().getFullYear(),
+                  years: d.years && typeof d.years === "object" ? d.years : {},
+                };
+              } else {
+                publicAnnualFund = {
+                  activeYear: new Date().getFullYear(),
+                  years: {},
+                };
+              }
+              renderMemberPayments();
+            },
+            () => {},
+          ),
+        );
+
         if (canViewAdminFinance) {
           financeUnsubs.push(
             onSnapshot(
@@ -10280,7 +10340,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                   }
                 });
                 annualSheets = nextAnnual;
+                if (canEditSector("finance")) {
+                  Object.values(nextAnnual).forEach((s) => {
+                    if (!publicAnnualFund?.years?.[String(s.year)]) {
+                      mirrorAnnualSheetForMembers(s);
+                    }
+                  });
+                }
                 renderFinance();
+                renderMemberPayments();
                 scheduleDashboard();
               },
               onErr,
@@ -10480,9 +10548,253 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         return escapeHtml(v);
       }
 
+      const FULL_MONTH_NAMES = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      window.prefillMonthlyDonation = (monthIdx, year, amount = 11) => {
+        const amtEl = document.getElementById("pay-amount");
+        const monthEl = document.getElementById("pay-month");
+        const catSel = document.getElementById("pay-category");
+        const noteEl = document.getElementById("pay-note");
+        const formEl = document.getElementById("payment-form");
+        const monthLabel = `${FULL_MONTH_NAMES[monthIdx] || "Month"} ${year}`;
+        if (amtEl) amtEl.value = Math.max(1, Math.round(Number(amount) || 11));
+        if (monthEl) monthEl.value = monthLabel;
+        if (catSel && !catSel.classList.contains("hidden")) {
+          const opt = [...catSel.options].find((o) =>
+            /monthly|subscription|চাঁদা|fund/i.test(o.value),
+          );
+          if (opt) catSel.value = opt.value;
+        }
+        if (noteEl && !noteEl.value.trim()) {
+          noteEl.value = `Monthly ৳${Math.max(1, Math.round(Number(amount) || 11))} Fund (${monthLabel})`;
+        }
+        if (formEl) {
+          formEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        showToast(
+          `Donation form filled for ${monthLabel} (৳${Math.round(Number(amount) || 11)}).`,
+        );
+      };
+
+      function renderMemberMonthlyStatus(mine) {
+        const alertEl = document.getElementById("mypay-due-alert");
+        const cardEl = document.getElementById("mypay-monthly-card");
+        const gridEl = document.getElementById("mypay-monthly-grid");
+        const titleEl = document.getElementById("mypay-monthly-title");
+        const pillEl = document.getElementById("mypay-monthly-summary-pill");
+        if (!alertEl || !cardEl || !gridEl) return;
+
+        const now = new Date();
+        const curCalendarYear = now.getFullYear();
+        const targetYear =
+          Number(publicAnnualFund?.activeYear) || curCalendarYear;
+        const sheetSource =
+          annualSheets[targetYear] ||
+          publicAnnualFund?.years?.[String(targetYear)] ||
+          null;
+        const monthlyFee =
+          Number(sheetSource?.monthlyFee) > 0
+            ? Number(sheetSource.monthlyFee)
+            : 11;
+
+        const rows = Array.isArray(sheetSource?.members)
+          ? sheetSource.members
+          : Array.isArray(sheetSource?.rows)
+            ? sheetSource.rows
+            : [];
+
+        const myUid = currentUser?.uid || "";
+        const myCsf = (currentUserProfile?.csfId || "").trim().toLowerCase();
+        const myName = (currentUserProfile?.name || "").trim().toLowerCase();
+        const matchedRow = rows.find(
+          (r) =>
+            (myUid && (r.uid === myUid || r.id === myUid)) ||
+            (myCsf && (r.csfId || "").trim().toLowerCase() === myCsf) ||
+            (myName && (r.name || "").trim().toLowerCase() === myName),
+        );
+
+        const sheetMonths = normalizeAnnualMonths(matchedRow?.months);
+        const confirmedMonths = Array(12).fill(0);
+        const pendingMonths = Array(12).fill(0);
+
+        mine.forEach((p) => {
+          const mIdx = parseAnnualMonthIndexForYear(
+            p.month,
+            p.createdAt,
+            targetYear,
+          );
+          if (mIdx < 0 || mIdx > 11) return;
+          const amt = Math.round(Number(p.amount || 0));
+          if (isPaymentConfirmed(p)) {
+            confirmedMonths[mIdx] += amt;
+          } else if (isPaymentPending(p)) {
+            pendingMonths[mIdx] += amt;
+          }
+        });
+
+        const curMonthIdx =
+          targetYear < curCalendarYear
+            ? 11
+            : targetYear > curCalendarYear
+              ? -1
+              : now.getMonth();
+
+        let paidCount = 0;
+        const dueMonths = [];
+        const monthCards = ANNUAL_MONTH_NAMES.map((shortName, idx) => {
+          const effectivePaid = Math.max(
+            sheetMonths[idx],
+            confirmedMonths[idx],
+          );
+          const hasPending =
+            pendingMonths[idx] > 0 && effectivePaid < monthlyFee;
+          const isDueWindow = idx <= curMonthIdx;
+          const remaining = Math.max(0, monthlyFee - effectivePaid);
+
+          if (effectivePaid >= monthlyFee) {
+            paidCount++;
+            const extra = effectivePaid - monthlyFee;
+            return `
+              <div class="rounded-xl p-2 border bg-emerald-50 border-emerald-200 text-center">
+                <p class="text-[11px] font-bold text-emerald-900">${shortName}</p>
+                <p class="text-xs font-extrabold text-emerald-700 mt-0.5">৳${effectivePaid} ✓</p>
+                <p class="text-[9px] font-bold ${extra > 0 ? "text-amber-700" : "text-emerald-600"}">${extra > 0 ? `+৳${extra} Extra` : "Paid"}</p>
+              </div>`;
+          }
+
+          if (hasPending) {
+            return `
+              <div class="rounded-xl p-2 border bg-sky-50 border-sky-200 text-center">
+                <p class="text-[11px] font-bold text-sky-900">${shortName}</p>
+                <p class="text-xs font-extrabold text-sky-700 mt-0.5">Pending</p>
+                <p class="text-[9px] font-semibold text-sky-600">৳${pendingMonths[idx]} req</p>
+              </div>`;
+          }
+
+          if (isDueWindow) {
+            dueMonths.push({ idx, shortName, remaining });
+            return `
+              <button
+                type="button"
+                onclick="prefillMonthlyDonation(${idx}, ${targetYear}, ${remaining})"
+                class="rounded-xl p-2 border bg-red-50 hover:bg-red-100 border-red-200 text-center transition cursor-pointer"
+                title="Click to pay ${FULL_MONTH_NAMES[idx]} ${targetYear} (৳${remaining})"
+              >
+                <p class="text-[11px] font-bold text-red-900">${shortName}</p>
+                <p class="text-[11px] font-extrabold text-red-600 mt-0.5">${effectivePaid > 0 ? `৳${effectivePaid}/${monthlyFee}` : "Not Paid"}</p>
+                <p class="text-[9px] font-bold text-red-700">Due ৳${remaining}</p>
+              </button>`;
+          }
+
+          return `
+            <div class="rounded-xl p-2 border bg-slate-50 border-slate-200 text-center opacity-75">
+              <p class="text-[11px] font-bold text-slate-600">${shortName}</p>
+              <p class="text-[11px] font-semibold text-slate-400 mt-0.5">—</p>
+              <p class="text-[9px] font-semibold text-slate-400">Upcoming</p>
+            </div>`;
+        });
+
+        gridEl.innerHTML = monthCards.join("");
+        if (titleEl) {
+          titleEl.textContent = `Monthly ৳${monthlyFee} Fund Status (${targetYear})`;
+        }
+        if (pillEl) {
+          pillEl.textContent = `${paidCount} / 12 Paid`;
+          pillEl.className = dueMonths.length
+            ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200"
+            : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+        }
+
+        const totalDueAmt = dueMonths.reduce((s, d) => s + d.remaining, 0);
+        const curDueObj = dueMonths.find((d) => d.idx === curMonthIdx);
+        const curMonthPaid =
+          curMonthIdx >= 0
+            ? Math.max(sheetMonths[curMonthIdx], confirmedMonths[curMonthIdx])
+            : monthlyFee;
+        const curMonthPending =
+          curMonthIdx >= 0 &&
+          pendingMonths[curMonthIdx] > 0 &&
+          curMonthPaid < monthlyFee;
+
+        alertEl.classList.remove("hidden");
+        if (curDueObj) {
+          const curFullMonth = FULL_MONTH_NAMES[curMonthIdx];
+          alertEl.innerHTML = `
+            <div class="glass rounded-2xl p-4 border-2 border-red-300 bg-red-50/90 flex flex-wrap items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0">
+                <p class="text-sm font-extrabold text-red-800 flex items-center gap-1.5">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600 shrink-0"></i>
+                  <span>মাসিক ৳${monthlyFee} চাঁদা দেওয়া হয়নি! (${curFullMonth} ${targetYear} Not Paid)</span>
+                </p>
+                <p class="text-xs text-red-700 leading-relaxed">
+                  আপনার <strong>${curFullMonth} ${targetYear}</strong> মাসের নির্ধারিত <strong>৳${monthlyFee}</strong> চাঁদা এখনো জমা হয়নি${curDueObj.remaining < monthlyFee ? ` (বাকি ৳${curDueObj.remaining})` : ""}।
+                  ${dueMonths.length > 1 ? `এছাড়া ${targetYear} সালে মোট <strong>${dueMonths.length}টি</strong> মাস বকেয়া রয়েছে (মোট বকেয়া: <strong>৳${totalDueAmt}</strong>)।` : ""}
+                </p>
+              </div>
+              <button
+                type="button"
+                onclick="prefillMonthlyDonation(${curMonthIdx}, ${targetYear}, ${curDueObj.remaining})"
+                class="shrink-0 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition"
+              >
+                Pay ${curFullMonth} (৳${curDueObj.remaining})
+              </button>
+            </div>`;
+        } else if (curMonthPending && dueMonths.length === 0) {
+          const curFullMonth = FULL_MONTH_NAMES[curMonthIdx];
+          alertEl.innerHTML = `
+            <div class="glass rounded-2xl p-4 border border-sky-200 bg-sky-50/90 flex items-center gap-2.5">
+              <i data-lucide="clock" class="w-4 h-4 text-sky-600 shrink-0"></i>
+              <p class="text-xs font-semibold text-sky-900">
+                <strong>${curFullMonth} ${targetYear}</strong> মাসের চাঁদার রিকোয়েস্ট পাঠানো হয়েছে — Admin / Collector কনফার্ম করলে Paid দেখাবে।
+              </p>
+            </div>`;
+        } else if (dueMonths.length > 0) {
+          const firstDue = dueMonths[0];
+          alertEl.innerHTML = `
+            <div class="glass rounded-2xl p-4 border border-amber-300 bg-amber-50/90 flex flex-wrap items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0">
+                <p class="text-sm font-extrabold text-amber-900 flex items-center gap-1.5">
+                  <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                  <span>আগের ${dueMonths.length}টি মাসের চাঁদা বকেয়া আছে! (Previous Months Unpaid)</span>
+                </p>
+                <p class="text-xs text-amber-800">
+                  বকেয়া মাস: <strong>${dueMonths.map((d) => d.shortName).join(", ")} ${targetYear}</strong> (মোট বকেয়া: <strong>৳${totalDueAmt}</strong>)। নিচের লাল ঘরে ক্লিক করে পরিশোধ করতে পারবেন।
+                </p>
+              </div>
+              <button
+                type="button"
+                onclick="prefillMonthlyDonation(${firstDue.idx}, ${targetYear}, ${firstDue.remaining})"
+                class="shrink-0 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition"
+              >
+                Pay ${firstDue.shortName} (৳${firstDue.remaining})
+              </button>
+            </div>`;
+        } else {
+          alertEl.innerHTML = `
+            <div class="glass rounded-2xl p-3.5 border border-emerald-200 bg-emerald-50/90 flex items-center gap-2.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+              <p class="text-xs font-bold text-emerald-800">
+                মাসিক ৳${monthlyFee} চাঁদা পরিশোধিত (${targetYear} সালের চলতি মাস পর্যন্ত কোনো বকেয়া নেই)।
+              </p>
+            </div>`;
+        }
+      }
+
       function renderMemberPayments() {
         const listEl = document.getElementById("mypay-list");
-        if (!listEl) return;
         const mine = allPayments.filter((p) => p.uid === currentUser?.uid);
         const total = mine
           .filter(isPaymentConfirmed)
@@ -10490,12 +10802,19 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const pending = mine
           .filter(isPaymentPending)
           .reduce((s, p) => s + Number(p.amount || 0), 0);
-        document.getElementById("mypay-total").textContent = BDT(total);
-        document.getElementById("mypay-pending").textContent = BDT(pending);
-        document.getElementById("mypay-count").textContent = mine.length;
+        const totalEl = document.getElementById("mypay-total");
+        const pendEl = document.getElementById("mypay-pending");
+        const cntEl = document.getElementById("mypay-count");
+        if (totalEl) totalEl.textContent = BDT(total);
+        if (pendEl) pendEl.textContent = BDT(pending);
+        if (cntEl) cntEl.textContent = mine.length;
+
+        renderMemberMonthlyStatus(mine);
+        if (!listEl) return;
 
         if (!mine.length) {
           listEl.innerHTML = `<p class="text-sm text-slate-500 text-center py-4">No donation requests yet.</p>`;
+          lucide.createIcons();
           return;
         }
         listEl.innerHTML = mine
@@ -12125,6 +12444,37 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         el.classList.toggle("text-emerald-700", !isWarn);
       }
 
+      async function mirrorAnnualSheetForMembers(sheet) {
+        if (!canEditSector("finance") || !sheet) return;
+        const yr = Number(sheet.year);
+        if (!(yr >= 2000 && yr <= 2100)) return;
+        try {
+          await setDoc(
+            doc(db, "settings", "annual_fund"),
+            {
+              activeYear: Number(activeAnnualYear) || yr,
+              years: {
+                [String(yr)]: {
+                  year: yr,
+                  monthlyFee: Number(sheet.monthlyFee) || 11,
+                  status: sheet.status === "closed" ? "closed" : "open",
+                  rows: (Array.isArray(sheet.members) ? sheet.members : []).map(
+                    (m) => ({
+                      uid: m.uid || "",
+                      csfId: m.csfId || "",
+                      name: m.name || "",
+                      months: normalizeAnnualMonths(m.months),
+                    }),
+                  ),
+                },
+              },
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+        } catch (_) {}
+      }
+
       async function saveAnnualSheetToCloud(sheet, extraFields = {}) {
         if (!canEditSector("finance")) return;
         const yr = Number(sheet.year);
@@ -12150,6 +12500,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             },
             { merge: true },
           );
+          await mirrorAnnualSheetForMembers(sheet);
           setAnnualSaveStatus("Saved to Cloud ✓", false);
         } catch (err) {
           setAnnualSaveStatus("Save failed!", true);
