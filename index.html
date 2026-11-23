@@ -225,21 +225,100 @@
           transform: translate3d(0, 10px, 0) scale(0.97);
         }
       }
-      @keyframes premium-drawer-in {
+      /* Smooth Nav Menu Drawer & Backdrop Transitions */
+      .nav-backdrop {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        will-change: opacity;
+        transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .nav-backdrop.nav-backdrop-ready {
+        visibility: visible;
+      }
+      .nav-backdrop.nav-backdrop-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .nav-drawer {
+        transform: translate3d(-108%, 0, 0) scale(0.94);
+        transform-origin: left center;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        will-change: transform, opacity;
+        transition:
+          transform 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+          opacity 0.34s ease;
+      }
+      .nav-drawer.nav-drawer-ready {
+        visibility: visible;
+      }
+      .nav-drawer.nav-drawer-open {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition:
+          transform 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      @keyframes nav-item-slide-in {
         from {
-          transform: translate3d(-100%, 0, 0);
+          opacity: 0;
+          transform: translate3d(-18px, 0, 0);
         }
         to {
+          opacity: 1;
           transform: translate3d(0, 0, 0);
         }
       }
-      @keyframes premium-drawer-out {
-        from {
-          transform: translate3d(0, 0, 0);
-        }
-        to {
-          transform: translate3d(-100%, 0, 0);
-        }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button {
+        animation: nav-item-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(2) {
+        animation-delay: 0.13s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(3) {
+        animation-delay: 0.16s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(4) {
+        animation-delay: 0.19s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(5) {
+        animation-delay: 0.22s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(6) {
+        animation-delay: 0.25s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(7) {
+        animation-delay: 0.28s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(8) {
+        animation-delay: 0.31s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(9) {
+        animation-delay: 0.34s;
+      }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(10) {
+        animation-delay: 0.37s;
+      }
+      #hamburger-btn {
+        transition:
+          transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+          background-color 0.2s ease,
+          border-color 0.2s ease;
+      }
+      #hamburger-btn:active {
+        transform: scale(0.92);
+      }
+      #hamburger-btn.is-open {
+        background-color: rgba(255, 255, 255, 0.28);
+        transform: rotate(90deg);
       }
       @keyframes premium-dropdown-in {
         from {
@@ -281,14 +360,6 @@
       .backdrop-exit {
         animation: premium-fade-out 0.22s ease-in both;
       }
-      .drawer-enter {
-        will-change: transform;
-        animation: premium-drawer-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-      .drawer-exit {
-        will-change: transform;
-        animation: premium-drawer-out 0.24s cubic-bezier(0.4, 0, 1, 1) both;
-      }
       .modal-card-enter {
         will-change: transform, opacity;
         animation: premium-modal-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -322,8 +393,7 @@
         .section-enter,
         .backdrop-enter,
         .backdrop-exit,
-        .drawer-enter,
-        .drawer-exit,
+        .nav-drawer.nav-drawer-open .nav-menu-items > button,
         .modal-card-enter,
         .modal-card-exit,
         .dropdown-enter,
@@ -332,6 +402,11 @@
         .gallery-img-enter {
           animation-duration: 0.01ms !important;
           animation-iteration-count: 1 !important;
+        }
+        .nav-drawer,
+        .nav-backdrop,
+        #hamburger-btn {
+          transition-duration: 0.01ms !important;
         }
         .quote-fade-enter,
         .quote-blur-enter {
@@ -1185,8 +1260,9 @@
               type="button"
               onclick="toggleNavMenu()"
               id="hamburger-btn"
-              class="relative bg-white/15 hover:bg-white/25 border border-white/25 p-2.5 rounded-xl transition flex items-center justify-center shrink-0"
+              class="relative bg-white/15 hover:bg-white/25 border border-white/25 p-2.5 rounded-xl flex items-center justify-center shrink-0"
               aria-label="Open Navigation Menu"
+              aria-expanded="false"
             >
               <i data-lucide="menu" class="w-5 h-5"></i>
               <span
@@ -1399,11 +1475,13 @@
       <div
         id="nav-menu-backdrop"
         onclick="closeNavMenu()"
-        class="hidden fixed inset-0 bg-emerald-950/40 backdrop-blur-sm z-40"
+        class="nav-backdrop fixed inset-0 bg-emerald-950/40 backdrop-blur-sm z-40"
+        aria-hidden="true"
       ></div>
       <nav
         id="nav-menu-drawer"
-        class="hidden fixed top-0 left-0 h-screen w-72 max-w-[85vw] bg-white/95 backdrop-blur-2xl text-slate-700 shadow-2xl border-r border-emerald-100 z-50 flex flex-col"
+        aria-hidden="true"
+        class="nav-drawer fixed top-0 left-0 h-screen w-72 max-w-[85vw] bg-white/95 text-slate-700 shadow-2xl border-r border-emerald-100 rounded-r-2xl overflow-hidden z-50 flex flex-col"
       >
         <div
           class="glass-emerald text-white px-5 py-4 flex items-center justify-between"
@@ -1435,7 +1513,9 @@
           </button>
         </div>
 
-        <div class="p-3 space-y-1.5 flex-1 overflow-y-auto text-sm">
+        <div
+          class="nav-menu-items p-3 space-y-1.5 flex-1 overflow-y-auto text-sm"
+        >
           <button
             onclick="switchTab('dashboard')"
             id="tab-dashboard"
@@ -2782,12 +2862,19 @@
             <div
               class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1"
             >
-              <p class="font-bold">How Donation &amp; Money Receipt Works:</p>
+              <p class="font-bold">
+                How Donation &amp; Money Receipt Works (3 Simple Steps):
+              </p>
               <p>
-                1. Submit your donation request below. 2. When Admin approves
-                your request, send the amount to the Collector's receiving
-                number above. 3. Once the Collector confirms with the
-                Transaction ID / URL, you can download your signed official Money Receipt.
+                <strong>1. Send Request:</strong> Submit amount, method, and
+                your sender mobile/account number below.
+                <strong>2. Send Money &amp; Submit Proof:</strong> Once Admin
+                approves, you will see the Collector's receiving number with a
+                Copy button—send the money from your bKash/Nagad/Rocket app and
+                submit your <strong>Sender Number &amp; Transaction ID</strong>.
+                <strong>3. Collector Confirm &amp; Receipt:</strong> Collector
+                verifies and confirms your TrxID, unlocking your signed official
+                English Money Receipt.
               </p>
             </div>
             <form
@@ -2828,12 +2915,18 @@
                   <option value="Cash">Cash / Hand-to-Hand</option>
                 </select>
                 <input
-                  id="pay-note"
+                  id="pay-sender-number"
                   type="text"
-                  placeholder="Note / Purpose (Optional)"
+                  placeholder="Your Sender Account / Mobile No. (Optional)"
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
+              <input
+                id="pay-note"
+                type="text"
+                placeholder="Note / Purpose (Optional)"
+                class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+              />
               <button
                 id="pay-submit-btn"
                 type="submit"
@@ -6673,20 +6766,32 @@
         }, 4250);
       };
 
-      let navDrawerTimer = null;
+      let navDrawerCloseTimer = null;
+      let navDrawerRaf = null;
       window.toggleNavMenu = () => {
         const drawer = document.getElementById("nav-menu-drawer");
         const backdrop = document.getElementById("nav-menu-backdrop");
-        if (
-          drawer.classList.contains("hidden") ||
-          drawer.classList.contains("drawer-exit")
-        ) {
-          clearTimeout(navDrawerTimer);
-          drawer.classList.remove("hidden", "drawer-exit");
-          backdrop.classList.remove("hidden", "backdrop-exit");
+        const btn = document.getElementById("hamburger-btn");
+        if (!drawer || !backdrop) return;
+        const isOpen = drawer.classList.contains("nav-drawer-open");
+        if (!isOpen) {
+          clearTimeout(navDrawerCloseTimer);
+          cancelAnimationFrame(navDrawerRaf);
+          drawer.classList.add("nav-drawer-ready");
+          backdrop.classList.add("nav-backdrop-ready");
+          drawer.setAttribute("aria-hidden", "false");
+          backdrop.setAttribute("aria-hidden", "false");
+          if (btn) {
+            btn.classList.add("is-open");
+            btn.setAttribute("aria-expanded", "true");
+          }
           void drawer.offsetWidth;
-          drawer.classList.add("drawer-enter");
-          backdrop.classList.add("backdrop-enter");
+          navDrawerRaf = requestAnimationFrame(() => {
+            navDrawerRaf = requestAnimationFrame(() => {
+              drawer.classList.add("nav-drawer-open");
+              backdrop.classList.add("nav-backdrop-open");
+            });
+          });
         } else {
           closeNavMenu();
         }
@@ -6695,19 +6800,39 @@
       window.closeNavMenu = () => {
         const drawer = document.getElementById("nav-menu-drawer");
         const backdrop = document.getElementById("nav-menu-backdrop");
-        if (!drawer || drawer.classList.contains("hidden")) return;
-        clearTimeout(navDrawerTimer);
-        drawer.classList.remove("drawer-enter");
-        backdrop.classList.remove("backdrop-enter");
-        drawer.classList.add("drawer-exit");
-        backdrop.classList.add("backdrop-exit");
-        navDrawerTimer = setTimeout(() => {
-          drawer.classList.add("hidden");
-          drawer.classList.remove("drawer-exit");
-          backdrop.classList.add("hidden");
-          backdrop.classList.remove("backdrop-exit");
-        }, 230);
+        const btn = document.getElementById("hamburger-btn");
+        if (
+          !drawer ||
+          (!drawer.classList.contains("nav-drawer-open") &&
+            !drawer.classList.contains("nav-drawer-ready"))
+        )
+          return;
+        cancelAnimationFrame(navDrawerRaf);
+        clearTimeout(navDrawerCloseTimer);
+        drawer.classList.remove("nav-drawer-open");
+        if (backdrop) backdrop.classList.remove("nav-backdrop-open");
+        drawer.setAttribute("aria-hidden", "true");
+        if (backdrop) backdrop.setAttribute("aria-hidden", "true");
+        if (btn) {
+          btn.classList.remove("is-open");
+          btn.setAttribute("aria-expanded", "false");
+        }
+        navDrawerCloseTimer = setTimeout(() => {
+          if (!drawer.classList.contains("nav-drawer-open")) {
+            drawer.classList.remove("nav-drawer-ready");
+            if (backdrop) backdrop.classList.remove("nav-backdrop-ready");
+          }
+        }, 440);
       };
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const drawer = document.getElementById("nav-menu-drawer");
+          if (drawer && drawer.classList.contains("nav-drawer-open")) {
+            closeNavMenu();
+          }
+        }
+      });
 
       // Fixed Password Show/Hide Toggle (preserves targetId across Lucide SVG swaps)
       window.togglePasswordVisibility = (inputId, targetId) => {
@@ -9738,22 +9863,92 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         ) {
           return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-sky-100 text-sky-800 border-sky-300">Awaiting Collector Confirm</span>`;
         }
+        if (
+          (status === "awaiting_collector" || status === "pending") &&
+          typeof p === "object" &&
+          p.memberProofSubmitted
+        ) {
+          return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 bg-indigo-100 text-indigo-800 border-indigo-300">Proof Sent • Waiting Collector</span>`;
+        }
         const map = {
           requested: "bg-amber-100 text-amber-800 border-amber-300",
           awaiting_collector: "bg-sky-100 text-sky-800 border-sky-300",
-          pending: "bg-amber-100 text-amber-800 border-amber-300",
+          pending: "bg-sky-100 text-sky-800 border-sky-300",
           approved: "bg-emerald-100 text-emerald-800 border-emerald-300",
           rejected: "bg-red-100 text-red-700 border-red-300",
         };
         const label = {
           requested: "Requested (Pending Admin)",
-          awaiting_collector: "Approved • Send to Collector",
-          pending: "Waiting Collector Confirm",
+          awaiting_collector: "Approved • Send Money Now",
+          pending: "Approved • Send Money Now",
           approved: "Paid & Confirmed",
           rejected: "Rejected",
         };
         return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${map[status] || map.requested}">${label[status] || "Pending"}</span>`;
       }
+
+      function getCollectorAccountForMethod(method) {
+        const m = String(method || "bKash").trim();
+        const accounts = {
+          bKash: paymentSettings.bkash,
+          Nagad: paymentSettings.nagad,
+          Rocket: paymentSettings.rocket,
+          "Bank Transfer": paymentSettings.bank,
+        };
+        if (m === "Cash") {
+          return {
+            label: "Cash / Hand-to-Hand",
+            account: "Hand over directly to the Collector",
+            copyable: "",
+          };
+        }
+        const direct = (accounts[m] || "").trim();
+        if (direct) {
+          return {
+            label: `Collector's ${m}`,
+            account: direct,
+            copyable: direct,
+          };
+        }
+        const fallbackEntry = Object.entries(accounts).find(
+          ([, val]) => val && String(val).trim(),
+        );
+        if (fallbackEntry) {
+          return {
+            label: `Collector's ${fallbackEntry[0]} (${m} not set)`,
+            account: String(fallbackEntry[1]).trim(),
+            copyable: String(fallbackEntry[1]).trim(),
+          };
+        }
+        return {
+          label: `Collector's ${m}`,
+          account: "Contact Collector / Admin for receiving number",
+          copyable: "",
+        };
+      }
+
+      window.onMemberStep2MethodChange = (id) => {
+        const sel = document.getElementById(`mem-pay-method-${id}`);
+        const targetBox = document.getElementById(`mem-pay-dest-${id}`);
+        if (!sel || !targetBox) return;
+        const info = getCollectorAccountForMethod(sel.value);
+        targetBox.innerHTML = `
+          <div class="min-w-0">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-sky-700">${escapeHtml(info.label)}</p>
+            <p class="text-sm font-extrabold text-emerald-950 break-words">${escapeHtml(info.account)}</p>
+          </div>
+          ${
+            info.copyable
+              ? `<button type="button" data-copy="${escapeHtml(info.copyable)}" onclick="copyPayText(this.dataset.copy)" class="shrink-0 text-[11px] bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg font-bold transition">Copy</button>`
+              : ""
+          }`;
+      };
+
+      window.toggleMemberProofEdit = (id) => {
+        const formWrap = document.getElementById(`mem-proof-form-${id}`);
+        if (!formWrap) return;
+        formWrap.classList.toggle("hidden");
+      };
 
       function renderPaymentInfo() {
         renderPayCategories();
@@ -9763,6 +9958,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             month: "long",
             year: "numeric",
           });
+        }
+        const senderEl = document.getElementById("pay-sender-number");
+        if (
+          senderEl &&
+          !senderEl.value &&
+          document.activeElement !== senderEl &&
+          currentUserProfile?.phone
+        ) {
+          senderEl.value = currentUserProfile.phone;
         }
         const list = document.getElementById("pay-info-list");
         if (!list) return;
@@ -9858,20 +10062,84 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         listEl.innerHTML = mine
           .map((p) => {
             const confirmed = isPaymentConfirmed(p);
-            const stepHint =
-              p.status === "awaiting_collector"
-                ? `<div class="mt-2 bg-sky-50 border border-sky-200 rounded-lg px-2.5 py-2 text-[11px] text-sky-900">
-                    <strong>Approved by Admin!</strong> Please send <strong>${BDT(p.amount)}</strong> (${escapeHtml(p.paymentMethod || "Collector Account")}) using the Collector numbers above. Collector will confirm with your Transaction ID / URL.
-                   </div>`
-                : p.status === "requested"
-                  ? `<p class="text-[11px] text-amber-700 mt-1">Step 1 submitted — waiting for Admin to approve your request.</p>`
-                  : "";
+            const awaitingCollector =
+              p.status === "awaiting_collector" || p.status === "pending";
+            let stepHint = "";
+            if (p.status === "requested") {
+              stepHint = `<p class="text-[11px] text-amber-700 mt-1">Step 1 submitted — waiting for Admin approval before sending money.</p>`;
+            } else if (awaitingCollector) {
+              const curMethod = p.paymentMethod || "bKash";
+              const destInfo = getCollectorAccountForMethod(curMethod);
+              const methodOpts = [
+                "bKash",
+                "Nagad",
+                "Rocket",
+                "Bank Transfer",
+                "Cash",
+              ]
+                .map(
+                  (m) =>
+                    `<option value="${m}" ${m === curMethod ? "selected" : ""}>${m}</option>`,
+                )
+                .join("");
+              const defaultSender =
+                p.senderNumber || currentUserProfile?.phone || "";
+              const existingTrx = p.memberTrxId || p.trxId || "";
+              const proofSubmitted = Boolean(
+                p.memberProofSubmitted && existingTrx,
+              );
+
+              stepHint = `
+              <div class="mt-2.5 bg-sky-50/90 border border-sky-200 rounded-xl p-3 space-y-2.5">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <p class="text-xs font-extrabold text-sky-950">Step 2: Send ${BDT(p.amount)} &amp; Submit Proof</p>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-sky-800 border border-sky-200">From Your bKash/Nagad App</span>
+                </div>
+                <div id="mem-pay-dest-${p.id}" class="flex items-center justify-between gap-2 bg-white border border-sky-200 rounded-lg px-3 py-2">
+                  <div class="min-w-0">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-sky-700">${escapeHtml(destInfo.label)}</p>
+                    <p class="text-sm font-extrabold text-emerald-950 break-words">${escapeHtml(destInfo.account)}</p>
+                  </div>
+                  ${
+                    destInfo.copyable
+                      ? `<button type="button" data-copy="${escapeHtml(destInfo.copyable)}" onclick="copyPayText(this.dataset.copy)" class="shrink-0 text-[11px] bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg font-bold transition">Copy</button>`
+                      : ""
+                  }
+                </div>
+                ${
+                  proofSubmitted
+                    ? `<div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 flex items-start justify-between gap-2 flex-wrap">
+                        <div class="text-[11px] text-emerald-900 space-y-0.5">
+                          <p class="font-bold">Proof Submitted — Waiting for Collector Verification</p>
+                          ${p.senderNumber ? `<p><strong>Sent From:</strong> ${escapeHtml(p.senderNumber)}</p>` : ""}
+                          <p class="break-all"><strong>TrxID / Proof:</strong> ${trxHtml(existingTrx)}</p>
+                        </div>
+                        <button type="button" onclick="toggleMemberProofEdit('${p.id}')" class="text-[11px] font-bold text-emerald-800 bg-white hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition">Edit Proof</button>
+                      </div>`
+                    : `<p class="text-[11px] text-sky-900 leading-relaxed">1. Copy the Collector number above. 2. Open your bKash/Nagad/Rocket app and <strong>Send Money (${BDT(p.amount)})</strong>. 3. Enter your Sender Number &amp; TrxID below.</p>`
+                }
+                <div id="mem-proof-form-${p.id}" class="${proofSubmitted ? "hidden " : ""}space-y-2 pt-0.5">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <select id="mem-pay-method-${p.id}" onchange="onMemberStep2MethodChange('${p.id}')" class="px-2.5 py-2 bg-white border border-sky-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500">
+                      ${methodOpts}
+                    </select>
+                    <input id="mem-pay-sender-${p.id}" type="text" value="${escapeHtml(defaultSender)}" placeholder="Your Sender No. (e.g. 017...) *" class="px-2.5 py-2 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                  </div>
+                  <input id="mem-pay-trx-${p.id}" type="text" value="${escapeHtml(existingTrx)}" placeholder="Transaction ID (TrxID)*" class="w-full px-2.5 py-2 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <button type="button" id="mem-proof-btn-${p.id}" onclick="submitMemberPaymentProof('${p.id}')" class="w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white text-xs font-bold py-2 px-3 rounded-lg transition shadow-sm">
+                    I Have Sent Money • Submit Proof
+                  </button>
+                </div>
+              </div>`;
+            }
+
             return `
-          <div class="bg-white/75 border ${confirmed ? "border-emerald-200" : p.status === "awaiting_collector" ? "border-sky-200" : "border-emerald-100"} rounded-xl p-3.5 space-y-2">
+          <div class="bg-white/75 border ${confirmed ? "border-emerald-200" : awaitingCollector ? "border-sky-200" : "border-emerald-100"} rounded-xl p-3.5 space-y-2">
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
                 <p class="font-bold text-slate-800">${BDT(p.amount)}${p.category ? ` <span class="text-xs font-semibold text-slate-500">• ${escapeHtml(p.category)}</span>` : ""}</p>
                 <p class="text-xs text-slate-500 mt-0.5">${p.month ? `Period: ${escapeHtml(p.month)} • ` : ""}Method: ${escapeHtml(p.paymentMethod || "N/A")}</p>
+                ${p.senderNumber ? `<p class="text-xs text-slate-600 mt-0.5">Sender No: <strong class="text-slate-800">${escapeHtml(p.senderNumber)}</strong></p>` : ""}
                 ${p.receiptNo ? `<p class="text-xs font-semibold text-emerald-700 mt-0.5">Receipt No: ${escapeHtml(p.receiptNo)}</p>` : ""}
                 ${p.trxId ? `<p class="text-xs text-slate-600 mt-0.5 break-all">Transaction: ${trxHtml(p.trxId)}</p>` : ""}
                 ${p.note ? `<p class="text-xs text-slate-500 mt-0.5">Note: ${escapeHtml(p.note)}</p>` : ""}
@@ -9901,6 +10169,76 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         lucide.createIcons();
       }
 
+      window.submitMemberPaymentProof = async (id) => {
+        if (!currentUser || !currentUserProfile) return;
+        const p = allPayments.find((x) => x.id === id);
+        if (!p || p.uid !== currentUser.uid) return;
+        const methodEl = document.getElementById(`mem-pay-method-${id}`);
+        const senderEl = document.getElementById(`mem-pay-sender-${id}`);
+        const trxEl = document.getElementById(`mem-pay-trx-${id}`);
+        const btn = document.getElementById(`mem-proof-btn-${id}`);
+
+        const paymentMethod = (
+          methodEl?.value ||
+          p.paymentMethod ||
+          "bKash"
+        ).trim();
+        let senderNumber = (senderEl?.value || "").trim();
+        let trxId = (trxEl?.value || "").trim();
+
+        if (paymentMethod !== "Cash" && !senderNumber) {
+          showToast(
+            "Please enter the mobile/account number you sent money from.",
+            "error",
+          );
+          if (senderEl) senderEl.focus();
+          return;
+        }
+        if (paymentMethod === "Cash" && !senderNumber) {
+          senderNumber = currentUserProfile?.phone || "Hand-to-Hand";
+        }
+        if (!trxId) {
+          if (paymentMethod === "Cash") {
+            trxId = "Cash given in person";
+          } else {
+            showToast(
+              "Please enter your Transaction ID (TrxID) or Proof Link.",
+              "error",
+            );
+            if (trxEl) trxEl.focus();
+            return;
+          }
+        }
+
+        if (btn) btn.disabled = true;
+        try {
+          await updateDoc(doc(db, "payments", id), {
+            paymentMethod,
+            senderNumber,
+            memberTrxId: trxId,
+            trxId,
+            memberProofSubmitted: true,
+            memberPaidAt: serverTimestamp(),
+          });
+          createAppNotification({
+            type: "payment",
+            title: "Payment Proof Submitted",
+            body: `${currentUserProfile.name || "A member"} sent ${BDT(p.amount)} via ${paymentMethod} from ${senderNumber} (Ref: ${trxId}). Please verify & issue receipt.`,
+            targetRole: "admin",
+            targetTab: "admin",
+            createdByUid: currentUser.uid,
+            authorName: currentUserProfile.name || "",
+          });
+          showToast(
+            "Payment proof sent to Collector! Receipt unlocks after confirmation.",
+          );
+        } catch (err) {
+          showToast("Failed to submit proof: " + err.message, "error");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
       window.submitPayment = async (e) => {
         e.preventDefault();
         if (!currentUser || !currentUserProfile) return;
@@ -9911,6 +10249,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         ).trim();
         const paymentMethod =
           document.getElementById("pay-method")?.value || "bKash";
+        const senderNumber = (
+          document.getElementById("pay-sender-number")?.value || ""
+        ).trim();
         const note = (document.getElementById("pay-note")?.value || "").trim();
 
         const catSel = document.getElementById("pay-category");
@@ -9927,6 +10268,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             name: currentUserProfile.name || "Member",
             csfId: (currentUserProfile.csfId || "").trim(),
             phone: currentUserProfile.phone || "",
+            senderNumber,
             amount,
             month:
               month ||
@@ -9937,6 +10279,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             paymentMethod,
             note,
             trxId: "",
+            memberTrxId: "",
+            memberProofSubmitted: false,
             collectorName: "",
             receiptNo: "",
             collectorConfirmed: false,
@@ -10240,7 +10584,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                   </select>
                   <input id="col-name-${p.id}" type="text" value="${escapeHtml(p.collectorName || defaultSigner)}" placeholder="Collector / Signer Name" class="px-2.5 py-1.5 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
                 </div>
-                <input id="col-trx-${p.id}" type="text" value="${escapeHtml(p.trxId || "")}" placeholder="Enter Transaction ID or Payment Proof URL *" class="w-full px-2.5 py-1.5 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input id="col-trx-${p.id}" type="text" value="${escapeHtml(p.trxId || p.memberTrxId || "")}" placeholder="Enter Transaction ID or Payment Proof URL *" class="w-full px-2.5 py-1.5 bg-white border border-sky-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
                 <div class="flex flex-wrap gap-2">
                   <button type="button" onclick="confirmCollectorPayment('${p.id}')" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition">Confirm Payment &amp; Issue Receipt</button>
                   <button type="button" onclick="openReceiptModal('${p.id}')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold py-2 px-3 rounded-lg transition">Preview</button>
@@ -10271,8 +10615,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               <p class="text-lg font-extrabold text-emerald-800">${BDT(p.amount)} ${p.category ? `<span class="text-xs font-semibold text-slate-500">${escapeHtml(p.category)}</span>` : ""}</p>
               <div class="text-xs text-slate-600 space-y-0.5">
                 <p><strong>Month:</strong> ${escapeHtml(p.month || "N/A")} • <strong>Method:</strong> ${escapeHtml(p.paymentMethod || "N/A")}</p>
+                ${p.senderNumber ? `<p><strong>Sender No:</strong> <span class="font-semibold text-slate-800">${escapeHtml(p.senderNumber)}</span></p>` : ""}
                 ${p.receiptNo ? `<p class="text-emerald-700 font-semibold"><strong>Receipt No:</strong> ${escapeHtml(p.receiptNo)}${p.collectorName ? ` • <strong>Collector:</strong> ${escapeHtml(p.collectorName)}` : ""}</p>` : ""}
-                ${p.trxId ? `<p class="break-all"><strong>Transaction:</strong> ${trxHtml(p.trxId)} ${dup ? '<span class="text-red-600 font-bold">⚠ duplicate</span>' : ""}</p>` : ""}
+                ${p.trxId || p.memberTrxId ? `<p class="break-all"><strong>Transaction:</strong> ${trxHtml(p.trxId || p.memberTrxId)} ${dup ? '<span class="text-red-600 font-bold">⚠ duplicate</span>' : ""}</p>` : ""}
                 ${p.note ? `<p><strong>Member Note:</strong> ${escapeHtml(p.note)}</p>` : ""}
                 ${p.adminNote ? `<p class="text-red-600"><strong>Admin note:</strong> ${escapeHtml(p.adminNote)}</p>` : ""}
                 <p class="text-[11px] text-slate-400">${escapeHtml(fmtDateTime(p.createdAt))}</p>
@@ -10484,7 +10829,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           category: p.category || p.purpose || "Donation",
           month: monthStr,
           method:
-            p.paymentMethod || (p.trxId ? "Verified Transfer" : "Pending"),
+            (p.paymentMethod || (p.trxId ? "Verified Transfer" : "Pending")) +
+            (p.senderNumber ? ` (From: ${p.senderNumber})` : ""),
           trxId: (p.trxId || "").trim(),
           receiptNo,
           dateStr,
