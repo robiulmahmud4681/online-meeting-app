@@ -1010,7 +1010,7 @@
             <div>
               <label
                 class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >CSF ID (assigned by Admin)</label
+                >CSF ID (Optional)</label
               >
               <input
                 type="number"
@@ -1081,33 +1081,18 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label
-                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >Parents' Phone Number *</label
-              >
-              <input
-                type="tel"
-                id="reg-parents-phone"
-                required
-                placeholder="+8801..."
-                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-              />
-            </div>
-            <div>
-              <label
-                class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >Designation *</label
-              >
-              <input
-                type="text"
-                id="reg-desig"
-                required
-                placeholder="e.g. Member / Volunteer"
-                class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-              />
-            </div>
+          <div>
+            <label
+              class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
+              >Parents' Phone Number *</label
+            >
+            <input
+              type="tel"
+              id="reg-parents-phone"
+              required
+              placeholder="+8801..."
+              class="w-full px-3.5 py-2.5 bg-white/85 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
+            />
           </div>
 
           <div>
@@ -1681,14 +1666,6 @@
             <span>Members &amp; Status</span>
           </button>
           <button
-            onclick="switchTab('history')"
-            id="tab-history"
-            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition text-left"
-          >
-            <i data-lucide="book-open" class="w-4 h-4 shrink-0"></i>
-            <span class="leading-tight">History of Darber E Chandpurishah</span>
-          </button>
-          <button
             onclick="switchTab('csf')"
             id="tab-csf"
             class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
@@ -1712,15 +1689,7 @@
             class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
           >
             <i data-lucide="wallet" class="w-4 h-4"></i>
-            <span>Donation</span>
-          </button>
-          <button
-            onclick="switchTab('verified')"
-            id="tab-verified"
-            class="w-full px-4 py-3 rounded-xl font-semibold hidden items-center gap-3 hover:bg-emerald-50 transition"
-          >
-            <i data-lucide="badge-check" class="w-4 h-4"></i>
-            <span>CSF Member Area</span>
+            <span>Monthly Fee</span>
           </button>
           <button
             onclick="switchTab('profile')"
@@ -1767,6 +1736,11 @@
           Join Now →
         </button>
       </div>
+
+      <div
+        id="global-fee-reminder-banner"
+        class="hidden bg-red-50/95 backdrop-blur-md border-b-2 border-red-300 text-red-950 px-4 py-2.5 text-xs sm:text-sm font-medium flex flex-wrap items-center justify-center gap-2.5"
+      ></div>
 
       <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1">
         <!-- 1. UPDATES & RESOURCES TAB -->
@@ -2423,36 +2397,96 @@
               />
             </div>
           </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button
+              type="button"
+              onclick="setMemberStatusFilter('all')"
+              id="mem-filter-all"
+              class="glass rounded-2xl p-3.5 text-left border-2 border-emerald-500 transition hover:shadow-md"
+            >
+              <p
+                class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5"
+              >
+                <i data-lucide="users" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Total Member</span>
+              </p>
+              <p
+                id="mem-stat-total"
+                class="text-2xl font-extrabold text-emerald-900 mt-1"
+              >
+                0
+              </p>
+            </button>
+            <button
+              type="button"
+              onclick="setMemberStatusFilter('active')"
+              id="mem-filter-active"
+              class="glass rounded-2xl p-3.5 text-left border border-emerald-200 transition hover:shadow-md"
+            >
+              <p
+                class="text-[11px] font-semibold text-emerald-700 flex items-center gap-1.5"
+              >
+                <span
+                  class="w-2 h-2 rounded-full bg-emerald-500 inline-block"
+                ></span>
+                <span>Active</span>
+              </p>
+              <p
+                id="mem-stat-active"
+                class="text-2xl font-extrabold text-emerald-700 mt-1"
+              >
+                0
+              </p>
+            </button>
+            <button
+              type="button"
+              onclick="setMemberStatusFilter('away')"
+              id="mem-filter-away"
+              class="glass rounded-2xl p-3.5 text-left border border-amber-200 transition hover:shadow-md"
+            >
+              <p
+                class="text-[11px] font-semibold text-amber-700 flex items-center gap-1.5"
+              >
+                <span
+                  class="w-2 h-2 rounded-full bg-amber-500 inline-block"
+                ></span>
+                <span>Away</span>
+              </p>
+              <p
+                id="mem-stat-away"
+                class="text-2xl font-extrabold text-amber-600 mt-1"
+              >
+                0
+              </p>
+            </button>
+            <button
+              type="button"
+              onclick="setMemberStatusFilter('offline')"
+              id="mem-filter-offline"
+              class="glass rounded-2xl p-3.5 text-left border border-slate-200 transition hover:shadow-md"
+            >
+              <p
+                class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5"
+              >
+                <span
+                  class="w-2 h-2 rounded-full bg-slate-400 inline-block"
+                ></span>
+                <span>Offline</span>
+              </p>
+              <p
+                id="mem-stat-offline"
+                class="text-2xl font-extrabold text-slate-600 mt-1"
+              >
+                0
+              </p>
+            </button>
+          </div>
+
           <div
             id="members-grid"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           ></div>
-        </section>
-
-        <!-- 5. HISTORY TAB -->
-        <section id="section-history" class="hidden max-w-3xl mx-auto">
-          <div class="glass p-8 sm:p-10 rounded-3xl text-center space-y-4">
-            <img
-              src="./darber-logo.png"
-              onerror="
-                if (!this.dataset.t) {
-                  this.dataset.t = 1;
-                  this.src = './darber-logo.jpg';
-                }
-              "
-              alt="DARBER E CHANDPURISHAH"
-              class="w-24 h-24 rounded-full object-cover mx-auto shadow-lg border-2 border-emerald-600 bg-white p-0.5"
-            />
-            <h2 class="text-2xl font-extrabold text-emerald-950">
-              History of Darber E Chandpurishah
-            </h2>
-            <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              This section presents the history, heritage, and
-              important milestones of
-              <strong>DARBER E CHANDPURISHAH (EST. 1860)</strong>.
-            </p>
-            <div id="history-about-body" class="text-left space-y-4 pt-2"></div>
-          </div>
         </section>
 
         <!-- 6. CSF TAB -->
@@ -2477,13 +2511,13 @@
               <strong>CSF (Chandpurisha Special Force)</strong> updates,
               mission, and activities.
             </p>
-            <div id="csf-about-body" class="text-left space-y-4 pt-2"></div>
+            <div
+              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
+            >
+              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+              <span>Details coming soon</span>
+            </div>
           </div>
-        </section>
-
-        <!-- CSF VERIFIED MEMBER DASHBOARD -->
-        <section id="section-verified" class="hidden max-w-3xl mx-auto">
-          <div id="verified-body" class="space-y-4"></div>
         </section>
 
         <!-- 7. MY PROFILE TAB -->
@@ -2727,9 +2761,7 @@
                     type="text"
                     id="prof-csfid"
                     maxlength="40"
-                    readonly
-                    title="Only the Admin can assign or change a CSF ID"
-                    placeholder="Assigned by Admin"
+                    placeholder="e.g. 2101111"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
@@ -2738,14 +2770,21 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label
-                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                    >Designation</label
+                    class="text-xs font-semibold text-slate-600 uppercase tracking-wider flex items-center justify-between gap-1"
                   >
+                    <span>Designation</span>
+                    <span
+                      class="text-[10px] font-bold text-slate-400 normal-case"
+                      >Admin Only</span
+                    >
+                  </label>
                   <input
                     type="text"
                     id="prof-designation"
-                    placeholder="e.g. Member / Secretary"
-                    class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    readonly
+                    disabled
+                    value="General User"
+                    class="w-full mt-1 px-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 cursor-not-allowed outline-none"
                   />
                 </div>
                 <div>
@@ -2917,9 +2956,10 @@
               <i data-lucide="wallet" class="w-5 h-5"></i>
             </div>
             <div>
-              <h2 class="text-lg font-bold text-emerald-950">Donation</h2>
+              <h2 class="text-lg font-bold text-emerald-950">Monthly Fee</h2>
               <p class="text-xs text-slate-500">
-                Submit your subscription / donation and track its status
+                Pay your mandatory monthly ৳11 Token Donation or make a
+                voluntary Free Donation
               </p>
             </div>
           </div>
@@ -2951,39 +2991,6 @@
             </div>
           </div>
 
-          <div id="mypay-due-alert" class="hidden"></div>
-
-          <div
-            id="mypay-monthly-card"
-            class="glass p-4 sm:p-5 rounded-2xl space-y-3 border border-emerald-200"
-          >
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h3
-                class="font-bold text-emerald-950 flex items-center gap-2 text-sm sm:text-base"
-              >
-                <i
-                  data-lucide="calendar-check-2"
-                  class="w-4 h-4 text-emerald-600"
-                ></i>
-                <span id="mypay-monthly-title">Monthly 11tk Fund Status</span>
-              </h3>
-              <span
-                id="mypay-monthly-summary-pill"
-                class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
-              >
-                0 / 12 Paid
-              </span>
-            </div>
-            <div
-              id="mypay-monthly-grid"
-              class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2"
-            ></div>
-            <p class="text-[11px] text-slate-500">
-              যেকোনো বকেয়া (Not Paid) মাসের ঘরে ক্লিক করলে আপনি সেই মাসের জন্য
-              ডোনেশন রিকোয়েস্ট পাঠাতে পারবেন।
-            </p>
-          </div>
-
           <div
             id="pay-info-card"
             class="hidden glass p-5 rounded-2xl space-y-3 border border-emerald-200"
@@ -2999,97 +3006,262 @@
             ></p>
           </div>
 
-          <div class="glass p-5 rounded-2xl space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h3 class="font-bold text-emerald-950 flex items-center gap-2">
-                <i
-                  data-lucide="hand-heart"
-                  class="w-4 h-4 text-emerald-600"
-                ></i>
-                <span>Request a Donation</span>
-              </h3>
-              <span
-                class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
-              >
-                Step 1: Send Request
-              </span>
-            </div>
+          <!-- TWO-PART SWITCHER: TOKEN DONATION (MANDATORY ৳11) vs FREE DONATION -->
+          <div
+            class="grid grid-cols-2 gap-2 glass p-1.5 rounded-2xl border border-emerald-200"
+          >
+            <button
+              type="button"
+              id="pay-subtab-token"
+              onclick="switchMemberPayPart('token')"
+              class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition bg-emerald-700 text-white shadow flex items-center justify-center gap-1.5"
+            >
+              <i data-lucide="coins" class="w-4 h-4"></i>
+              <span>Token Donation (৳11)</span>
+            </button>
+            <button
+              type="button"
+              id="pay-subtab-free"
+              onclick="switchMemberPayPart('free')"
+              class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition text-emerald-800 hover:bg-emerald-50 flex items-center justify-center gap-1.5"
+            >
+              <i data-lucide="hand-heart" class="w-4 h-4"></i>
+              <span>Free Donation</span>
+            </button>
+          </div>
+
+          <!-- PART 1: TOKEN DONATION (MANDATORY MONTHLY 11 TK) -->
+          <div id="pay-view-token" class="space-y-4">
+            <div id="mypay-due-alert" class="hidden"></div>
+
             <div
-              class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1"
+              id="mypay-monthly-card"
+              class="glass p-4 sm:p-5 rounded-2xl space-y-3 border border-emerald-200"
             >
-              <p class="font-bold">
-                How Donation &amp; Money Receipt Works (3 Simple Steps):
-              </p>
-              <p>
-                <strong>1. Send Request:</strong> Submit amount, method, and
-                your sender mobile/account number below.
-                <strong>2. Send Money &amp; Submit Proof:</strong> Once Admin
-                approves, you will see the Collector's receiving number with a
-                Copy button—send the money from your bKash/Nagad/Rocket app and
-                submit your <strong>Sender Number &amp; Transaction ID</strong>.
-                <strong>3. Collector Confirm &amp; Receipt:</strong> Collector
-                verifies and confirms your TrxID, unlocking your signed official
-                English Money Receipt.
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3
+                  class="font-bold text-emerald-950 flex items-center gap-2 text-sm sm:text-base"
+                >
+                  <i
+                    data-lucide="calendar-check-2"
+                    class="w-4 h-4 text-emerald-600"
+                  ></i>
+                  <span id="mypay-monthly-title"
+                    >Token Donation • Monthly ৳11 Status</span
+                  >
+                </h3>
+                <span
+                  id="mypay-monthly-summary-pill"
+                  class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
+                >
+                  0 / 12 Paid
+                </span>
+              </div>
+              <div
+                id="mypay-monthly-grid"
+                class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2"
+              ></div>
+              <p class="text-[11px] text-slate-500">
+                প্রতি মাসে নির্ধারিত ৳11 (Token Donation) দেওয়া আবশ্যক। যেকোনো
+                বকেয়া (Not Paid) মাসের ঘরে ক্লিক করলে ফর্মে ওই মাস ও ৳11 বসে
+                যাবে।
               </p>
             </div>
-            <form
-              id="payment-form"
-              onsubmit="submitPayment(event)"
-              class="space-y-3"
+
+            <div
+              class="glass p-5 rounded-2xl space-y-3 border border-emerald-200"
             >
-              <select
-                id="pay-category"
-                class="hidden w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-              ></select>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input
-                  id="pay-amount"
-                  type="number"
-                  min="1"
-                  step="any"
-                  required
-                  placeholder="Donation Amount (BDT ৳) *"
-                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-                <input
-                  id="pay-month"
-                  type="text"
-                  placeholder="Month / Period (e.g. November 2026)"
-                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <select
-                  id="pay-method"
-                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="font-bold text-emerald-950 flex items-center gap-2">
+                  <i data-lucide="coins" class="w-4 h-4 text-emerald-600"></i>
+                  <span>Token Donation (Mandatory Monthly ৳11)</span>
+                </h3>
+                <span
+                  class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
                 >
-                  <option value="bKash">bKash</option>
-                  <option value="Nagad">Nagad</option>
-                  <option value="Rocket">Rocket</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="Cash">Cash / Hand-to-Hand</option>
-                </select>
+                  Must for All Members
+                </span>
+              </div>
+              <div
+                class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1"
+              >
+                <p class="font-bold">3-Step Token Donation Process:</p>
+                <p>
+                  <strong>1. Send Request:</strong> Monthly minimum is
+                  <strong>৳11</strong> (amounts above ৳11 count as Extra).
+                  <strong>2. Send Money &amp; Submit Proof:</strong> After Admin
+                  approves, send the amount to Collector's number above and
+                  submit your <strong>Sender Number &amp; TrxID</strong>.
+                  <strong>3. Collector Confirm &amp; Receipt:</strong> Collector
+                  confirms TrxID &amp; unlocks your signed Money Receipt.
+                </p>
+              </div>
+              <form
+                id="token-payment-form"
+                onsubmit="submitPayment(event, 'token')"
+                class="space-y-3"
+              >
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <input
+                      id="pay-token-amount"
+                      type="number"
+                      min="1"
+                      step="1"
+                      required
+                      value="11"
+                      oninput="updateTokenExtraHint()"
+                      placeholder="Monthly Fee Amount (৳11+) *"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <p
+                      id="pay-token-extra-hint"
+                      class="text-[11px] font-semibold text-emerald-700 mt-1"
+                    >
+                      Standard Monthly Fee: ৳11
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      id="pay-token-month"
+                      type="text"
+                      required
+                      placeholder="Month / Period (e.g. November 2026) *"
+                      class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <select
+                    id="pay-token-method"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Cash">Cash / Hand-to-Hand</option>
+                  </select>
+                  <input
+                    id="pay-token-sender-number"
+                    type="text"
+                    placeholder="Your Sender Account / Mobile No. (Optional)"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
                 <input
-                  id="pay-sender-number"
+                  id="pay-token-note"
                   type="text"
-                  placeholder="Your Sender Account / Mobile No. (Optional)"
+                  placeholder="Note / Purpose (Optional)"
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
+                <button
+                  id="pay-token-submit-btn"
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 transition"
+                >
+                  Send Token Donation Request (৳11 Monthly)
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- PART 2: FREE DONATION (ANY VOLUNTARY AMOUNT) -->
+          <div id="pay-view-free" class="hidden space-y-4">
+            <div
+              class="glass p-5 rounded-2xl space-y-3 border border-sky-200/80"
+            >
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="font-bold text-emerald-950 flex items-center gap-2">
+                  <i
+                    data-lucide="hand-heart"
+                    class="w-4 h-4 text-emerald-600"
+                  ></i>
+                  <span>Free Donation (Voluntary / General)</span>
+                </h3>
+                <span
+                  class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200"
+                >
+                  Any Amount • Same 3-Step System
+                </span>
               </div>
-              <input
-                id="pay-note"
-                type="text"
-                placeholder="Note / Purpose (Optional)"
-                class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-              <button
-                id="pay-submit-btn"
-                type="submit"
-                class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 transition"
+              <div
+                class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1"
               >
-                Send Donation Request
-              </button>
-            </form>
+                <p class="font-bold">
+                  How Free Donation &amp; Money Receipt Works (3 Simple Steps):
+                </p>
+                <p>
+                  <strong>1. Send Request:</strong> Submit your desired amount,
+                  method, and sender number below.
+                  <strong>2. Send Money &amp; Submit Proof:</strong> Once Admin
+                  approves, send the amount to the Collector's receiving number
+                  above and submit your
+                  <strong>Sender Number &amp; Transaction ID</strong>.
+                  <strong>3. Collector Confirm &amp; Receipt:</strong> Collector
+                  confirms your TrxID, unlocking your signed official English
+                  Money Receipt.
+                </p>
+              </div>
+              <form
+                id="payment-form"
+                onsubmit="submitPayment(event, 'free')"
+                class="space-y-3"
+              >
+                <select
+                  id="pay-category"
+                  class="hidden w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                ></select>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    id="pay-amount"
+                    type="number"
+                    min="1"
+                    step="any"
+                    required
+                    placeholder="Free Donation Amount (BDT ৳) *"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    id="pay-month"
+                    type="text"
+                    placeholder="Month / Period (Optional)"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <select
+                    id="pay-method"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Cash">Cash / Hand-to-Hand</option>
+                  </select>
+                  <input
+                    id="pay-sender-number"
+                    type="text"
+                    placeholder="Your Sender Account / Mobile No. (Optional)"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <input
+                  id="pay-note"
+                  type="text"
+                  placeholder="Note / Purpose (Optional)"
+                  class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button
+                  id="pay-submit-btn"
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 transition"
+                >
+                  Send Free Donation Request
+                </button>
+              </form>
+            </div>
           </div>
 
           <div class="glass p-5 rounded-2xl space-y-3">
@@ -3554,64 +3726,6 @@
                           placeholder="Building a righteous, knowledgeable..."
                           class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                         ></textarea>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="border-t border-emerald-100 pt-4">
-                    <h4 class="text-sm font-bold text-emerald-900 mb-1">About Section</h4>
-                    <p class="text-[11px] text-slate-500 mb-2">Shown on the public home page (About), the in-app History tab and the CSF tab. Leave a box empty to hide that part. For lines with a title use: Title | Description.</p>
-                    <div class="space-y-3">
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">About heading</label><input id="he-aboutTitle" type="text" maxlength="60" placeholder="About Us" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">About text</label><textarea id="he-aboutText" rows="3" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Mission heading</label><input id="he-missionTitle" type="text" maxlength="60" placeholder="Our Mission" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Mission text</label><textarea id="he-missionText" rows="3" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Values heading</label><input id="he-valuesTitle" type="text" maxlength="60" placeholder="Our Core Values" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Core values (one per line: Title | Description)</label><textarea id="he-aboutValues" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Membership heading</label><input id="he-membershipTitle" type="text" maxlength="60" placeholder="Membership" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">General Member - title</label><input id="he-generalTitle" type="text" maxlength="60" placeholder="General Member" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">General Member - description</label><textarea id="he-generalText" rows="2" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">General Member - benefits (one per line)</label><textarea id="he-generalPoints" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF Verified Member - title</label><input id="he-verifiedTitle" type="text" maxlength="60" placeholder="CSF Verified Member" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF Verified Member - description</label><textarea id="he-verifiedText" rows="2" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF Verified Member - benefits (one per line)</label><textarea id="he-verifiedPoints" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">History text (History tab; blank line = new paragraph)</label><textarea id="he-historyText" rows="6" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">History milestones (one per line: Year | Event)</label><textarea id="he-historyMilestones" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF tab - about text</label><textarea id="he-csfAboutText" rows="3" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                      </div>
-                      <div>
-                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF tab - activities (one per line)</label><textarea id="he-csfActivities" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                       </div>
                     </div>
                   </div>
@@ -4495,6 +4609,15 @@
                         >
                           <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                           <span>Sync Donations</span>
+                        </button>
+                        <button
+                          type="button"
+                          id="fin-annual-notify-unpaid-btn"
+                          onclick="sendBulkUnpaidFeeNotifications()"
+                          class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 transition shadow-sm"
+                        >
+                          <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+                          <span>Notify Unpaid (৳11)</span>
                         </button>
                         <button
                           type="button"
@@ -5545,12 +5668,21 @@
                       class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                     <div class="grid grid-cols-2 gap-2">
-                      <input
-                        type="text"
+                      <select
                         id="new-mem-desig"
-                        placeholder="Designation"
                         class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
+                      >
+                        <option value="General User">
+                          Designation: General User
+                        </option>
+                        <option value="Member" selected>
+                          Designation: Member
+                        </option>
+                        <option value="Sub Admin">
+                          Designation: Sub Admin
+                        </option>
+                        <option value="Admin">Designation: Admin</option>
+                      </select>
                       <input
                         type="text"
                         id="new-mem-country"
@@ -5562,8 +5694,11 @@
                       id="new-mem-role"
                       class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                     >
-                      <option value="member">Regular Member</option>
-                      <option value="admin">Admin</option>
+                      <option value="member">Role: Regular Member</option>
+                      <option value="subadmin">
+                        Role: Sub-Admin (Sector Access)
+                      </option>
+                      <option value="admin">Role: Admin (Full Access)</option>
                     </select>
                     <button
                       type="submit"
@@ -5578,64 +5713,6 @@
             </div>
 
             <!-- SUB-ADMIN ROLES SECTOR -->
-            <div id="admin-pane-verified" class="admin-sector-pane hidden">
-              <div class="glass p-4 sm:p-6 rounded-2xl space-y-4 border border-amber-200/80">
-                <h3 class="text-lg font-bold text-emerald-950 flex items-center gap-2 border-b border-emerald-100 pb-3">
-                  <i data-lucide="badge-check" class="w-5 h-5 text-amber-600"></i>
-                  <span>CSF Verified Member Management</span>
-                </h3>
-                <div id="ver-stats" class="grid grid-cols-3 gap-2"></div>
-                <div class="grid grid-cols-3 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100">
-                  <button type="button" id="ver-subtab-members" data-allow-viewonly="true" onclick="switchVerifiedTab('members')" class="py-2 px-2 rounded-xl text-xs font-bold transition">Members &amp; Membership</button>
-                  <button type="button" id="ver-subtab-features" data-allow-viewonly="true" onclick="switchVerifiedTab('features')" class="py-2 px-2 rounded-xl text-xs font-bold transition">Features Catalog</button>
-                  <button type="button" id="ver-subtab-access" data-allow-viewonly="true" onclick="switchVerifiedTab('access')" class="py-2 px-2 rounded-xl text-xs font-bold transition">General Member Access</button>
-                </div>
-
-                <div id="ver-panel-members" class="space-y-3">
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <input id="ver-search" data-allow-viewonly="true" oninput="renderVerifiedAdmin()" type="text" placeholder="Search name, email or CSF ID..." class="sm:col-span-2 w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                    <select id="ver-filter" data-allow-viewonly="true" onchange="renderVerifiedAdmin()" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500">
-                      <option value="all">All members</option>
-                      <option value="verified">CSF Verified</option>
-                      <option value="general">General</option>
-                      <option value="pending">Pending / Rejected</option>
-                      <option value="suspended">Suspended</option>
-                    </select>
-                  </div>
-                  <p id="ver-count" class="text-[11px] text-slate-500"></p>
-                  <div id="ver-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                </div>
-
-                <div id="ver-panel-access" class="hidden space-y-3">
-                  <p class="text-xs text-slate-500">Choose what a <strong>General Member</strong> can see in the Dashboard, the app menu and the About section. Untick to hide. CSF Verified Members and Admins always get everything (plus their assigned features). Dashboard and My Profile are always available.</p>
-                  <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="setAllAccess(true)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg">Select all</button>
-                    <button type="button" onclick="setAllAccess(false)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg">Clear all</button>
-                  </div>
-                  <div id="ver-access-list" class="space-y-3"></div>
-                  <button type="button" onclick="saveMemberAccess()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition">Save General Member Features</button>
-                </div>
-
-                <div id="ver-panel-features" class="hidden space-y-4">
-                  <p class="text-xs text-slate-500">Create the features and privileges here. Then open a member and tick the features they may use. Members can only read the features assigned to them (enforced by Firestore rules).</p>
-                  <form id="ver-feature-form" onsubmit="saveVerFeature(event)" class="bg-white/60 border border-emerald-100 rounded-xl p-3 space-y-2.5">
-                    <input type="hidden" id="ver-f-id" />
-                    <input id="ver-f-title" type="text" maxlength="80" required placeholder="Feature title (e.g. Exclusive Resources)" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                    <input id="ver-f-desc" type="text" maxlength="200" placeholder="Short description" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                    <select id="ver-f-icon" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></select>
-                    <textarea id="ver-f-content" rows="4" maxlength="4000" placeholder="Member-only content / instructions (shown only to members who have this feature)" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                    <input id="ver-f-link" type="url" placeholder="Optional link (https://...)" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                    <label class="flex items-center gap-2 text-xs text-slate-700"><input id="ver-f-active" type="checkbox" checked /> Active</label>
-                    <div class="flex gap-2">
-                      <button type="submit" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition">Save Feature</button>
-                      <button type="button" onclick="resetVerFeatureForm()" class="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-bold transition">Clear</button>
-                    </div>
-                  </form>
-                  <div id="ver-feature-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                </div>
-              </div>
-            </div>
-
             <div id="admin-pane-subadmins" class="admin-sector-pane hidden">
               <div
                 class="glass p-6 rounded-2xl space-y-4 border border-emerald-200"
@@ -6053,7 +6130,85 @@
             </div>
           </div>
 
-          <div id="modal-admin-actions" class="mt-4 hidden space-y-2">
+          <div
+            id="modal-admin-fee-box"
+            class="hidden mt-4 p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 text-left space-y-2"
+          >
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <span
+                class="text-xs font-extrabold text-amber-950 flex items-center gap-1.5"
+              >
+                <i data-lucide="coins" class="w-4 h-4 text-amber-700"></i>
+                <span>Monthly ৳11 Fee &amp; Reminder Log</span>
+              </span>
+              <span id="modal-mem-fee-status-badge"></span>
+            </div>
+            <p class="text-xs text-slate-700">
+              <strong>Last ৳11 Notification Sent:</strong>
+              <span
+                id="modal-mem-reminder-date"
+                class="font-semibold text-emerald-900"
+                >Never sent yet</span
+              >
+            </p>
+            <button
+              type="button"
+              id="modal-send-reminder-btn"
+              class="hidden w-full py-2 px-3 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+              <span>Send ৳11 Due Reminder Notification</span>
+            </button>
+          </div>
+
+          <div
+            id="modal-admin-desig-box"
+            class="hidden mt-3 p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-left space-y-2.5"
+          >
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <label
+                for="modal-mem-desig-select"
+                class="block text-xs font-extrabold text-emerald-950"
+              >
+                Designation &amp; Role (Admin Control)
+              </label>
+              <span class="text-[10px] font-semibold text-emerald-700"
+                >Auto-updates Admin / Sub-Admin access</span
+              >
+            </div>
+            <div class="flex items-center gap-2">
+              <select
+                id="modal-mem-desig-select"
+                class="flex-1 px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="Admin">Admin</option>
+                <option value="Sub Admin">Sub Admin</option>
+                <option value="Member">Member</option>
+                <option value="General User">General User</option>
+              </select>
+              <button
+                type="button"
+                id="modal-mem-desig-save-btn"
+                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white transition"
+              >
+                Save
+              </button>
+            </div>
+            <div
+              id="modal-subadmin-sectors-wrap"
+              class="hidden pt-2 border-t border-emerald-200/70 space-y-1.5"
+            >
+              <p class="text-[11px] font-bold text-teal-900">
+                Sub-Admin Sector Access:
+              </p>
+              <div
+                id="modal-subadmin-sectors-list"
+                class="flex flex-wrap gap-1.5"
+              ></div>
+            </div>
+          </div>
+
+          <div id="modal-admin-actions" class="mt-3 hidden space-y-2">
             <button
               id="modal-role-btn"
               class="w-full py-2.5 rounded-xl text-xs font-semibold border transition"
@@ -6197,7 +6352,6 @@
         arrayUnion,
         onSnapshot,
         serverTimestamp,
-        runTransaction,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       import {
         getDatabase,
@@ -6289,6 +6443,31 @@
       let firstChatLoad = true;
       let firstNotifLoad = true;
       const seenNotifIds = new Set();
+      let memberStatusFilter = "all";
+      let memberPayPart = "token";
+
+      const VALID_DESIGNATIONS = [
+        "Admin",
+        "Sub Admin",
+        "Member",
+        "General User",
+      ];
+
+      function getSelectableDesignation(m) {
+        const raw = String(m?.designation || "").trim();
+        const exact = VALID_DESIGNATIONS.find(
+          (d) => d.toLowerCase() === raw.toLowerCase(),
+        );
+        if (exact) return exact;
+        if (m?.role === "admin") return "Admin";
+        if (
+          typeof getUserSubAdminSectors === "function" &&
+          getUserSubAdminSectors(m).length > 0
+        ) {
+          return "Sub Admin";
+        }
+        return raw ? "Member" : "General User";
+      }
 
       const tabNames = {
         dashboard: "Dashboard",
@@ -6296,10 +6475,8 @@
         meeting: "Online Meeting",
         chat: "Group Chat",
         members: "Members & Status",
-        history: "History of Darber E Chandpurishah",
         csf: "CSF",
-        verified: "CSF Member Area",
-        payments: "Donation",
+        payments: "Monthly Fee",
         profile: "My profile",
         admin: "Admin Panel",
       };
@@ -6350,14 +6527,6 @@
           title: "Home Page Editor",
           subtitle: "Edit the public landing page",
           icon: "layout-template",
-          bg: "bg-amber-100",
-          tx: "text-amber-700",
-        },
-        {
-          id: "verified",
-          title: "CSF Verified Members",
-          subtitle: "Membership, CSF ID & features",
-          icon: "badge-check",
           bg: "bg-amber-100",
           tx: "text-amber-700",
         },
@@ -6954,9 +7123,6 @@
         } else if (sectorId === "homepage") {
           fillHomeEditor();
           updateHomeEditorPreviews();
-        } else if (sectorId === "verified") {
-          switchVerifiedTab(verTab);
-          renderVerifiedAdmin();
         } else if (sectorId === "subadmins") {
           renderSubAdminsSector();
         }
@@ -7097,6 +7263,115 @@
         });
       }
 
+      function getMemberLastReminderInfo(memberObj) {
+        if (!memberObj)
+          return {
+            date: null,
+            formatted: "Never sent yet",
+            monthLabel: "",
+            by: "",
+          };
+        const uid = memberObj.id || memberObj.uid || "";
+        const profileDate = tsToDate(memberObj.lastFeeReminderAt);
+        const notifMatch = allNotifications.find(
+          (n) => n.type === "fee_reminder" && n.targetUid === uid,
+        );
+        const notifDate = tsToDate(notifMatch?.createdAt);
+
+        let latestDate = null;
+        let monthLabel = "";
+        let by = "";
+        if (profileDate && (!notifDate || profileDate >= notifDate)) {
+          latestDate = profileDate;
+          monthLabel = memberObj.lastFeeReminderMonth || "";
+          by = memberObj.lastFeeReminderBy || "";
+        } else if (notifDate) {
+          latestDate = notifDate;
+          monthLabel = notifMatch?.monthLabel || "";
+          by = notifMatch?.authorName || "";
+        }
+
+        if (!latestDate || Number.isNaN(latestDate.getTime())) {
+          return {
+            date: null,
+            formatted: "Never sent yet",
+            monthLabel: "",
+            by: "",
+          };
+        }
+        const formatted = latestDate.toLocaleString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        return { date: latestDate, formatted, monthLabel, by };
+      }
+
+      function renderGlobalFeeReminderBanner() {
+        const banner = document.getElementById("global-fee-reminder-banner");
+        if (!banner || !currentUser || !currentUserProfile) {
+          if (banner) banner.classList.add("hidden");
+          return;
+        }
+        if (currentUserProfile.approved === false) {
+          banner.classList.add("hidden");
+          return;
+        }
+        const mine = allPayments.filter((p) => p.uid === currentUser.uid);
+        const state = getMemberMonthlyFeeState(currentUserProfile, mine);
+        const myReminders = allNotifications.filter(
+          (n) => n.type === "fee_reminder" && n.targetUid === currentUser.uid,
+        );
+        const latestReminder = myReminders[0] || null;
+        const reminderInfo = getMemberLastReminderInfo({
+          ...currentUserProfile,
+          id: currentUser.uid,
+        });
+
+        const hasUnpaid = state.dueMonths.length > 0;
+        if (!hasUnpaid) {
+          banner.classList.add("hidden");
+          banner.innerHTML = "";
+          return;
+        }
+
+        const primaryDue = state.curDueObj || state.dueMonths[0];
+        const dueMonthLabel = `${FULL_MONTH_NAMES[primaryDue.idx]} ${state.targetYear}`;
+        const hasAdminNotice = Boolean(latestReminder || reminderInfo.date);
+
+        banner.classList.remove("hidden");
+        banner.innerHTML = `
+          <div class="flex flex-wrap items-center justify-center gap-2.5 max-w-7xl mx-auto">
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-red-800">
+              <i data-lucide="bell-ring" class="w-4 h-4 text-red-600 animate-pulse shrink-0"></i>
+              <span>${
+                hasAdminNotice
+                  ? `Admin Fee Notice (${escapeHtml(reminderInfo.formatted)}):`
+                  : "Mandatory Monthly Fee Due:"
+              }</span>
+            </span>
+            <span class="text-red-900">
+              আপনার <strong>${escapeHtml(dueMonthLabel)}</strong> মাসের নির্ধারিত <strong>৳${state.monthlyFee}</strong> (Token Donation) এখনো পরিশোধ করা হয়নি${state.dueMonths.length > 1 ? ` (মোট ${state.dueMonths.length}টি মাস বকেয়া: ${BDT(state.totalDueAmt)})` : ""}।
+            </span>
+            <button
+              type="button"
+              onclick="goToTokenDuePayment(${primaryDue.idx}, ${state.targetYear}, ${primaryDue.remaining})"
+              class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm transition shrink-0"
+            >
+              Pay ৳${primaryDue.remaining} Now →
+            </button>
+          </div>`;
+        lucide.createIcons();
+      }
+
+      window.goToTokenDuePayment = (monthIdx, year, amount = 11) => {
+        switchTab("payments");
+        switchMemberPayPart("token");
+        prefillMonthlyDonation(monthIdx, year, amount);
+      };
+
       function updateNotifPermUI() {
         const permBanner = document.getElementById("notif-perm-banner");
         const deniedBanner = document.getElementById("notif-denied-banner");
@@ -7165,9 +7440,11 @@
                 iconHtml = `<div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><i data-lucide="video" class="w-4 h-4"></i></div>`;
               } else if (n.type === "member_pending") {
                 iconHtml = `<div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0"><i data-lucide="user-check" class="w-4 h-4"></i></div>`;
+              } else if (n.type === "fee_reminder") {
+                iconHtml = `<div class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0"><i data-lucide="coins" class="w-4 h-4"></i></div>`;
               }
               return `
-                <button type="button" onclick="openNotificationItem('${n.id}', '${escapeHtml(n.targetTab || "updates")}')" class="w-full text-left px-4 py-3 hover:bg-emerald-50/70 transition flex items-start gap-3 ${isUnread ? "bg-emerald-50/50" : "bg-white"}">
+                <button type="button" onclick="openNotificationItem('${n.id}', '${escapeHtml(n.targetTab || "updates")}', '${escapeHtml(n.type || "")}')" class="w-full text-left px-4 py-3 hover:bg-emerald-50/70 transition flex items-start gap-3 ${isUnread ? "bg-emerald-50/50" : "bg-white"}">
                   ${iconHtml}
                   <div class="flex-1 min-w-0">
                     <div class="flex items-start justify-between gap-2">
@@ -7241,7 +7518,11 @@
         } catch (_) {}
       };
 
-      window.openNotificationItem = async (notifId, targetTab) => {
+      window.openNotificationItem = async (
+        notifId,
+        targetTab,
+        notifType = "",
+      ) => {
         if (currentUser) {
           try {
             await updateDoc(doc(db, "notifications", notifId), {
@@ -7253,6 +7534,9 @@
         document.getElementById("notif-dropdown").classList.add("hidden");
         if (targetTab && tabNames[targetTab]) {
           switchTab(targetTab);
+          if (targetTab === "payments" && notifType === "fee_reminder") {
+            switchMemberPayPart("token");
+          }
         }
       };
 
@@ -7486,11 +7770,6 @@
 
       window.switchTab = (tabName, fromHistory = false) => {
         if (!tabNames[tabName]) return;
-        if (tabName === "verified" && !isVerifiedActive()) return;
-        if (TAB_FEATURE && TAB_FEATURE[tabName] && !gfOn(TAB_FEATURE[tabName])) {
-          showToast("This section is not available for your membership type.", "error");
-          return;
-        }
         if (tabName === "admin" && !hasAdminPanelAccess()) return;
         activeTab = tabName;
         Object.keys(tabNames).forEach((t) => {
@@ -7521,12 +7800,6 @@
         }
         if (tabName === "csf") {
           renderHelpDeskUI();
-        }
-        if (tabName === "csf" || tabName === "history") {
-          renderAboutSections();
-        }
-        if (tabName === "verified") {
-          renderVerifiedDashboard();
         }
         if (tabName === "dashboard") {
           renderDashboard();
@@ -7828,7 +8101,6 @@
           const parentsPhone = document
             .getElementById("reg-parents-phone")
             .value.trim();
-          const designation = document.getElementById("reg-desig").value.trim();
           const educationLevel = document
             .getElementById("reg-education")
             .value.trim();
@@ -7850,7 +8122,6 @@
             !fatherName ||
             !motherName ||
             !parentsPhone ||
-            !designation ||
             !educationLevel ||
             !presentAddress ||
             !permanentAddress ||
@@ -7866,7 +8137,7 @@
           pendingRegistrationProfile = {
             name,
             age,
-            csfIdRequested: csfId,
+            csfId,
             phone,
             fatherName,
             motherName,
@@ -7874,7 +8145,7 @@
             presentAddress,
             permanentAddress,
             country,
-            designation,
+            designation: "General User",
             educationLevel,
             email,
             role: "member",
@@ -7910,18 +8181,6 @@
         });
 
       function cleanupAllDataListeners() {
-        try {
-          if (featuresUnsub) featuresUnsub();
-        } catch (_) {}
-        featuresUnsub = null;
-        premiumFeatures = [];
-        myFeatures = [];
-        myFeaturesKey = "";
-        try {
-          if (accessUnsub) accessUnsub();
-        } catch (_) {}
-        accessUnsub = null;
-        memberAccess = {};
         appDataUnsubs.forEach((u) => {
           try {
             u();
@@ -8042,7 +8301,7 @@
                   name: user.email.split("@")[0],
                   email: user.email,
                   role: existingUsers.empty ? "admin" : "member",
-                  designation: existingUsers.empty ? "Admin" : "Member",
+                  designation: existingUsers.empty ? "Admin" : "General User",
                   country: "Bangladesh",
                   phone: "",
                   bio: "",
@@ -8258,11 +8517,15 @@
               );
               updateNavUserUI();
               updateProfileCsfIdBadge();
-              onMembershipChanged();
               const csfIdInput = document.getElementById("prof-csfid");
               if (csfIdInput && document.activeElement !== csfIdInput) {
                 csfIdInput.value = currentUserProfile.csfId || "";
               }
+              const desigInput = document.getElementById("prof-designation");
+              if (desigInput) {
+                desigInput.value = getSelectableDesignation(currentUserProfile);
+              }
+              renderGlobalFeeReminderBanner();
               if (
                 prevRole !== currentUserProfile.role ||
                 prevSectors !== nextSectors
@@ -8301,7 +8564,6 @@
             renderMembers();
             renderPendingApprovals();
             renderAdminMembersList();
-            renderVerifiedAdmin();
             renderSubAdminsSector();
             renderAdminSectorsGrid();
             updateEmailRecipientStats();
@@ -8429,7 +8691,7 @@
         const qNotifs = query(
           collection(db, "notifications"),
           orderBy("createdAt", "desc"),
-          limit(50),
+          limit(100),
         );
         appDataUnsubs.push(
           onSnapshot(qNotifs, (snap) => {
@@ -8450,7 +8712,11 @@
                 if (isForMe && n.createdByUid !== currentUser.uid) {
                   showToast(
                     `${n.title}: ${n.body}`,
-                    n.type === "meeting" ? "warn" : "info",
+                    n.type === "fee_reminder"
+                      ? "error"
+                      : n.type === "meeting"
+                        ? "warn"
+                        : "info",
                   );
                   playNotificationChime();
                   showBrowserNotification(
@@ -8463,6 +8729,8 @@
             }
             allNotifications = list;
             renderNotifications();
+            renderGlobalFeeReminderBanner();
+            if (activeTab === "admin") renderAdminMembersList();
           }),
         );
       }
@@ -8881,13 +9149,28 @@
           );
           return;
         }
+        if (uid === currentUser?.uid && nextRole !== "admin") {
+          showToast("You cannot remove your own Main Admin role.", "error");
+          return;
+        }
+        const target = allMembers.find((m) => m.id === uid);
         const msg =
           nextRole === "admin"
             ? `Are you sure you want to make "${name}" an Admin? They will get full Admin Panel access.`
             : `Remove Admin Panel access from "${name}" and set them as a regular Member?`;
         if (!confirm(msg)) return;
+        const payload =
+          nextRole === "admin"
+            ? { role: "admin", designation: "Admin" }
+            : { role: "member", designation: "Member", subAdminSectors: [] };
         try {
-          await updateDoc(doc(db, "users", uid), { role: nextRole });
+          await updateDoc(doc(db, "users", uid), payload);
+          if (target) Object.assign(target, payload);
+          renderMembers();
+          renderAdminMembersList();
+          if (typeof renderSubAdminsSector === "function") {
+            renderSubAdminsSector();
+          }
           showToast(
             nextRole === "admin"
               ? `"${name}" is now an Admin!`
@@ -8896,6 +9179,265 @@
           closeMemberModal();
         } catch (err) {
           showToast("Failed to update role: " + err.message, "error");
+        }
+      };
+
+      window.updateMemberDesignation = async (uid, newDesignation) => {
+        const target = allMembers.find((m) => m.id === uid);
+        if (!target) return;
+        if (!VALID_DESIGNATIONS.includes(newDesignation)) {
+          showToast("Invalid designation selected.", "error");
+          renderAdminMembersList();
+          return;
+        }
+
+        const main = isMainAdmin();
+        const targetIsAdmin = target.role === "admin";
+        const existingSectors = getUserSubAdminSectors(target);
+        const targetIsSubAdmin = !targetIsAdmin && existingSectors.length > 0;
+        const targetName = target.name || "Member";
+
+        if (targetIsAdmin && !main) {
+          showToast(
+            "Only Main Admin can change another Main Admin's designation.",
+            "error",
+          );
+          renderAdminMembersList();
+          return;
+        }
+        if (
+          uid === currentUser?.uid &&
+          targetIsAdmin &&
+          newDesignation !== "Admin"
+        ) {
+          showToast("You cannot remove your own Main Admin role.", "error");
+          renderAdminMembersList();
+          return;
+        }
+
+        const roleChangingToAdmin =
+          newDesignation === "Admin" && !targetIsAdmin;
+        const roleChangingToSubAdmin =
+          newDesignation === "Sub Admin" &&
+          (targetIsAdmin || !targetIsSubAdmin);
+        const roleRemovingPrivileges =
+          (newDesignation === "Member" || newDesignation === "General User") &&
+          (targetIsAdmin || targetIsSubAdmin);
+        const requiresMainAdmin =
+          newDesignation === "Admin" ||
+          newDesignation === "Sub Admin" ||
+          roleRemovingPrivileges;
+
+        if (requiresMainAdmin && !main) {
+          showToast(
+            "Only Main Admin can grant or remove Admin / Sub Admin roles.",
+            "error",
+          );
+          renderAdminMembersList();
+          return;
+        }
+        if (!requiresMainAdmin && !requireSectorEdit("members")) {
+          renderAdminMembersList();
+          return;
+        }
+
+        if (roleChangingToAdmin) {
+          if (
+            !confirm(
+              `Set "${targetName}" designation to Admin? This will also grant full Admin role & Admin Panel access.`,
+            )
+          ) {
+            renderAdminMembersList();
+            return;
+          }
+        } else if (roleChangingToSubAdmin) {
+          const msg = targetIsAdmin
+            ? `Change "${targetName}" from Main Admin to Sub Admin? They will get Sub Admin sector access instead of full Admin.`
+            : `Set "${targetName}" designation to Sub Admin? They will get Sub Admin role & sector access.`;
+          if (!confirm(msg)) {
+            renderAdminMembersList();
+            return;
+          }
+        } else if (roleRemovingPrivileges) {
+          if (
+            !confirm(
+              `Set "${targetName}" to "${newDesignation}"? This will also remove their ${targetIsAdmin ? "Admin" : "Sub Admin"} role access.`,
+            )
+          ) {
+            renderAdminMembersList();
+            return;
+          }
+        }
+
+        let payload = { designation: newDesignation };
+        if (newDesignation === "Admin") {
+          payload = { designation: "Admin", role: "admin" };
+        } else if (newDesignation === "Sub Admin") {
+          const nextSectors = existingSectors.length
+            ? existingSectors
+            : [...VALID_ADMIN_SECTOR_IDS];
+          payload = {
+            designation: "Sub Admin",
+            role: "member",
+            subAdminSectors: nextSectors,
+          };
+        } else if (roleRemovingPrivileges) {
+          payload = {
+            designation: newDesignation,
+            role: "member",
+            subAdminSectors: [],
+          };
+        }
+
+        try {
+          await updateDoc(doc(db, "users", uid), payload);
+          Object.assign(target, payload);
+          if (currentUser?.uid === uid && currentUserProfile) {
+            Object.assign(currentUserProfile, payload);
+            const profDesig = document.getElementById("prof-designation");
+            if (profDesig) profDesig.value = newDesignation;
+          }
+          renderMembers();
+          renderAdminMembersList();
+          if (typeof renderSubAdminsSector === "function") {
+            renderSubAdminsSector();
+          }
+          if (newDesignation === "Admin") {
+            showToast(
+              `Updated ${targetName} to Admin (full Admin role granted)!`,
+            );
+          } else if (newDesignation === "Sub Admin") {
+            showToast(
+              `Updated ${targetName} to Sub Admin (Sub-Admin role granted)!`,
+            );
+          } else {
+            showToast(
+              `Updated ${targetName}'s designation to "${newDesignation}".`,
+            );
+          }
+        } catch (err) {
+          renderAdminMembersList();
+          showToast("Failed to update designation: " + err.message, "error");
+        }
+      };
+
+      async function dispatchMemberFeeReminder(memberObj) {
+        const uid = memberObj?.id || memberObj?.uid;
+        if (!uid) return false;
+        const state = getMemberMonthlyFeeState(memberObj);
+        const primaryDue = state.curDueObj ||
+          state.dueMonths[0] || {
+            idx: Math.max(0, new Date().getMonth()),
+            remaining: state.monthlyFee,
+          };
+        const monthLabel = `${FULL_MONTH_NAMES[primaryDue.idx]} ${state.targetYear}`;
+        const monthKey = `${state.targetYear}-${String(primaryDue.idx + 1).padStart(2, "0")}`;
+        const amt = primaryDue.remaining || state.monthlyFee;
+        const authorName = currentUserProfile?.name || "Admin";
+
+        await addDoc(collection(db, "notifications"), {
+          type: "fee_reminder",
+          title: `Monthly ৳${state.monthlyFee} Token Donation Due`,
+          body: `প্রিয় ${memberObj.name || "Member"}, আপনার ${monthLabel} মাসের নির্ধারিত ৳${amt} (Token Donation) এখনো পরিশোধ করা হয়নি। অনুগ্রহ করে Monthly Fee → Token Donation থেকে জমা দিন।`,
+          targetRole: "specific",
+          targetUid: uid,
+          targetTab: "payments",
+          monthKey,
+          monthLabel,
+          amount: amt,
+          createdByUid: currentUser.uid,
+          authorName,
+          readBy: [],
+          createdAt: serverTimestamp(),
+        });
+
+        try {
+          await updateDoc(doc(db, "users", uid), {
+            lastFeeReminderAt: serverTimestamp(),
+            lastFeeReminderMonth: monthLabel,
+            lastFeeReminderBy: authorName,
+          });
+        } catch (_) {}
+
+        return true;
+      }
+
+      window.sendMemberFeeReminder = async (uid) => {
+        if (
+          !canEditSector("finance") &&
+          !canEditSector("members") &&
+          !isMainAdmin()
+        ) {
+          return showToast(
+            "Only Admin / Members or Finance Sub-Admin can send ৳11 reminders.",
+            "error",
+          );
+        }
+        const m = allMembers.find((x) => x.id === uid);
+        if (!m) return showToast("Member account not found.", "error");
+        const state = getMemberMonthlyFeeState(m);
+        if (state.dueMonths.length === 0) {
+          return showToast(
+            `${m.name || "Member"} has no unpaid ৳${state.monthlyFee} due!`,
+          );
+        }
+        try {
+          await dispatchMemberFeeReminder(m);
+          showToast(
+            `৳${state.monthlyFee} reminder notification sent to ${m.name || "Member"}!`,
+          );
+          renderAdminMembersList();
+          const modal = document.getElementById("member-modal");
+          if (modal && !modal.classList.contains("hidden")) {
+            openMemberModal(uid);
+          }
+        } catch (err) {
+          showToast("Failed to send notification: " + err.message, "error");
+        }
+      };
+
+      window.sendBulkUnpaidFeeNotifications = async () => {
+        if (
+          !canEditSector("finance") &&
+          !canEditSector("members") &&
+          !isMainAdmin()
+        ) {
+          return showToast("Permission denied.", "error");
+        }
+        const approved = allMembers.filter(
+          (m) => m.approved !== false && !m.disabled,
+        );
+        const unpaidList = approved.filter(
+          (m) => getMemberMonthlyFeeState(m).dueMonths.length > 0,
+        );
+        if (!unpaidList.length) {
+          return showToast(
+            "All approved members have already paid or have pending requests!",
+          );
+        }
+        if (
+          !confirm(
+            `Send Mandatory ৳11 Token Donation reminder notification to ${unpaidList.length} unpaid member(s)?`,
+          )
+        ) {
+          return;
+        }
+        const btn = document.getElementById("fin-annual-notify-unpaid-btn");
+        if (btn) btn.disabled = true;
+        try {
+          let sentCount = 0;
+          for (const m of unpaidList) {
+            try {
+              await dispatchMemberFeeReminder(m);
+              sentCount++;
+            } catch (_) {}
+          }
+          showToast(
+            `Sent ৳11 due reminder notification to ${sentCount} member(s)!`,
+          );
+          renderAdminMembersList();
+        } finally {
+          if (btn) btn.disabled = false;
         }
       };
 
@@ -8910,6 +9452,8 @@
         }
 
         const canEditMembers = canEditSector("members");
+        const canNotifyFee =
+          canEditSector("finance") || canEditSector("members") || isMainAdmin();
         const main = isMainAdmin();
 
         container.innerHTML = others
@@ -8923,44 +9467,90 @@
               .replace(/\\/g, "\\\\")
               .replace(/'/g, "\\'");
             const canDeleteTarget = canEditMembers && (main || !isMemberAdmin);
+            const canEditDesig = canEditMembers && (main || !isMemberAdmin);
+            const curDesig = getSelectableDesignation(m);
+            const feeState = getMemberMonthlyFeeState(m);
+            const hasUnpaid = feeState.dueMonths.length > 0;
+            const reminderInfo = getMemberLastReminderInfo(m);
+
+            const feeBadgeHtml = hasUnpaid
+              ? `<span class="text-[10px] font-bold bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full shrink-0">Due ৳${feeState.totalDueAmt}</span>`
+              : `<span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full shrink-0">৳${feeState.monthlyFee} Paid ✓</span>`;
+
+            const desigOpts = VALID_DESIGNATIONS.map((opt) => {
+              const lockPrivileged =
+                !main && (opt === "Admin" || opt === "Sub Admin");
+              return `<option value="${opt}" ${opt === curDesig ? "selected" : ""} ${lockPrivileged ? "disabled" : ""}>${opt}</option>`;
+            }).join("");
+
             return `
-        <div class="bg-white/80 p-3 rounded-xl border border-emerald-100 flex items-center justify-between gap-2">
-          <div onclick="openMemberModal('${m.id}')" class="flex items-center gap-2.5 min-w-0 cursor-pointer">
-            <img src="${avatarUrl(m)}" class="w-9 h-9 rounded-xl object-cover shrink-0" />
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <p class="text-sm font-bold text-slate-800 truncate">${safeName}</p>
-                ${
-                  isMemberAdmin
-                    ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full shrink-0">Admin</span>`
-                    : isSubAdmin
-                      ? `<span class="text-[10px] font-bold bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded-full shrink-0">Sub-Admin</span>`
-                      : ""
-                }
+        <div class="bg-white/85 p-3 rounded-xl border border-emerald-100 space-y-2">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div onclick="openMemberModal('${m.id}')" class="flex items-center gap-2.5 min-w-0 cursor-pointer">
+              <img src="${avatarUrl(m)}" class="w-9 h-9 rounded-xl object-cover shrink-0" />
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <p class="text-sm font-bold text-slate-800 truncate">${safeName}</p>
+                  ${
+                    isMemberAdmin
+                      ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full shrink-0">Admin</span>`
+                      : isSubAdmin
+                        ? `<span class="text-[10px] font-bold bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded-full shrink-0">Sub-Admin</span>`
+                        : ""
+                  }
+                  ${feeBadgeHtml}
+                </div>
+                <p class="text-[11px] text-slate-500 truncate">${escapeHtml(m.email)}${m.csfId ? ` • ID: ${escapeHtml(m.csfId)}` : ""}</p>
               </div>
-              <p class="text-[11px] text-slate-500 truncate">${escapeHtml(m.email)}${m.csfId ? ` • ID: ${escapeHtml(m.csfId)}` : ""}</p>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+              ${
+                canNotifyFee && hasUnpaid
+                  ? `<button type="button" data-allow-viewonly="true" onclick="sendMemberFeeReminder('${m.id}')" class="bg-amber-50 hover:bg-amber-600 text-amber-800 hover:text-white border border-amber-200 text-[11px] px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 transition" title="Send ৳11 Fee Due Notification">
+                      <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+                      <span>Notify ৳${feeState.monthlyFee}</span>
+                    </button>`
+                  : ""
+              }
+              ${
+                main
+                  ? `<button onclick="toggleMemberRole('${m.id}', '${safeNameJs}', '${nextRole}')" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 border transition ${
+                      isMemberAdmin
+                        ? "bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200"
+                        : "bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border-emerald-200"
+                    }">
+                      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                      <span>${isMemberAdmin ? "Remove Admin" : "Make Admin"}</span>
+                    </button>`
+                  : ""
+              }
+              ${
+                canDeleteTarget
+                  ? `<button onclick="deleteMember('${m.id}', '${safeNameJs}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>`
+                  : ""
+              }
             </div>
           </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            ${
-              main
-                ? `<button onclick="toggleMemberRole('${m.id}', '${safeNameJs}', '${nextRole}')" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 border transition ${
-                    isMemberAdmin
-                      ? "bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200"
-                      : "bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border-emerald-200"
-                  }">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                    <span>${isMemberAdmin ? "Remove Admin" : "Make Admin"}</span>
-                  </button>`
-                : ""
-            }
-            ${
-              canDeleteTarget
-                ? `<button onclick="deleteMember('${m.id}', '${safeNameJs}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                  </button>`
-                : ""
-            }
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1.5 border-t border-emerald-100/70 text-[11px]">
+            <div class="flex items-center gap-1.5">
+              <span class="font-semibold text-slate-500">Designation:</span>
+              <select
+                ${canEditDesig ? "" : "disabled"}
+                onchange="updateMemberDesignation('${m.id}', this.value)"
+                class="px-2 py-1 bg-white border border-emerald-200 rounded-lg text-[11px] font-bold text-emerald-900 outline-none focus:ring-2 focus:ring-emerald-500 ${canEditDesig ? "" : "opacity-60 cursor-not-allowed"}"
+              >
+                ${desigOpts}
+              </select>
+            </div>
+            <span class="text-[10px] text-slate-500">
+              ${
+                reminderInfo.date
+                  ? `<strong>Last Notified:</strong> ${escapeHtml(reminderInfo.formatted)}`
+                  : "No ৳11 reminder sent"
+              }
+            </span>
           </div>
         </div>
       `;
@@ -9053,7 +9643,6 @@
             <div class="flex flex-wrap gap-1.5 pt-1">
               <button type="button" data-allow-viewonly="true" onclick="openMemberModal('${m.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Full Info</button>
               <button type="button" ${canEditReg ? "" : "disabled"} onclick="approveMember('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold ${canEditReg ? "" : "opacity-50 cursor-not-allowed"}">Approve</button>
-              ${m.membershipRejected ? `<span class="text-[10px] px-2 py-1 rounded-full font-bold bg-red-100 text-red-700 self-center">Rejected</span>` : `<button type="button" ${canEditReg ? "" : "disabled"} onclick="rejectMembership('${m.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold ${canEditReg ? "" : "opacity-50 cursor-not-allowed"}">Reject</button>`}
               <button type="button" ${canEditReg ? "" : "disabled"} onclick="deleteMember('${m.id}', '${safeNameJs}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold ${canEditReg ? "" : "opacity-50 cursor-not-allowed"}">Delete</button>
             </div>
           </div>
@@ -9074,10 +9663,7 @@
 
       window.approveMember = async (uid) => {
         if (!requireSectorEdit("members")) return;
-        await updateDoc(doc(db, "users", uid), {
-          approved: true,
-          membershipRejected: false,
-        });
+        await updateDoc(doc(db, "users", uid), { approved: true });
         showToast("Member approved!");
       };
 
@@ -9092,27 +9678,80 @@
         return `<span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100/90 px-2.5 py-0.5 rounded-full text-[11px] font-semibold"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>Offline</span>`;
       }
 
+      window.setMemberStatusFilter = (filter = "all") => {
+        memberStatusFilter = ["all", "active", "away", "offline"].includes(
+          filter,
+        )
+          ? filter
+          : "all";
+        renderMembers();
+      };
+
       window.renderMembers = () => {
         const search = (
-          document.getElementById("member-search").value || ""
+          document.getElementById("member-search")?.value || ""
         ).toLowerCase();
         const grid = document.getElementById("members-grid");
+        if (!grid) return;
+
+        const approved = allMembers.filter((m) => m.approved !== false);
+        let activeCnt = 0;
+        let awayCnt = 0;
+        let offlineCnt = 0;
+        approved.forEach((m) => {
+          const st = presenceMap[m.id]?.state || "offline";
+          if (st === "active") activeCnt++;
+          else if (st === "away") awayCnt++;
+          else offlineCnt++;
+        });
+
+        const setStat = (id, v) => {
+          const el = document.getElementById(id);
+          if (el) el.innerText = String(v);
+        };
+        setStat("mem-stat-total", approved.length);
+        setStat("mem-stat-active", activeCnt);
+        setStat("mem-stat-away", awayCnt);
+        setStat("mem-stat-offline", offlineCnt);
+
+        ["all", "active", "away", "offline"].forEach((key) => {
+          const card = document.getElementById(`mem-filter-${key}`);
+          if (!card) return;
+          const isAct = memberStatusFilter === key;
+          card.classList.toggle("border-2", isAct);
+          card.classList.toggle("border-emerald-500", isAct);
+          card.classList.toggle("shadow-md", isAct);
+        });
+
         grid.innerHTML = "";
 
-        const filtered = allMembers.filter(
-          (m) =>
-            m.approved !== false &&
-            ((m.name || "").toLowerCase().includes(search) ||
-              (m.country || "").toLowerCase().includes(search) ||
-              (m.designation || "").toLowerCase().includes(search) ||
-              (m.csfId || "").toLowerCase().includes(search)),
-        );
+        const filtered = approved.filter((m) => {
+          const st = presenceMap[m.id]?.state || "offline";
+          if (memberStatusFilter !== "all" && st !== memberStatusFilter) {
+            return false;
+          }
+          return (
+            (m.name || "").toLowerCase().includes(search) ||
+            (m.country || "").toLowerCase().includes(search) ||
+            (m.designation || "").toLowerCase().includes(search) ||
+            (m.csfId || "").toLowerCase().includes(search)
+          );
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div class="col-span-full glass rounded-2xl p-6 text-center text-sm text-slate-500">No members match the selected filter.</div>`;
+          lucide.createIcons();
+          return;
+        }
 
         filtered.forEach((m) => {
+          const desig = m.designation || "General User";
           const roleTag =
-            m.role === "admin"
+            m.role === "admin" && desig.toLowerCase() !== "admin"
               ? " • Admin"
-              : getUserSubAdminSectors(m).length > 0
+              : m.role !== "admin" &&
+                  getUserSubAdminSectors(m).length > 0 &&
+                  !/sub[\s-]*admin/i.test(desig)
                 ? " • Sub-Admin"
                 : "";
           grid.innerHTML += `
@@ -9123,7 +9762,7 @@
                 <h4 class="font-bold text-slate-800 truncate">${escapeHtml(m.name)}</h4>
                 ${statusBadgeHtml(m.id)}
               </div>
-              <p class="text-xs text-emerald-700 font-semibold mt-0.5">${escapeHtml(m.designation || "Member")}${roleTag}${m.csfId ? ` • ID: ${escapeHtml(m.csfId)}` : ""}</p>
+              <p class="text-xs text-emerald-700 font-semibold mt-0.5">${escapeHtml(desig)}${roleTag}${m.csfId ? ` • ID: ${escapeHtml(m.csfId)}` : ""}</p>
               <div class="flex items-center justify-between mt-2">
                 <p class="text-xs text-slate-500 flex items-center gap-1 truncate">
                   <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
@@ -9151,14 +9790,17 @@
         document.getElementById("modal-mem-status").innerHTML = statusBadgeHtml(
           m.id,
         );
+        const modalDesig = m.designation || "General User";
         const modalRoleTag =
-          m.role === "admin"
+          m.role === "admin" && modalDesig.toLowerCase() !== "admin"
             ? " • Admin"
-            : getUserSubAdminSectors(m).length > 0
+            : m.role !== "admin" &&
+                getUserSubAdminSectors(m).length > 0 &&
+                !/sub[\s-]*admin/i.test(modalDesig)
               ? " • Sub-Admin"
               : "";
         document.getElementById("modal-mem-desig").innerText =
-          `${m.designation || "Member"}${modalRoleTag}`;
+          `${modalDesig}${modalRoleTag}`;
 
         const verEl = document.getElementById("modal-mem-verified");
         if (m.emailVerified) verEl.classList.remove("hidden");
@@ -9261,6 +9903,107 @@
           setRow("modal-mem-perm-row", "modal-mem-perm", m.permanentAddress);
         } else {
           privBox.classList.add("hidden");
+        }
+
+        const feeBox = document.getElementById("modal-admin-fee-box");
+        const feeStatusBadge = document.getElementById(
+          "modal-mem-fee-status-badge",
+        );
+        const feeReminderDateEl = document.getElementById(
+          "modal-mem-reminder-date",
+        );
+        const feeSendBtn = document.getElementById("modal-send-reminder-btn");
+
+        if (feeBox) {
+          if (hasAdminPanelAccess()) {
+            feeBox.classList.remove("hidden");
+            const feeState = getMemberMonthlyFeeState(m);
+            const hasUnpaid = feeState.dueMonths.length > 0;
+            const reminderInfo = getMemberLastReminderInfo(m);
+
+            if (feeStatusBadge) {
+              feeStatusBadge.className = hasUnpaid
+                ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200"
+                : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+              feeStatusBadge.textContent = hasUnpaid
+                ? `Unpaid (Due ৳${feeState.totalDueAmt})`
+                : `৳${feeState.monthlyFee} Paid (${feeState.paidCount}/12)`;
+            }
+
+            if (feeReminderDateEl) {
+              feeReminderDateEl.textContent = reminderInfo.date
+                ? `${reminderInfo.formatted}${reminderInfo.monthLabel ? ` (${reminderInfo.monthLabel})` : ""}${reminderInfo.by ? ` • by ${reminderInfo.by}` : ""}`
+                : "Never sent yet";
+            }
+
+            const canNotify =
+              canEditSector("finance") ||
+              canEditSector("members") ||
+              isMainAdmin();
+            if (feeSendBtn) {
+              feeSendBtn.classList.toggle("hidden", !(canNotify && hasUnpaid));
+              feeSendBtn.onclick = () => sendMemberFeeReminder(m.id);
+            }
+          } else {
+            feeBox.classList.add("hidden");
+          }
+        }
+
+        const desigBox = document.getElementById("modal-admin-desig-box");
+        const desigSelect = document.getElementById("modal-mem-desig-select");
+        const desigSaveBtn = document.getElementById(
+          "modal-mem-desig-save-btn",
+        );
+        const modalSubWrap = document.getElementById(
+          "modal-subadmin-sectors-wrap",
+        );
+        const modalSubList = document.getElementById(
+          "modal-subadmin-sectors-list",
+        );
+        const canManageDesig =
+          canEditSector("members") && (isMainAdmin() || m.role !== "admin");
+        if (desigBox && desigSelect && desigSaveBtn) {
+          if (canManageDesig) {
+            desigBox.classList.remove("hidden");
+            desigSelect.value = getSelectableDesignation(m);
+            Array.from(desigSelect.options).forEach((opt) => {
+              opt.disabled =
+                !isMainAdmin() &&
+                (opt.value === "Admin" || opt.value === "Sub Admin");
+            });
+            desigSaveBtn.onclick = async () => {
+              await updateMemberDesignation(m.id, desigSelect.value);
+              openMemberModal(m.id);
+            };
+            if (modalSubWrap && modalSubList) {
+              const assigned = getUserSubAdminSectors(m);
+              const showSectors =
+                isMainAdmin() && m.role !== "admin" && assigned.length > 0;
+              modalSubWrap.classList.toggle("hidden", !showSectors);
+              if (showSectors) {
+                modalSubList.innerHTML = ADMIN_SECTORS.filter(
+                  (s) => s.id !== "subadmins",
+                )
+                  .map((s) => {
+                    const active = assigned.includes(s.id);
+                    return `<button type="button" onclick="toggleSubAdminSector('${m.id}', '${s.id}').then(() => openMemberModal('${m.id}'))" class="text-[10px] font-bold px-2 py-1 rounded-lg border inline-flex items-center gap-1 transition ${
+                      active
+                        ? "bg-emerald-700 text-white border-emerald-700 hover:bg-emerald-800"
+                        : "bg-white text-slate-600 border-emerald-200 hover:bg-emerald-50"
+                    }">
+                      <i data-lucide="${active ? "check-square" : "square"}" class="w-3 h-3"></i>
+                      <span>${escapeHtml(s.title)}</span>
+                    </button>`;
+                  })
+                  .join("");
+              } else {
+                modalSubList.innerHTML = "";
+              }
+            }
+          } else {
+            desigBox.classList.add("hidden");
+            if (modalSubWrap) modalSubWrap.classList.add("hidden");
+          }
         }
 
         const adminBox = document.getElementById("modal-admin-actions");
@@ -9557,14 +10300,9 @@
       };
 
       function updateProfileCsfIdBadge() {
-        try {
-          renderAboutSections();
-        } catch (_) {}
         const badge = document.getElementById("prof-csfid-badge");
         const badgeText = document.getElementById("prof-csfid-badge-text");
-        const val = isVerifiedActive()
-          ? (currentUserProfile?.csfId || "").trim()
-          : "";
+        const val = (currentUserProfile?.csfId || "").trim();
         if (badge && badgeText) {
           if (val) {
             badgeText.innerText = `CSF ID: ${val}`;
@@ -9606,7 +10344,7 @@
         const csfIdInput = document.getElementById("prof-csfid");
         if (csfIdInput) csfIdInput.value = currentUserProfile.csfId || "";
         document.getElementById("prof-designation").value =
-          currentUserProfile.designation || "";
+          getSelectableDesignation(currentUserProfile);
         document.getElementById("prof-country").value =
           currentUserProfile.country || "";
         const eduInput = document.getElementById("prof-education");
@@ -9646,9 +10384,7 @@
           const updated = {
             name: document.getElementById("prof-name").value.trim(),
             age: document.getElementById("prof-age").value.trim(),
-            designation: document
-              .getElementById("prof-designation")
-              .value.trim(),
+            csfId: csfIdInput ? csfIdInput.value.trim() : "",
             country: document.getElementById("prof-country").value.trim(),
             educationLevel: (
               document.getElementById("prof-education")?.value || ""
@@ -9675,6 +10411,34 @@
           showToast("Profile updated successfully!");
         });
 
+      const newMemDesigEl = document.getElementById("new-mem-desig");
+      const newMemRoleEl = document.getElementById("new-mem-role");
+      if (newMemDesigEl && newMemRoleEl) {
+        newMemDesigEl.addEventListener("change", () => {
+          const val = newMemDesigEl.value;
+          if (val === "Admin" && isMainAdmin()) {
+            newMemRoleEl.value = "admin";
+          } else if (val === "Sub Admin" && isMainAdmin()) {
+            newMemRoleEl.value = "subadmin";
+          } else if (val === "Member" || val === "General User") {
+            newMemRoleEl.value = "member";
+          }
+        });
+        newMemRoleEl.addEventListener("change", () => {
+          const rVal = newMemRoleEl.value;
+          if (rVal === "admin") {
+            newMemDesigEl.value = "Admin";
+          } else if (rVal === "subadmin") {
+            newMemDesigEl.value = "Sub Admin";
+          } else if (
+            newMemDesigEl.value === "Admin" ||
+            newMemDesigEl.value === "Sub Admin"
+          ) {
+            newMemDesigEl.value = "Member";
+          }
+        });
+      }
+
       document
         .getElementById("admin-add-member-form")
         .addEventListener("submit", async (e) => {
@@ -9683,13 +10447,32 @@
           const name = document.getElementById("new-mem-name").value.trim();
           const email = document.getElementById("new-mem-email").value.trim();
           const pass = document.getElementById("new-mem-pass").value;
-          const designation =
-            document.getElementById("new-mem-desig").value.trim() || "Member";
+          let designation =
+            document.getElementById("new-mem-desig").value.trim() ||
+            "General User";
           const country =
             document.getElementById("new-mem-country").value.trim() || "Global";
           const requestedRole = document.getElementById("new-mem-role").value;
-          const role =
-            requestedRole === "admin" && isMainAdmin() ? "admin" : "member";
+          const main = isMainAdmin();
+          const wantsAdmin =
+            main && (requestedRole === "admin" || designation === "Admin");
+          const wantsSubAdmin =
+            !wantsAdmin &&
+            main &&
+            (requestedRole === "subadmin" || designation === "Sub Admin");
+
+          if (
+            !main &&
+            (designation === "Admin" || designation === "Sub Admin")
+          ) {
+            designation = "Member";
+          }
+          const role = wantsAdmin ? "admin" : "member";
+          if (wantsAdmin) designation = "Admin";
+          if (wantsSubAdmin) designation = "Sub Admin";
+          const subAdminSectors = wantsSubAdmin
+            ? [...VALID_ADMIN_SECTOR_IDS]
+            : [];
 
           try {
             const cred = await createUserWithEmailAndPassword(
@@ -9704,6 +10487,7 @@
               designation,
               country,
               role,
+              subAdminSectors,
               phone: "",
               bio: "",
               photoURL: "",
@@ -9714,7 +10498,7 @@
             await signOut(secondaryAuth);
             e.target.reset();
             showToast(
-              `New member "${name}" added and verification email sent!`,
+              `New member "${name}" added (${designation}) and verification email sent!`,
             );
           } catch (err) {
             showToast("Error: " + err.message, "error");
@@ -10431,8 +11215,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 .map((d) => ({ id: d.id, ...d.data() }))
                 .sort((a, b) => tsToDate(b.createdAt) - tsToDate(a.createdAt));
               renderMemberPayments();
+              renderGlobalFeeReminderBanner();
               if (canViewAdminFinance) {
                 renderFinance();
+                renderAdminMembersList();
                 renderAdminSectorsGrid();
               }
               scheduleDashboard();
@@ -10472,6 +11258,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 };
               }
               renderMemberPayments();
+              renderGlobalFeeReminderBanner();
+              if (hasAdminPanelAccess()) renderAdminMembersList();
             },
             () => {},
           ),
@@ -10516,6 +11304,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 }
                 renderFinance();
                 renderMemberPayments();
+                renderGlobalFeeReminderBanner();
+                renderAdminMembersList();
                 scheduleDashboard();
               },
               onErr,
@@ -10624,24 +11414,74 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         formWrap.classList.toggle("hidden");
       };
 
+      window.switchMemberPayPart = (part = "token") => {
+        memberPayPart = part === "free" ? "free" : "token";
+        const tokView = document.getElementById("pay-view-token");
+        const freeView = document.getElementById("pay-view-free");
+        if (tokView)
+          tokView.classList.toggle("hidden", memberPayPart !== "token");
+        if (freeView)
+          freeView.classList.toggle("hidden", memberPayPart !== "free");
+
+        applySubTabPillStyles("pay-subtab", ["token", "free"], memberPayPart);
+        renderPaymentInfo();
+        lucide.createIcons();
+      };
+
+      window.updateTokenExtraHint = () => {
+        const amtEl = document.getElementById("pay-token-amount");
+        const hintEl = document.getElementById("pay-token-extra-hint");
+        if (!amtEl || !hintEl) return;
+        const targetYear =
+          Number(publicAnnualFund?.activeYear) || new Date().getFullYear();
+        const sheetSource =
+          annualSheets[targetYear] ||
+          publicAnnualFund?.years?.[String(targetYear)] ||
+          null;
+        const fixed =
+          Number(sheetSource?.monthlyFee) > 0
+            ? Number(sheetSource.monthlyFee)
+            : 11;
+        const val = Math.floor(Number(amtEl.value) || 0);
+        if (val > fixed) {
+          hintEl.className = "text-[11px] font-bold text-amber-700 mt-1";
+          hintEl.textContent = `Regular Monthly: ৳${fixed} + Extra Fund: ৳${val - fixed}`;
+        } else if (val === fixed) {
+          hintEl.className = "text-[11px] font-semibold text-emerald-700 mt-1";
+          hintEl.textContent = `Standard Monthly Token Fee: ৳${fixed}`;
+        } else if (val > 0) {
+          hintEl.className = "text-[11px] font-semibold text-slate-600 mt-1";
+          hintEl.textContent = `Partial payment (৳${fixed - val} remaining for full ৳${fixed} monthly fee)`;
+        } else {
+          hintEl.className = "text-[11px] font-semibold text-red-600 mt-1";
+          hintEl.textContent = `Mandatory monthly fee: ৳${fixed}`;
+        }
+      };
+
       function renderPaymentInfo() {
         renderPayCategories();
-        const monthEl = document.getElementById("pay-month");
-        if (monthEl && !monthEl.value && document.activeElement !== monthEl) {
-          monthEl.value = new Date().toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-          });
-        }
-        const senderEl = document.getElementById("pay-sender-number");
-        if (
-          senderEl &&
-          !senderEl.value &&
-          document.activeElement !== senderEl &&
-          currentUserProfile?.phone
-        ) {
-          senderEl.value = currentUserProfile.phone;
-        }
+        const defaultMonthLabel = new Date().toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        });
+        ["pay-month", "pay-token-month"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el && !el.value && document.activeElement !== el) {
+            el.value = defaultMonthLabel;
+          }
+        });
+        ["pay-sender-number", "pay-token-sender-number"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (
+            el &&
+            !el.value &&
+            document.activeElement !== el &&
+            currentUserProfile?.phone
+          ) {
+            el.value = currentUserProfile.phone;
+          }
+        });
+        updateTokenExtraHint();
         const list = document.getElementById("pay-info-list");
         if (!list) return;
         const rows = [
@@ -10730,40 +11570,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         "December",
       ];
 
-      window.prefillMonthlyDonation = (monthIdx, year, amount = 11) => {
-        const amtEl = document.getElementById("pay-amount");
-        const monthEl = document.getElementById("pay-month");
-        const catSel = document.getElementById("pay-category");
-        const noteEl = document.getElementById("pay-note");
-        const formEl = document.getElementById("payment-form");
-        const monthLabel = `${FULL_MONTH_NAMES[monthIdx] || "Month"} ${year}`;
-        if (amtEl) amtEl.value = Math.max(1, Math.round(Number(amount) || 11));
-        if (monthEl) monthEl.value = monthLabel;
-        if (catSel && !catSel.classList.contains("hidden")) {
-          const opt = [...catSel.options].find((o) =>
-            /monthly|subscription|চাঁদা|fund/i.test(o.value),
-          );
-          if (opt) catSel.value = opt.value;
-        }
-        if (noteEl && !noteEl.value.trim()) {
-          noteEl.value = `Monthly ৳${Math.max(1, Math.round(Number(amount) || 11))} Fund (${monthLabel})`;
-        }
-        if (formEl) {
-          formEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-        showToast(
-          `Donation form filled for ${monthLabel} (৳${Math.round(Number(amount) || 11)}).`,
-        );
-      };
-
-      function renderMemberMonthlyStatus(mine) {
-        const alertEl = document.getElementById("mypay-due-alert");
-        const cardEl = document.getElementById("mypay-monthly-card");
-        const gridEl = document.getElementById("mypay-monthly-grid");
-        const titleEl = document.getElementById("mypay-monthly-title");
-        const pillEl = document.getElementById("mypay-monthly-summary-pill");
-        if (!alertEl || !cardEl || !gridEl) return;
-
+      function getMemberMonthlyFeeState(
+        memberObj,
+        memberPaymentsOverride = null,
+      ) {
         const now = new Date();
         const curCalendarYear = now.getFullYear();
         const targetYear =
@@ -10783,21 +11593,24 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             ? sheetSource.rows
             : [];
 
-        const myUid = currentUser?.uid || "";
-        const myCsf = (currentUserProfile?.csfId || "").trim().toLowerCase();
-        const myName = (currentUserProfile?.name || "").trim().toLowerCase();
+        const mUid = memberObj?.id || memberObj?.uid || "";
+        const mCsf = (memberObj?.csfId || "").trim().toLowerCase();
+        const mName = (memberObj?.name || "").trim().toLowerCase();
         const matchedRow = rows.find(
           (r) =>
-            (myUid && (r.uid === myUid || r.id === myUid)) ||
-            (myCsf && (r.csfId || "").trim().toLowerCase() === myCsf) ||
-            (myName && (r.name || "").trim().toLowerCase() === myName),
+            (mUid && (r.uid === mUid || r.id === mUid)) ||
+            (mCsf && (r.csfId || "").trim().toLowerCase() === mCsf) ||
+            (mName && (r.name || "").trim().toLowerCase() === mName),
         );
 
         const sheetMonths = normalizeAnnualMonths(matchedRow?.months);
         const confirmedMonths = Array(12).fill(0);
         const pendingMonths = Array(12).fill(0);
+        const paymentsList = Array.isArray(memberPaymentsOverride)
+          ? memberPaymentsOverride
+          : allPayments.filter((p) => p.uid === mUid);
 
-        mine.forEach((p) => {
+        paymentsList.forEach((p) => {
           const mIdx = parseAnnualMonthIndexForYear(
             p.month,
             p.createdAt,
@@ -10821,7 +11634,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
         let paidCount = 0;
         const dueMonths = [];
-        const monthCards = ANNUAL_MONTH_NAMES.map((shortName, idx) => {
+        const months = ANNUAL_MONTH_NAMES.map((shortName, idx) => {
           const effectivePaid = Math.max(
             sheetMonths[idx],
             confirmedMonths[idx],
@@ -10830,63 +11643,24 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             pendingMonths[idx] > 0 && effectivePaid < monthlyFee;
           const isDueWindow = idx <= curMonthIdx;
           const remaining = Math.max(0, monthlyFee - effectivePaid);
-
-          if (effectivePaid >= monthlyFee) {
-            paidCount++;
-            const extra = effectivePaid - monthlyFee;
-            return `
-              <div class="rounded-xl p-2 border bg-emerald-50 border-emerald-200 text-center">
-                <p class="text-[11px] font-bold text-emerald-900">${shortName}</p>
-                <p class="text-xs font-extrabold text-emerald-700 mt-0.5">৳${effectivePaid} ✓</p>
-                <p class="text-[9px] font-bold ${extra > 0 ? "text-amber-700" : "text-emerald-600"}">${extra > 0 ? `+৳${extra} Extra` : "Paid"}</p>
-              </div>`;
-          }
-
-          if (hasPending) {
-            return `
-              <div class="rounded-xl p-2 border bg-sky-50 border-sky-200 text-center">
-                <p class="text-[11px] font-bold text-sky-900">${shortName}</p>
-                <p class="text-xs font-extrabold text-sky-700 mt-0.5">Pending</p>
-                <p class="text-[9px] font-semibold text-sky-600">৳${pendingMonths[idx]} req</p>
-              </div>`;
-          }
-
-          if (isDueWindow) {
+          const isPaid = effectivePaid >= monthlyFee;
+          if (isPaid) paidCount++;
+          else if (!hasPending && isDueWindow) {
             dueMonths.push({ idx, shortName, remaining });
-            return `
-              <button
-                type="button"
-                onclick="prefillMonthlyDonation(${idx}, ${targetYear}, ${remaining})"
-                class="rounded-xl p-2 border bg-red-50 hover:bg-red-100 border-red-200 text-center transition cursor-pointer"
-                title="Click to pay ${FULL_MONTH_NAMES[idx]} ${targetYear} (৳${remaining})"
-              >
-                <p class="text-[11px] font-bold text-red-900">${shortName}</p>
-                <p class="text-[11px] font-extrabold text-red-600 mt-0.5">${effectivePaid > 0 ? `৳${effectivePaid}/${monthlyFee}` : "Not Paid"}</p>
-                <p class="text-[9px] font-bold text-red-700">Due ৳${remaining}</p>
-              </button>`;
           }
-
-          return `
-            <div class="rounded-xl p-2 border bg-slate-50 border-slate-200 text-center opacity-75">
-              <p class="text-[11px] font-bold text-slate-600">${shortName}</p>
-              <p class="text-[11px] font-semibold text-slate-400 mt-0.5">—</p>
-              <p class="text-[9px] font-semibold text-slate-400">Upcoming</p>
-            </div>`;
+          return {
+            idx,
+            shortName,
+            effectivePaid,
+            pendingAmt: pendingMonths[idx],
+            hasPending,
+            isDueWindow,
+            remaining,
+            isPaid,
+          };
         });
 
-        gridEl.innerHTML = monthCards.join("");
-        if (titleEl) {
-          titleEl.textContent = `Monthly ৳${monthlyFee} Fund Status (${targetYear})`;
-        }
-        if (pillEl) {
-          pillEl.textContent = `${paidCount} / 12 Paid`;
-          pillEl.className = dueMonths.length
-            ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200"
-            : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
-        }
-
-        const totalDueAmt = dueMonths.reduce((s, d) => s + d.remaining, 0);
-        const curDueObj = dueMonths.find((d) => d.idx === curMonthIdx);
+        const curDueObj = dueMonths.find((d) => d.idx === curMonthIdx) || null;
         const curMonthPaid =
           curMonthIdx >= 0
             ? Math.max(sheetMonths[curMonthIdx], confirmedMonths[curMonthIdx])
@@ -10895,6 +11669,117 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           curMonthIdx >= 0 &&
           pendingMonths[curMonthIdx] > 0 &&
           curMonthPaid < monthlyFee;
+        const totalDueAmt = dueMonths.reduce((s, d) => s + d.remaining, 0);
+
+        return {
+          targetYear,
+          monthlyFee,
+          curMonthIdx,
+          paidCount,
+          dueMonths,
+          totalDueAmt,
+          curDueObj,
+          curMonthPending,
+          months,
+        };
+      }
+
+      window.prefillMonthlyDonation = (monthIdx, year, amount = 11) => {
+        switchMemberPayPart("token");
+        const amtEl = document.getElementById("pay-token-amount");
+        const monthEl = document.getElementById("pay-token-month");
+        const noteEl = document.getElementById("pay-token-note");
+        const formEl = document.getElementById("token-payment-form");
+        const monthLabel = `${FULL_MONTH_NAMES[monthIdx] || "Month"} ${year}`;
+        const finalAmt = Math.max(1, Math.round(Number(amount) || 11));
+        if (amtEl) amtEl.value = finalAmt;
+        if (monthEl) monthEl.value = monthLabel;
+        if (noteEl) {
+          noteEl.value = `Token Donation - Monthly ৳${finalAmt} (${monthLabel})`;
+        }
+        updateTokenExtraHint();
+        if (formEl) {
+          formEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        showToast(`Token Donation filled for ${monthLabel} (৳${finalAmt}).`);
+      };
+
+      function renderMemberMonthlyStatus(mine) {
+        const alertEl = document.getElementById("mypay-due-alert");
+        const cardEl = document.getElementById("mypay-monthly-card");
+        const gridEl = document.getElementById("mypay-monthly-grid");
+        const titleEl = document.getElementById("mypay-monthly-title");
+        const pillEl = document.getElementById("mypay-monthly-summary-pill");
+        if (!alertEl || !cardEl || !gridEl) return;
+
+        const state = getMemberMonthlyFeeState(
+          { ...currentUserProfile, id: currentUser?.uid },
+          mine,
+        );
+        const {
+          targetYear,
+          monthlyFee,
+          curMonthIdx,
+          paidCount,
+          dueMonths,
+          totalDueAmt,
+          curDueObj,
+          curMonthPending,
+          months,
+        } = state;
+
+        const monthCards = months.map((m) => {
+          if (m.isPaid) {
+            const extra = m.effectivePaid - monthlyFee;
+            return `
+              <div class="rounded-xl p-2 border bg-emerald-50 border-emerald-200 text-center">
+                <p class="text-[11px] font-bold text-emerald-900">${m.shortName}</p>
+                <p class="text-xs font-extrabold text-emerald-700 mt-0.5">৳${m.effectivePaid} ✓</p>
+                <p class="text-[9px] font-bold ${extra > 0 ? "text-amber-700" : "text-emerald-600"}">${extra > 0 ? `+৳${extra} Extra` : "Paid"}</p>
+              </div>`;
+          }
+
+          if (m.hasPending) {
+            return `
+              <div class="rounded-xl p-2 border bg-sky-50 border-sky-200 text-center">
+                <p class="text-[11px] font-bold text-sky-900">${m.shortName}</p>
+                <p class="text-xs font-extrabold text-sky-700 mt-0.5">Pending</p>
+                <p class="text-[9px] font-semibold text-sky-600">৳${m.pendingAmt} req</p>
+              </div>`;
+          }
+
+          if (m.isDueWindow) {
+            return `
+              <button
+                type="button"
+                onclick="prefillMonthlyDonation(${m.idx}, ${targetYear}, ${m.remaining})"
+                class="rounded-xl p-2 border bg-red-50 hover:bg-red-100 border-red-200 text-center transition cursor-pointer"
+                title="Click to pay ${FULL_MONTH_NAMES[m.idx]} ${targetYear} (৳${m.remaining})"
+              >
+                <p class="text-[11px] font-bold text-red-900">${m.shortName}</p>
+                <p class="text-[11px] font-extrabold text-red-600 mt-0.5">${m.effectivePaid > 0 ? `৳${m.effectivePaid}/${monthlyFee}` : "Not Paid"}</p>
+                <p class="text-[9px] font-bold text-red-700">Due ৳${m.remaining}</p>
+              </button>`;
+          }
+
+          return `
+            <div class="rounded-xl p-2 border bg-slate-50 border-slate-200 text-center opacity-75">
+              <p class="text-[11px] font-bold text-slate-600">${m.shortName}</p>
+              <p class="text-[11px] font-semibold text-slate-400 mt-0.5">—</p>
+              <p class="text-[9px] font-semibold text-slate-400">Upcoming</p>
+            </div>`;
+        });
+
+        gridEl.innerHTML = monthCards.join("");
+        if (titleEl) {
+          titleEl.textContent = `Token Donation • Monthly ৳${monthlyFee} Status (${targetYear})`;
+        }
+        if (pillEl) {
+          pillEl.textContent = `${paidCount} / 12 Paid`;
+          pillEl.className = dueMonths.length
+            ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200"
+            : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+        }
 
         alertEl.classList.remove("hidden");
         if (curDueObj) {
@@ -10904,7 +11789,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               <div class="space-y-1 min-w-0">
                 <p class="text-sm font-extrabold text-red-800 flex items-center gap-1.5">
                   <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600 shrink-0"></i>
-                  <span>মাসিক ৳${monthlyFee} চাঁদা দেওয়া হয়নি! (${curFullMonth} ${targetYear} Not Paid)</span>
+                  <span>মাসিক ৳${monthlyFee} Token Donation দেওয়া হয়নি! (${curFullMonth} ${targetYear} Not Paid)</span>
                 </p>
                 <p class="text-xs text-red-700 leading-relaxed">
                   আপনার <strong>${curFullMonth} ${targetYear}</strong> মাসের নির্ধারিত <strong>৳${monthlyFee}</strong> চাঁদা এখনো জমা হয়নি${curDueObj.remaining < monthlyFee ? ` (বাকি ৳${curDueObj.remaining})` : ""}।
@@ -10925,7 +11810,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             <div class="glass rounded-2xl p-4 border border-sky-200 bg-sky-50/90 flex items-center gap-2.5">
               <i data-lucide="clock" class="w-4 h-4 text-sky-600 shrink-0"></i>
               <p class="text-xs font-semibold text-sky-900">
-                <strong>${curFullMonth} ${targetYear}</strong> মাসের চাঁদার রিকোয়েস্ট পাঠানো হয়েছে — Admin / Collector কনফার্ম করলে Paid দেখাবে।
+                <strong>${curFullMonth} ${targetYear}</strong> মাসের Token Donation রিকোয়েস্ট পাঠানো হয়েছে — Admin / Collector কনফার্ম করলে Paid দেখাবে।
               </p>
             </div>`;
         } else if (dueMonths.length > 0) {
@@ -10935,7 +11820,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               <div class="space-y-1 min-w-0">
                 <p class="text-sm font-extrabold text-amber-900 flex items-center gap-1.5">
                   <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 shrink-0"></i>
-                  <span>আগের ${dueMonths.length}টি মাসের চাঁদা বকেয়া আছে! (Previous Months Unpaid)</span>
+                  <span>আগের ${dueMonths.length}টি মাসের Token Donation বকেয়া আছে! (Previous Months Unpaid)</span>
                 </p>
                 <p class="text-xs text-amber-800">
                   বকেয়া মাস: <strong>${dueMonths.map((d) => d.shortName).join(", ")} ${targetYear}</strong> (মোট বকেয়া: <strong>৳${totalDueAmt}</strong>)। নিচের লাল ঘরে ক্লিক করে পরিশোধ করতে পারবেন।
@@ -10954,7 +11839,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             <div class="glass rounded-2xl p-3.5 border border-emerald-200 bg-emerald-50/90 flex items-center gap-2.5">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
               <p class="text-xs font-bold text-emerald-800">
-                মাসিক ৳${monthlyFee} চাঁদা পরিশোধিত (${targetYear} সালের চলতি মাস পর্যন্ত কোনো বকেয়া নেই)।
+                মাসিক ৳${monthlyFee} Token Donation পরিশোধিত (${targetYear} সালের চলতি মাস পর্যন্ত কোনো বকেয়া নেই)।
               </p>
             </div>`;
         }
@@ -11058,11 +11943,24 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               </div>`;
             }
 
+            const isTok =
+              p.donationMode === "token" ||
+              /token donation|monthly ৳?11/i.test(
+                p.category || p.purpose || "",
+              );
+            const modePill = isTok
+              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Token Donation</span>`
+              : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">Free Donation</span>`;
+
             return `
           <div class="bg-white/75 border ${confirmed ? "border-emerald-200" : awaitingCollector ? "border-sky-200" : "border-emerald-100"} rounded-xl p-3.5 space-y-2">
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
-                <p class="font-bold text-slate-800">${BDT(p.amount)}${p.category ? ` <span class="text-xs font-semibold text-slate-500">• ${escapeHtml(p.category)}</span>` : ""}</p>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <p class="font-bold text-slate-800">${BDT(p.amount)}</p>
+                  ${modePill}
+                  ${p.category ? `<span class="text-xs font-semibold text-slate-500">• ${escapeHtml(p.category)}</span>` : ""}
+                </div>
                 <p class="text-xs text-slate-500 mt-0.5">${p.month ? `Period: ${escapeHtml(p.month)} • ` : ""}Method: ${escapeHtml(p.paymentMethod || "N/A")}</p>
                 ${p.senderNumber ? `<p class="text-xs text-slate-600 mt-0.5">Sender No: <strong class="text-slate-800">${escapeHtml(p.senderNumber)}</strong></p>` : ""}
                 ${p.receiptNo ? `<p class="text-xs font-semibold text-emerald-700 mt-0.5">Receipt No: ${escapeHtml(p.receiptNo)}</p>` : ""}
@@ -11164,29 +12062,47 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         }
       };
 
-      window.submitPayment = async (e) => {
+      window.submitPayment = async (e, mode = "free") => {
         e.preventDefault();
         if (!currentUser || !currentUserProfile) return;
-        const btn = document.getElementById("pay-submit-btn");
-        const amount = Number(document.getElementById("pay-amount").value);
+        const isToken = mode === "token";
+        const btn = document.getElementById(
+          isToken ? "pay-token-submit-btn" : "pay-submit-btn",
+        );
+        const amount = Number(
+          document.getElementById(isToken ? "pay-token-amount" : "pay-amount")
+            ?.value,
+        );
         const month = (
-          document.getElementById("pay-month")?.value || ""
+          document.getElementById(isToken ? "pay-token-month" : "pay-month")
+            ?.value || ""
         ).trim();
         const paymentMethod =
-          document.getElementById("pay-method")?.value || "bKash";
+          document.getElementById(isToken ? "pay-token-method" : "pay-method")
+            ?.value || "bKash";
         const senderNumber = (
-          document.getElementById("pay-sender-number")?.value || ""
+          document.getElementById(
+            isToken ? "pay-token-sender-number" : "pay-sender-number",
+          )?.value || ""
         ).trim();
-        const note = (document.getElementById("pay-note")?.value || "").trim();
+        const note = (
+          document.getElementById(isToken ? "pay-token-note" : "pay-note")
+            ?.value || ""
+        ).trim();
 
-        const catSel = document.getElementById("pay-category");
-        const category =
-          catSel && !catSel.classList.contains("hidden") ? catSel.value : "";
-        if (catSel && !catSel.classList.contains("hidden") && !category)
-          return showToast("Please select a category.", "error");
+        let category = "";
+        if (isToken) {
+          category = "Token Donation (Monthly ৳11)";
+        } else {
+          const catSel = document.getElementById("pay-category");
+          category =
+            catSel && !catSel.classList.contains("hidden") ? catSel.value : "";
+          if (catSel && !catSel.classList.contains("hidden") && !category)
+            return showToast("Please select a category.", "error");
+        }
         if (!(amount > 0)) return showToast("Enter a valid amount.", "error");
 
-        btn.disabled = true;
+        if (btn) btn.disabled = true;
         try {
           await addDoc(collection(db, "payments"), {
             uid: currentUser.uid,
@@ -11209,27 +12125,43 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             collectorName: "",
             receiptNo: "",
             collectorConfirmed: false,
-            category: category || "Donation",
-            purpose: category || "Donation",
+            donationMode: isToken ? "token" : "free",
+            donationType: isToken ? "Token Donation" : "Free Donation",
+            category: category || "Free Donation",
+            purpose: isToken
+              ? "Token Donation (Monthly ৳11)"
+              : category || "Free Donation",
             status: "requested",
             createdAt: serverTimestamp(),
           });
           createAppNotification({
             type: "payment",
-            title: "New Donation Request",
-            body: `${currentUserProfile.name || "A member"} requested to donate ${BDT(amount)}${category ? " (" + category + ")" : ""}.`,
+            title: isToken
+              ? "New Token Donation Request"
+              : "New Free Donation Request",
+            body: `${currentUserProfile.name || "A member"} requested ${isToken ? "Token Donation (৳11)" : "Free Donation"} of ${BDT(amount)}.`,
             targetRole: "admin",
             targetTab: "admin",
             createdByUid: currentUser.uid,
             authorName: currentUserProfile.name || "",
           });
-          document.getElementById("payment-form").reset();
+          if (isToken) {
+            document.getElementById("token-payment-form")?.reset();
+            const tokAmtEl = document.getElementById("pay-token-amount");
+            if (tokAmtEl) tokAmtEl.value = "11";
+          } else {
+            document.getElementById("payment-form")?.reset();
+          }
           renderPaymentInfo();
-          showToast("Donation request sent! Wait for Admin approval.");
+          showToast(
+            isToken
+              ? "Token Donation request sent! Wait for Admin approval."
+              : "Free Donation request sent! Wait for Admin approval.",
+          );
         } catch (err) {
           showToast("Failed to submit: " + err.message, "error");
         } finally {
-          btn.disabled = false;
+          if (btn) btn.disabled = false;
         }
       };
 
@@ -11533,6 +12465,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               </div>`;
             }
 
+            const isTokReq =
+              p.donationMode === "token" ||
+              /token donation|monthly ৳?11/i.test(
+                p.category || p.purpose || "",
+              );
+            const finModeBadge = isTokReq
+              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Token Donation</span>`
+              : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">Free Donation</span>`;
+
             return `
             <div class="bg-white/80 border ${p.status === "requested" ? "border-amber-300" : p.status === "awaiting_collector" || p.status === "pending" ? "border-sky-300" : "border-emerald-100"} rounded-xl p-3.5 space-y-2">
               <div class="flex items-start justify-between gap-2">
@@ -11542,7 +12483,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 </div>
                 ${statusBadge(p)}
               </div>
-              <p class="text-lg font-extrabold text-emerald-800">${BDT(p.amount)} ${p.category ? `<span class="text-xs font-semibold text-slate-500">${escapeHtml(p.category)}</span>` : ""}</p>
+              <div class="flex items-center gap-2 flex-wrap">
+                <p class="text-lg font-extrabold text-emerald-800">${BDT(p.amount)}</p>
+                ${finModeBadge}
+                ${p.category ? `<span class="text-xs font-semibold text-slate-500">${escapeHtml(p.category)}</span>` : ""}
+              </div>
               <div class="text-xs text-slate-600 space-y-0.5">
                 <p><strong>Month:</strong> ${escapeHtml(p.month || "N/A")} • <strong>Method:</strong> ${escapeHtml(p.paymentMethod || "N/A")}</p>
                 ${p.senderNumber ? `<p><strong>Sender No:</strong> <span class="font-semibold text-slate-800">${escapeHtml(p.senderNumber)}</span></p>` : ""}
@@ -12784,6 +13729,25 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
         tbody.innerHTML = indexed
           .map(({ m, idx, rowStat }) => {
+            const linkedMember = allMembers.find(
+              (pm) =>
+                (m.uid && (pm.id === m.uid || pm.uid === m.uid)) ||
+                (m.csfId &&
+                  (pm.csfId || "").trim().toLowerCase() ===
+                    (m.csfId || "").trim().toLowerCase()) ||
+                ((m.name || "").trim() &&
+                  (pm.name || "").trim().toLowerCase() ===
+                    (m.name || "").trim().toLowerCase()),
+            );
+            const curMIdx =
+              sheet.year < new Date().getFullYear()
+                ? 11
+                : sheet.year > new Date().getFullYear()
+                  ? -1
+                  : new Date().getMonth();
+            const isRowDueNow =
+              linkedMember && curMIdx >= 0 && (m.months[curMIdx] || 0) < fixed;
+
             const monthsHtml = m.months
               .map((val, mIdx) => {
                 const cls = annualInputColorClass(val, fixed);
@@ -12815,12 +13779,24 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 ${
                   editable
                     ? `<td>
-                        <button
-                          type="button"
-                          onclick="removeAnnualMember(${idx})"
-                          title="Remove member from this year's sheet"
-                          class="px-2 py-1 rounded-lg text-[11px] font-bold text-red-600 hover:bg-red-50 transition"
-                        >✕</button>
+                        <div class="flex items-center justify-center gap-1">
+                          ${
+                            isRowDueNow
+                              ? `<button
+                                  type="button"
+                                  onclick="sendMemberFeeReminder('${linkedMember.id}')"
+                                  title="Send ৳${fixed} Due Notification to ${escapeHtml(m.name)}"
+                                  class="px-1.5 py-1 rounded-lg text-[11px] font-bold text-amber-700 hover:bg-amber-50 transition"
+                                >🔔</button>`
+                              : ""
+                          }
+                          <button
+                            type="button"
+                            onclick="removeAnnualMember(${idx})"
+                            title="Remove member from this year's sheet"
+                            class="px-2 py-1 rounded-lg text-[11px] font-bold text-red-600 hover:bg-red-50 transition"
+                          >✕</button>
+                        </div>
                       </td>`
                     : ""
                 }
@@ -13481,51 +14457,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         visionTitle: "Our Vision",
         visionText:
           "Building a righteous, knowledgeable and united community under the guidance of Allah.",
-        aboutTitle: "About Us",
-        aboutText:
-          "Chandpurisha Special Force (CSF) is the official member community of Darber E Chandpurishah (est. 1860) - a place for spiritual growth, unity, learning and service, with online meetings, notices, group chat and donations in one portal.",
-        missionTitle: "Our Mission",
-        missionText:
-          "To bring members together in faith, knowledge and service, strengthening brotherhood and helping the community.",
-          /*
-        valuesTitle: "Our Core Values",
-        aboutValues: [
-          "Spiritual Growth | Strengthening faith and character through remembrance and guidance.",
-          "Unity & Brotherhood | Standing together as one community.",
-          "Knowledge & Learning | Learning and sharing beneficial knowledge.",
-          "Community Service | Serving people and the community with sincerity.",
-        ],*/
-        membershipTitle: "Membership", //membership card
-        generalTitle: "General Member",
-        generalText:
-          "Every registered member whose account has been approved by the Admin.",
-        generalPoints: [
-          "Dashboard, updates & notices",
-          "Online meetings and group chat",
-          /*"Members list and status",*/
-          "Ateendance sheet",
-          "Help Desk support",
-        ],
-        verifiedTitle: "CSF Verified Member",
-        verifiedText:
-          "A member who has been given an official CSF ID by the Admin. Apply from My Profile; the Admin reviews and assigns it.",
-        verifiedPoints: [
-          "Everything a General Member gets",
-          "Official CSF ID shown on your profile",
-          "Recognised as an official CSF member",
-          "CSF ID used to match your records (e.g. annual donation sheet)",
-        ],
-        historyText:
-          "Darber E Chandpurishah was established in 1860. Its complete history and heritage are shared here by the Admin.",
-        historyMilestones: ["1860 | Darber E Chandpurishah established"],
-        csfAboutText:
-        "CSF (Chandpurisha Special Force) is the member force of Darber E Chandpurishah, working together for faith, unity and service.",
-        csfActivities:[
-          "Online meetings and spiritual gatherings",
-          "Updates & notices for members",
-          "Community service and donations",
-          "Help Desk for advice and complaints",
-        ],
         allQuotesTitle: "All Quotes",
         quotes: [
           {
@@ -13554,15 +14485,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         "graduation-cap",
         "handshake",
       ];
-      const ABOUT_TEXT_KEYS = [
-        "aboutTitle", "aboutText", "missionTitle", "missionText", "valuesTitle",
-        "membershipTitle", "generalTitle", "generalText", "verifiedTitle",
-        "verifiedText", "historyText", "csfAboutText",
-      ];
-      const ABOUT_LIST_KEYS = [
-        "aboutValues", "generalPoints", "verifiedPoints",
-        "historyMilestones", "csfActivities",
-      ];
       let homeContent = JSON.parse(JSON.stringify(HOME_DEFAULTS));
       let homeImages = { logo: "", hero: "", quotes: "" };
       const HOME_IMG_DOCS = {
@@ -13586,11 +14508,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           title: d.features?.[i]?.title ?? f.title,
         }));
         out.quotes = Array.isArray(d.quotes) ? d.quotes : HOME_DEFAULTS.quotes;
-        ABOUT_LIST_KEYS.forEach((k) => {
-          out[k] = Array.isArray(d[k])
-            ? d[k].filter((x) => typeof x === "string")
-            : HOME_DEFAULTS[k];
-        });
         return out;
       }
       const safeImg = (v) =>
@@ -13605,7 +14522,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             renderHomeIfVisible();
             fillHomeEditor();
             renderDashQuotes();
-            renderAboutSections();
           },
           () => {},
         );
@@ -13833,8 +14749,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               .join("")}
           </section>
 
-          <section id="home-about" class="py-6 space-y-8">
-            ${aboutPublicHtml(c)}
+          <section id="home-about" class="text-center py-6 space-y-2">
+            <h2 class="text-xl sm:text-2xl font-extrabold vision-title flex items-center justify-center gap-3"><span class="w-10 h-0.5 bg-amber-400"></span>${e(c.visionTitle)}<span class="w-10 h-0.5 bg-amber-400"></span></h2>
+            <p class="text-sm sm:text-base vision-text max-w-xl mx-auto">${e(c.visionText)}</p>
           </section>
 
           ${
@@ -13872,690 +14789,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         if (window.lucide) lucide.createIcons();
       }
 
-      // ================= ABOUT SECTION =================
-      // CSF Verified Member = a member who holds a CSF ID (assigned by Admin).
-      // General Member = any other approved member.
-      function isCsfVerifiedMember(p = currentUserProfile) {
-        return isVerifiedActive(p);
-      }
-      function aboutPair(line) {
-        const i = String(line).indexOf("|");
-        return i > 0
-          ? [line.slice(0, i).trim(), line.slice(i + 1).trim()]
-          : ["", String(line).trim()];
-      }
-      function aboutHeading(title) {
-        return title
-          ? `<h2 class="text-xl sm:text-2xl font-extrabold vision-title flex items-center justify-center gap-3"><span class="w-10 h-0.5 bg-amber-400"></span>${escapeHtml(title)}<span class="w-10 h-0.5 bg-amber-400"></span></h2>`
-          : "";
-      }
-      function aboutValuesHtml(c) {
-        const items = (c.aboutValues || [])
-          .map((l) => {
-            const [ti, de] = aboutPair(l);
-            return `<div class="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm text-left">${ti ? `<p class="text-sm font-bold text-emerald-950">${escapeHtml(ti)}</p>` : ""}<p class="text-xs text-slate-600 mt-1">${escapeHtml(de)}</p></div>`;
-          })
-          .join("");
-        if (!items) return "";
-        return `<div class="space-y-3">${aboutHeading(c.valuesTitle)}<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl mx-auto">${items}</div></div>`;
-      }
-      function aboutMembershipHtml(c, ctx) {
-        const e = escapeHtml;
-        const inApp = ctx === "app" && currentUserProfile;
-        const verified = inApp && isCsfVerifiedMember();
-        const general = inApp && !verified;
-        const pts = (arr) =>
-          (arr || [])
-            .map(
-              (p) =>
-                `<li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-600"></i><span>${e(p)}</span></li>`,
-            )
-            .join("");
-        const tag = (on) =>
-          on
-            ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Your membership</span>`
-            : "";
-        const btn = (js, label) =>
-          `<button onclick="${js}" class="mt-3 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-full transition">${e(label)}</button>`;
-        const card = (icon, title, text, points, on, action) =>
-          `<div class="bg-white border ${on ? "border-amber-300 ring-2 ring-amber-200" : "border-emerald-100"} rounded-2xl p-4 shadow-sm text-left space-y-2">
-            <div class="flex items-center justify-between gap-2"><p class="text-sm font-bold text-emerald-950 flex items-center gap-2"><i data-lucide="${icon}" class="w-4 h-4 text-emerald-700"></i>${e(title)}</p>${tag(on)}</div>
-            ${text ? `<p class="text-xs text-slate-600">${e(text)}</p>` : ""}
-            ${points ? `<ul class="text-xs text-slate-700 space-y-1">${points}</ul>` : ""}
-            ${action || ""}
-          </div>`;
-        const gp = pts(c.generalPoints);
-        const vp = pts(c.verifiedPoints);
-        if (!c.generalTitle && !c.verifiedTitle) return "";
-        const joinBtn =
-          ctx === "app"
-            ? ""
-            : btn("openAuth('register')", c.btn1 || "Join Our Community");
-        const applyBtn = general
-          ? btn("switchTab('profile')", "Apply for CSF ID")
-          : ctx === "app"
-            ? ""
-            : "";
-        return `<div class="space-y-3">${aboutHeading(c.membershipTitle)}<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl mx-auto">
-          ${c.generalTitle ? card("user", c.generalTitle, c.generalText, gp, general, joinBtn) : ""}
-          ${c.verifiedTitle ? card("badge-check", c.verifiedTitle, c.verifiedText, vp, verified, applyBtn) : ""}
-        </div></div>`;
-      }
-      function aboutPublicHtml(c) {
-        const e = escapeHtml;
-        const vm = [
-          c.visionText && [c.visionTitle, c.visionText],
-          c.missionText && [c.missionTitle, c.missionText],
-        ].filter(Boolean);
-        return `
-          <div class="text-center space-y-2">
-            ${aboutHeading(c.aboutTitle || c.visionTitle)}
-            ${c.aboutText ? `<p class="text-sm sm:text-base vision-text max-w-2xl mx-auto">${e(c.aboutText)}</p>` : ""}
-          </div>
-          ${
-            vm.length
-              ? `<div class="grid grid-cols-1 ${vm.length > 1 ? "sm:grid-cols-2" : ""} gap-3 max-w-3xl mx-auto">${vm
-                  .map(
-                    ([ti, tx]) =>
-                      `<div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm text-left"><p class="text-sm font-bold text-emerald-950 mb-1">${e(ti)}</p><p class="text-sm text-slate-600">${e(tx)}</p></div>`,
-                  )
-                  .join("")}</div>`
-              : ""
-          }
-          ${aboutValuesHtml(c)}
-          ${aboutMembershipHtml(c, "public")}`;
-      }
-      function renderAboutSections() {
-        try {
-          const c = homeContent;
-          const e = escapeHtml;
-          const h = document.getElementById("history-about-body");
-          if (h) {
-            const paras = String(c.historyText || "")
-              .split(/\n{2,}/)
-              .map((p) => p.trim())
-              .filter(Boolean)
-              .map(
-                (p) =>
-                  `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${e(p)}</p>`,
-              )
-              .join("");
-            const ms = (c.historyMilestones || [])
-              .map((l) => {
-                const [yr, tx] = aboutPair(l);
-                return `<li class="flex gap-3"><span class="shrink-0 w-14 text-xs font-extrabold text-amber-700 pt-0.5">${e(yr)}</span><span class="text-sm text-slate-700 border-l-2 border-emerald-200 pl-3">${e(tx)}</span></li>`;
-              })
-              .join("");
-            h.innerHTML = !gfOn("about_history") ? aboutNoAccessHtml() : `${paras}${ms ? `<div class="space-y-2"><p class="text-sm font-bold text-emerald-900">Milestones</p><ul class="space-y-3">${ms}</ul></div>` : ""}`;
-          }
-          const s = document.getElementById("csf-about-body");
-          if (s) {
-            const acts = (c.csfActivities || [])
-              .map(
-                (a) =>
-                  `<li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-600"></i><span>${e(a)}</span></li>`,
-              )
-              .join("");
-            s.innerHTML = `
-              ${gfOn("about_intro") && c.csfAboutText ? `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${e(c.csfAboutText)}</p>` : ""}
-              ${gfOn("about_mission") && c.missionText ? `<div class="bg-white border border-emerald-100 rounded-2xl p-4"><p class="text-sm font-bold text-emerald-950 mb-1">${e(c.missionTitle)}</p><p class="text-sm text-slate-600">${e(c.missionText)}</p></div>` : ""}
-              ${gfOn("about_activities") && acts ? `<div class="space-y-2"><p class="text-sm font-bold text-emerald-900">Activities</p><ul class="text-sm text-slate-700 space-y-1.5">${acts}</ul></div>` : ""}
-              ${gfOn("about_values") ? aboutValuesHtml(c) : ""}
-              ${gfOn("about_membership") ? aboutMembershipHtml(c, "app") : ""}`;
-          }
-          if (window.lucide) lucide.createIcons();
-        } catch (_) {}
-      }
-
-      // ================= MEMBERSHIP: GENERAL vs CSF VERIFIED =================
-      let premiumFeatures = [];
-      let myFeatures = [];
-      let myFeaturesKey = "";
-      let featuresUnsub = null;
-      let verTab = "members";
-      const FEATURE_ICONS = ["star", "book-open", "shield", "globe", "sparkles", "graduation-cap", "handshake", "heart", "landmark", "users"];
-      const STATUS_UI = {
-        pending: ["Pending", "bg-amber-100 text-amber-800"],
-        approved: ["Approved", "bg-emerald-100 text-emerald-800"],
-        rejected: ["Rejected", "bg-red-100 text-red-700"],
-        suspended: ["Suspended", "bg-slate-200 text-slate-700"],
-      };
-      function memberType(m) {
-        return m?.membershipType === "csf_verified" ? "csf_verified" : "general";
-      }
-      function memberStatus(m) {
-        if (m?.disabled) return "suspended";
-        if (m?.approved === false) return m?.membershipRejected ? "rejected" : "pending";
-        return "approved";
-      }
-      function isVerifiedActive(p = currentUserProfile) {
-        return !!p && memberType(p) === "csf_verified" && !!String(p.csfId || "").trim() && p.approved !== false && !p.disabled;
-      }
-      function canManageVerified() {
-        return canEditSector("verified") || canEditSector("members");
-      }
-      function statusBadgeHtmlM(m) {
-        const [label, cls] = STATUS_UI[memberStatus(m)];
-        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${cls}">${label}</span>`;
-      }
-      function typeBadgeHtml(m) {
-        return memberType(m) === "csf_verified"
-          ? `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">CSF Verified</span>`
-          : `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">General</span>`;
-      }
-      function requireVerifiedEdit() {
-        if (canManageVerified()) return true;
-        showToast("View-only mode: only the Main Admin or an assigned Sub-Admin can change memberships.", "error");
-        return false;
-      }
-
-      // Unique CSF ID registry: csfIds/{lowercased id} -> { uid }. Firestore rules only allow
-      // CREATE on that collection (never update), so two members can never share an ID.
-      async function setMembership(uid, type, csfIdRaw = "") {
-        const uref = doc(db, "users", uid);
-        if (type !== "csf_verified") {
-          await updateDoc(uref, { membershipType: "general", memberFeatures: [], membershipUpdatedAt: serverTimestamp() });
-          return;
-        }
-        const id = String(csfIdRaw || "").trim();
-        if (!/^[A-Za-z0-9_-]{3,40}$/.test(id)) {
-          throw new Error("CSF ID must be 3-40 characters: letters, numbers, - or _ only.");
-        }
-        const key = id.toLowerCase();
-        if (allMembers.some((m) => m.id !== uid && String(m.csfId || "").trim().toLowerCase() === key)) {
-          throw new Error("This CSF ID is already used by another member.");
-        }
-        await runTransaction(db, async (tx) => {
-          const idRef = doc(db, "csfIds", key);
-          const idSnap = await tx.get(idRef);
-          const uSnap = await tx.get(uref);
-          if (!uSnap.exists()) throw new Error("Member not found.");
-          if (idSnap.exists() && idSnap.data().uid !== uid) {
-            throw new Error("This CSF ID is already assigned to another member.");
-          }
-          const oldKey = String(uSnap.data().csfId || "").trim().toLowerCase();
-          let oldRef = null;
-          let oldSnap = null;
-          if (oldKey && oldKey !== key) {
-            oldRef = doc(db, "csfIds", oldKey);
-            oldSnap = await tx.get(oldRef);
-          }
-          if (oldSnap && oldSnap.exists() && oldSnap.data().uid === uid) tx.delete(oldRef);
-          if (!idSnap.exists()) {
-            tx.set(idRef, { uid, csfId: id, assignedBy: currentUser.uid, assignedAt: serverTimestamp() });
-          }
-          tx.update(uref, { membershipType: "csf_verified", csfId: id, membershipUpdatedAt: serverTimestamp() });
-        });
-      }
-
-      window.rejectMembership = async (uid) => {
-        if (!requireVerifiedEdit()) return;
-        if (!confirm("Reject this membership request? The member will stay unable to log in to the app.")) return;
-        try {
-          await updateDoc(doc(db, "users", uid), { approved: false, membershipRejected: true });
-          showToast("Membership request rejected.", "warn");
-        } catch (err) {
-          showToast("Failed: " + err.message, "error");
-        }
-      };
-
-      function syncFeaturesListener() {
-        const need = canManageVerified() && hasAdminPanelAccess();
-        if (need && !featuresUnsub) {
-          featuresUnsub = onSnapshot(
-            collection(db, "premiumFeatures"),
-            (snap) => {
-              premiumFeatures = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
-                .sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
-              renderVerifiedAdmin();
-            },
-            () => {},
-          );
-        } else if (!need && featuresUnsub) {
-          featuresUnsub();
-          featuresUnsub = null;
-          premiumFeatures = [];
-        }
-      }
-
-      async function loadMyFeatures() {
-        if (!isVerifiedActive()) {
-          myFeatures = [];
-          return;
-        }
-        const ids = Array.isArray(currentUserProfile.memberFeatures) ? currentUserProfile.memberFeatures.slice(0, 50) : [];
-        const out = await Promise.all(
-          ids.map(async (id) => {
-            try {
-              const s = await getDoc(doc(db, "premiumFeatures", id));
-              return s.exists() ? { id, ...s.data() } : null;
-            } catch (_) {
-              return null; // not permitted by rules => not shown
-            }
-          }),
-        );
-        myFeatures = out.filter((f) => f && f.active !== false);
-        if (activeTab === "verified") renderVerifiedDashboard();
-      }
-
-      function onMembershipChanged() {
-        try {
-          const v = isVerifiedActive();
-          const tab = document.getElementById("tab-verified");
-          if (tab) {
-            tab.classList.toggle("hidden", !v);
-            tab.classList.toggle("flex", v);
-          }
-          if (!v && activeTab === "verified") switchTab("dashboard");
-          syncFeaturesListener();
-          listenMemberAccess();
-          applyMemberAccessUI();
-          const key = v ? JSON.stringify(currentUserProfile.memberFeatures || []) : "";
-          if (key !== myFeaturesKey) {
-            myFeaturesKey = key;
-            loadMyFeatures();
-          }
-          if (activeTab === "verified") renderVerifiedDashboard();
-          renderAboutSections();
-          const pv = document.getElementById("pending-view");
-          if (pv && currentUserProfile?.membershipRejected && currentUserProfile?.approved === false) {
-            let n = document.getElementById("pending-rejected-note");
-            if (!n) {
-              n = document.createElement("p");
-              n.id = "pending-rejected-note";
-              n.className = "text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl p-3 mt-3";
-              pv.firstElementChild?.appendChild(n);
-            }
-            n.innerText = "Your membership request was not approved. Please contact the Admin.";
-          }
-        } catch (_) {}
-      }
-
-      function renderVerifiedDashboard() {
-        const el = document.getElementById("verified-body");
-        if (!el || !isVerifiedActive()) return;
-        const e = escapeHtml;
-        const p = currentUserProfile;
-        const c = homeContent;
-        const feats = myFeatures
-          .map((f) => {
-            const link = safeLink(f.link);
-            return `<div class="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm space-y-2">
-              <div class="flex items-center gap-2"><i data-lucide="${e(FEATURE_ICONS.includes(f.icon) ? f.icon : "star")}" class="w-5 h-5 text-emerald-700"></i><p class="font-bold text-emerald-950 text-sm">${e(f.title)}</p></div>
-              ${f.description ? `<p class="text-xs text-slate-600">${e(f.description)}</p>` : ""}
-              ${f.content ? `<div class="text-sm text-slate-700 whitespace-pre-line bg-emerald-50/60 rounded-xl p-3">${e(f.content)}</div>` : ""}
-              ${link ? `<a href="${e(link)}" target="_blank" rel="noopener noreferrer" class="inline-block bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-full transition">Open</a>` : ""}
-            </div>`;
-          })
-          .join("");
-        el.innerHTML = `
-          <div class="glass p-5 sm:p-6 rounded-3xl space-y-3">
-            <div class="flex items-center justify-between gap-2 flex-wrap">
-              <h2 class="text-xl font-extrabold text-emerald-950 flex items-center gap-2"><i data-lucide="badge-check" class="w-6 h-6 text-amber-600"></i>CSF Member Area</h2>
-              <div class="flex gap-1.5">${typeBadgeHtml(p)}${statusBadgeHtmlM(p)}</div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="bg-white border border-emerald-100 rounded-2xl p-3"><p class="text-[11px] text-slate-500">CSF ID</p><p class="text-lg font-extrabold text-emerald-900 break-all">${e(p.csfId)}</p></div>
-              <div class="bg-white border border-emerald-100 rounded-2xl p-3"><p class="text-[11px] text-slate-500">Membership</p><p class="text-lg font-extrabold text-emerald-900">CSF Verified</p></div>
-            </div>
-          </div>
-          <div class="space-y-3">
-            <h3 class="text-sm font-bold text-emerald-900">Your features &amp; privileges</h3>
-            ${feats || `<div class="bg-white/70 border border-emerald-100 rounded-2xl p-6 text-center text-sm text-slate-500">No features have been assigned to you yet. The Admin will assign them.</div>`}
-          </div>
-          <div class="glass p-5 rounded-3xl space-y-3">
-            <h3 class="text-sm font-bold text-emerald-900">About CSF</h3>
-            ${c.csfAboutText ? `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${e(c.csfAboutText)}</p>` : ""}
-            ${aboutMembershipHtml(c, "app")}
-          </div>`;
-        if (window.lucide) lucide.createIcons();
-      }
-
-      // ---- Admin: members & membership
-      window.switchVerifiedTab = (tab) => {
-        verTab = ["features", "access"].includes(tab) ? tab : "members";
-        ["members", "features", "access"].forEach((k) => {
-          document.getElementById(`ver-panel-${k}`)?.classList.toggle("hidden", k !== verTab);
-          const b = document.getElementById(`ver-subtab-${k}`);
-          if (b) {
-            b.classList.toggle("bg-white", k === verTab);
-            b.classList.toggle("shadow-sm", k === verTab);
-            b.classList.toggle("text-emerald-900", k === verTab);
-            b.classList.toggle("text-slate-500", k !== verTab);
-          }
-        });
-        const sel = document.getElementById("ver-f-icon");
-        if (sel && !sel.options.length) {
-          sel.innerHTML = FEATURE_ICONS.map((i) => `<option value="${i}">${i}</option>`).join("");
-        }
-      };
-
-      window.renderVerifiedAdmin = () => {
-        const list = document.getElementById("ver-list");
-        if (!list || !hasAdminPanelAccess()) return;
-        renderVerifiedStats();
-        fillAccessEditor(false);
-        const e = escapeHtml;
-        const q = (document.getElementById("ver-search")?.value || "").trim().toLowerCase();
-        const f = document.getElementById("ver-filter")?.value || "all";
-        const rows = allMembers
-          .filter((m) => {
-            if (q && !(`${m.name || ""} ${m.email || ""} ${m.csfId || ""}`.toLowerCase().includes(q))) return false;
-            const st = memberStatus(m);
-            if (f === "verified") return memberType(m) === "csf_verified";
-            if (f === "general") return memberType(m) === "general";
-            if (f === "pending") return st === "pending" || st === "rejected";
-            if (f === "suspended") return st === "suspended";
-            return true;
-          })
-          .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
-        const cnt = document.getElementById("ver-count");
-        if (cnt) {
-          const v = allMembers.filter((m) => memberType(m) === "csf_verified").length;
-          cnt.innerText = `${rows.length} shown • ${v} CSF Verified • ${allMembers.length - v} General`;
-        }
-        list.innerHTML = rows.length
-          ? rows
-              .map((m) => `<div class="bg-white/85 border border-emerald-100 rounded-xl p-3 flex flex-col gap-2">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="min-w-0"><p class="font-bold text-slate-900 truncate">${e(m.name)}</p><p class="text-[11px] text-slate-500 truncate">${e(m.email)}</p></div>
-                  <div class="flex flex-col items-end gap-1 shrink-0">${typeBadgeHtml(m)}${statusBadgeHtmlM(m)}</div>
-                </div>
-                <p class="text-[11px] text-slate-600">${m.csfId ? `<strong>CSF ID:</strong> ${e(m.csfId)}` : "No CSF ID"}${memberType(m) === "csf_verified" ? ` • ${(m.memberFeatures || []).length} feature(s)` : ""}</p>
-                <button type="button" data-allow-viewonly="true" onclick="openVerifiedManage('${m.id}')" class="self-start bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition">Manage</button>
-              </div>`)
-              .join("")
-          : `<p class="text-xs text-slate-400 col-span-full">No members match.</p>`;
-
-        const fl = document.getElementById("ver-feature-list");
-        if (fl) {
-          fl.innerHTML = premiumFeatures.length
-            ? premiumFeatures
-                .map((x) => `<div class="bg-white/85 border border-emerald-100 rounded-xl p-3 space-y-1.5">
-                  <p class="font-bold text-sm text-emerald-950">${e(x.title)} ${x.active === false ? `<span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full">Inactive</span>` : ""}</p>
-                  <p class="text-xs text-slate-600">${e(x.description || "")}</p>
-                  <div class="flex gap-1.5"><button type="button" onclick="editVerFeature('${x.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-semibold">Edit</button><button type="button" onclick="deleteVerFeature('${x.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-3 py-1.5 rounded-lg font-semibold">Delete</button></div>
-                </div>`)
-                .join("")
-            : `<p class="text-xs text-slate-400 col-span-full">No features created yet.</p>`;
-        }
-        if (window.lucide) lucide.createIcons();
-      };
-
-      window.closeVerifiedManage = () => document.getElementById("ver-manage-modal")?.remove();
-
-      window.openVerifiedManage = (uid) => {
-        if (!hasAdminPanelAccess()) return;
-        const m = allMembers.find((x) => x.id === uid);
-        if (!m) return;
-        closeVerifiedManage();
-        const e = escapeHtml;
-        const can = canManageVerified();
-        const st = memberStatus(m);
-        const assigned = Array.isArray(m.memberFeatures) ? m.memberFeatures : [];
-        const dis = can ? "" : "disabled";
-        const feats = premiumFeatures.length
-          ? premiumFeatures.map((f) => `<label class="flex items-start gap-2 text-xs bg-white border border-emerald-100 rounded-xl p-2.5"><input type="checkbox" class="ver-feat-cb mt-0.5" value="${e(f.id)}" ${assigned.includes(f.id) ? "checked" : ""} ${dis} /><span><strong>${e(f.title)}</strong>${f.active === false ? " (inactive)" : ""}<br><span class="text-slate-500">${e(f.description || "")}</span></span></label>`).join("")
-          : `<p class="text-xs text-slate-400">No features yet. Create them in the Features Catalog tab.</p>`;
-        const btn = (cls, js, label) => `<button type="button" ${dis} onclick="${js}" class="${cls} text-xs font-bold px-3 py-1.5 rounded-lg ${can ? "" : "opacity-50"}">${label}</button>`;
-        const actions = [];
-        if (st === "pending" || st === "rejected") actions.push(btn("bg-emerald-600 text-white", `verSetStatus('${uid}','approve')`, "Approve"));
-        if (st === "pending") actions.push(btn("bg-amber-100 text-amber-800", `verSetStatus('${uid}','reject')`, "Reject"));
-        if (st === "approved") actions.push(btn("bg-slate-200 text-slate-800", `verSetStatus('${uid}','suspend')`, "Suspend"));
-        if (st === "suspended") actions.push(btn("bg-emerald-600 text-white", `verSetStatus('${uid}','activate')`, "Activate"));
-        const wrap = document.createElement("div");
-        wrap.id = "ver-manage-modal";
-        wrap.className = "fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-3";
-        wrap.innerHTML = `<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 space-y-4">
-          <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0"><p class="font-extrabold text-emerald-950 truncate">${e(m.name)}</p><p class="text-xs text-slate-500 truncate">${e(m.email)}</p></div>
-            <button type="button" onclick="closeVerifiedManage()" class="bg-slate-100 hover:bg-slate-200 p-1.5 rounded-lg" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">${typeBadgeHtml(m)}${statusBadgeHtmlM(m)}${actions.join("")}</div>
-          ${m.csfIdRequested && !m.csfId ? `<p class="text-[11px] text-slate-500">ID entered at registration: <strong>${e(m.csfIdRequested)}</strong></p>` : ""}
-          <div class="space-y-2">
-            <label class="block text-[11px] font-semibold text-slate-600">Membership type</label>
-            <select id="ver-m-type" ${dis} class="${'w-full px-3.5 py-2.5 border border-emerald-200 rounded-xl text-sm'}">
-              <option value="general" ${memberType(m) === "general" ? "selected" : ""}>General Member</option>
-              <option value="csf_verified" ${memberType(m) === "csf_verified" ? "selected" : ""}>CSF Verified Member</option>
-            </select>
-            <label class="block text-[11px] font-semibold text-slate-600">CSF ID (unique, required for CSF Verified)</label>
-            <input id="ver-m-csf" ${dis} type="text" maxlength="40" value="${e(m.csfId || m.csfIdRequested || "")}" placeholder="e.g. CSF-0101" class="w-full px-3.5 py-2.5 border border-emerald-200 rounded-xl text-sm" />
-          </div>
-          <div class="space-y-2"><p class="text-[11px] font-semibold text-slate-600">Features (CSF Verified only)</p><div class="space-y-1.5">${feats}</div></div>
-          ${can ? `<button type="button" onclick="saveVerifiedManage('${uid}')" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition">Save Membership</button>` : `<p class="text-xs text-amber-700">View-only: you cannot change memberships.</p>`}
-        </div>`;
-        document.body.appendChild(wrap);
-        wrap.addEventListener("click", (ev) => { if (ev.target === wrap) closeVerifiedManage(); });
-        if (window.lucide) lucide.createIcons();
-      };
-
-      window.verSetStatus = async (uid, action) => {
-        if (!requireVerifiedEdit()) return;
-        const m = allMembers.find((x) => x.id === uid);
-        if (m?.role === "admin" && !isMainAdmin()) {
-          showToast("Only the Main Admin can change another Main Admin.", "error");
-          return;
-        }
-        const patch = {
-          approve: { approved: true, membershipRejected: false },
-          reject: { approved: false, membershipRejected: true },
-          suspend: { disabled: true },
-          activate: { disabled: false },
-        }[action];
-        if (!patch) return;
-        try {
-          await updateDoc(doc(db, "users", uid), patch);
-          showToast("Membership status updated.");
-          closeVerifiedManage();
-        } catch (err) {
-          showToast("Failed: " + err.message, "error");
-        }
-      };
-
-      window.saveVerifiedManage = async (uid) => {
-        if (!requireVerifiedEdit()) return;
-        const m = allMembers.find((x) => x.id === uid);
-        if (!m) return;
-        const type = document.getElementById("ver-m-type").value;
-        const id = document.getElementById("ver-m-csf").value.trim();
-        const ids = [...document.querySelectorAll(".ver-feat-cb:checked")].map((c) => c.value);
-        try {
-          if (type === "csf_verified") {
-            if (m.approved === false) throw new Error("Approve this member first, then make them CSF Verified.");
-            await setMembership(uid, "csf_verified", id);
-            await updateDoc(doc(db, "users", uid), { memberFeatures: ids });
-          } else {
-            await setMembership(uid, "general");
-          }
-          showToast("Membership saved.");
-          closeVerifiedManage();
-        } catch (err) {
-          showToast(err.message || "Failed to save membership.", "error");
-        }
-      };
-
-      // ---- Admin: features catalog
-      window.resetVerFeatureForm = () => {
-        document.getElementById("ver-feature-form")?.reset();
-        const idEl = document.getElementById("ver-f-id");
-        if (idEl) idEl.value = "";
-        const a = document.getElementById("ver-f-active");
-        if (a) a.checked = true;
-      };
-      window.editVerFeature = (id) => {
-        const f = premiumFeatures.find((x) => x.id === id);
-        if (!f) return;
-        document.getElementById("ver-f-id").value = id;
-        document.getElementById("ver-f-title").value = f.title || "";
-        document.getElementById("ver-f-desc").value = f.description || "";
-        document.getElementById("ver-f-icon").value = FEATURE_ICONS.includes(f.icon) ? f.icon : "star";
-        document.getElementById("ver-f-content").value = f.content || "";
-        document.getElementById("ver-f-link").value = f.link || "";
-        document.getElementById("ver-f-active").checked = f.active !== false;
-        document.getElementById("ver-feature-form").scrollIntoView({ behavior: "smooth", block: "center" });
-      };
-      window.saveVerFeature = async (ev) => {
-        ev.preventDefault();
-        if (!requireVerifiedEdit()) return;
-        const val = (id) => document.getElementById(id).value.trim();
-        const data = {
-          title: val("ver-f-title").slice(0, 80),
-          description: val("ver-f-desc").slice(0, 200),
-          icon: val("ver-f-icon") || "star",
-          content: val("ver-f-content").slice(0, 4000),
-          link: safeLink(val("ver-f-link")),
-          active: document.getElementById("ver-f-active").checked,
-          updatedAt: serverTimestamp(),
-        };
-        if (!data.title) return;
-        try {
-          const id = val("ver-f-id");
-          if (id) await setDoc(doc(db, "premiumFeatures", id), data, { merge: true });
-          else await addDoc(collection(db, "premiumFeatures"), { ...data, createdAt: serverTimestamp() });
-          showToast("Feature saved.");
-          resetVerFeatureForm();
-        } catch (err) {
-          showToast("Failed: " + err.message, "error");
-        }
-      };
-      window.deleteVerFeature = async (id) => {
-        if (!requireVerifiedEdit()) return;
-        if (!confirm("Delete this feature? Members will lose access to it.")) return;
-        try {
-          await deleteDoc(doc(db, "premiumFeatures", id));
-          showToast("Feature deleted.", "warn");
-        } catch (err) {
-          showToast("Failed: " + err.message, "error");
-        }
-      };
-
-      // ================= GENERAL MEMBER ACCESS (admin chooses features) =================
-      var memberAccess = {};
-      var accessUnsub = null;
-      var TAB_FEATURE = {
-        updates: "tab_updates", meeting: "tab_meeting", chat: "tab_chat",
-        members: "tab_members", history: "tab_history", csf: "tab_csf", payments: "tab_payments",
-      };
-      var MEMBER_FEATURE_GROUPS = [
-        { title: "Dashboard", items: [
-          ["dash_welcome", "Welcome banner", "Greeting banner with the member's name"],
-          ["dash_quotes", "Spiritual quotes slider", "Quotes shown on the dashboard"],
-          ["dash_live_alert", "Live meeting alert", "\"Class is live now - Join\" banner"],
-          ["dash_stat_class", "Next Class / Event card", "Shows live class or next event"],
-          ["dash_stat_attendance", "Attendance card", "Member's monthly attendance %"],
-          ["dash_stat_events", "Upcoming Events card", "Number of upcoming events"],
-          ["dash_stat_donation", "Donation summary card", "Paid amount and pending requests"],
-          ["dash_gallery", "Photo gallery", "Gallery of uploaded photos"],
-          ["dash_announcements", "Recent Announcements", "Latest 5 updates list"],
-          ["dash_notice", "Dashboard notice bar", "Admin notice shown at the top"],
-          ["dash_feedback", "Advice / Complaint box", "Form to send advice or complaints"],
-        ] },
-        { title: "App sections (menu)", items: [
-          ["tab_updates", "Updates & Notice", "Notices, events, documents, links"],
-          ["tab_meeting", "Online Meeting", "Join live classes / meetings"],
-          ["tab_chat", "Group Chat", "Member group chat"],
-          ["tab_members", "Members & Status", "Members list and online status"],
-          ["tab_history", "History of Darber E Chandpurishah", "History tab"],
-          ["tab_csf", "CSF tab", "CSF information tab"],
-          ["tab_payments", "Donation", "Donation / payment requests"],
-        ] },
-        { title: "About section (inside the app)", items: [
-          ["about_intro", "About CSF text", "Intro text on the CSF tab"],
-          ["about_mission", "Mission", "Mission card on the CSF tab"],
-          ["about_values", "Core values", "Values cards"],
-          ["about_membership", "Membership levels", "General vs CSF Verified comparison"],
-          ["about_history", "History text & milestones", "Content of the History tab"],
-          ["about_activities", "CSF activities list", "Activities on the CSF tab"],
-        ] },
-      ];
-      function gfOn(id) {
-        if (!currentUserProfile) return true;
-        if (hasAdminPanelAccess() || isVerifiedActive()) return true;
-        return memberAccess[id] !== false;
-      }
-      function aboutNoAccessHtml() {
-        return `<p class="text-sm text-slate-500 bg-white/70 border border-emerald-100 rounded-2xl p-4 text-center">This content is not available for your membership type.</p>`;
-      }
-      function applyMemberAccessUI() {
-        try {
-          Object.entries(TAB_FEATURE).forEach(([tab, f]) => {
-            const b = document.getElementById("tab-" + tab);
-            if (b) b.style.display = gfOn(f) ? "" : "none";
-          });
-          const fb = document.getElementById("dash-feedback-card");
-          if (fb) fb.style.display = gfOn("dash_feedback") ? "" : "none";
-          const dn = document.getElementById("dash-notice");
-          if (dn) dn.style.display = gfOn("dash_notice") ? "" : "none";
-          if (TAB_FEATURE[activeTab] && !gfOn(TAB_FEATURE[activeTab])) switchTab("dashboard");
-        } catch (_) {}
-      }
-      function listenMemberAccess() {
-        if (accessUnsub || !currentUser) return;
-        accessUnsub = onSnapshot(
-          doc(db, "settings", "memberAccess"),
-          (snap) => {
-            memberAccess = (snap.exists() && snap.data().general) || {};
-            applyMemberAccessUI();
-            renderAboutSections();
-            if (activeTab === "dashboard") {
-              try { renderDashboard(); } catch (_) {}
-            }
-            fillAccessEditor(true);
-          },
-          () => {},
-        );
-      }
-      function fillAccessEditor(force) {
-        const box = document.getElementById("ver-access-list");
-        if (!box) return;
-        if (!force && box.dataset.dirty === "1") return;
-        if (force && box.dataset.dirty === "1" && box.contains(document.activeElement)) return;
-        const e = escapeHtml;
-        box.innerHTML = MEMBER_FEATURE_GROUPS.map((g) => `
-          <div class="bg-white/60 border border-emerald-100 rounded-xl p-3 space-y-2">
-            <p class="text-sm font-bold text-emerald-900">${e(g.title)}</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              ${g.items.map(([id, title, desc]) => `<label class="flex items-start gap-2 text-xs bg-white border border-emerald-100 rounded-xl p-2.5 cursor-pointer"><input type="checkbox" data-fid="${id}" class="mt-0.5" ${memberAccess[id] === false ? "" : "checked"} onchange="document.getElementById('ver-access-list').dataset.dirty='1'" /><span><strong>${e(title)}</strong><br><span class="text-slate-500">${e(desc)}</span></span></label>`).join("")}
-            </div>
-          </div>`).join("");
-        box.dataset.dirty = "0";
-      }
-      window.setAllAccess = (on) => {
-        const box = document.getElementById("ver-access-list");
-        if (!box) return;
-        box.querySelectorAll("input[data-fid]").forEach((cb) => (cb.checked = on));
-        box.dataset.dirty = "1";
-      };
-      window.saveMemberAccess = async () => {
-        if (!requireVerifiedEdit()) return;
-        const box = document.getElementById("ver-access-list");
-        const general = {};
-        box.querySelectorAll("input[data-fid]").forEach((cb) => {
-          if (!cb.checked) general[cb.dataset.fid] = false;
-        });
-        try {
-          await setDoc(doc(db, "settings", "memberAccess"), { general, updatedAt: serverTimestamp(), updatedBy: currentUser.uid });
-          box.dataset.dirty = "0";
-          showToast("General Member features saved.");
-        } catch (err) {
-          showToast("Failed to save: " + err.message, "error");
-        }
-      };
-      function renderVerifiedStats() {
-        const el = document.getElementById("ver-stats");
-        if (!el) return;
-        const total = allMembers.length;
-        const ver = allMembers.filter((m) => memberType(m) === "csf_verified");
-        const gen = allMembers.filter((m) => memberType(m) !== "csf_verified");
-        const cnt = (arr, s) => arr.filter((m) => memberStatus(m) === s).length;
-        const card = (label, n, sub, cls) => `<div class="bg-white border ${cls} rounded-2xl p-3 text-center shadow-sm"><p class="text-[11px] text-slate-500">${label}</p><p class="text-2xl font-extrabold text-emerald-950">${n}</p><p class="text-[10px] text-slate-500">${sub}</p></div>`;
-        el.innerHTML =
-          card("Total Members", total, `${cnt(allMembers, "approved")} approved`, "border-emerald-100") +
-          card("General Members", gen.length, `${cnt(gen, "approved")} approved • ${cnt(gen, "pending") + cnt(gen, "rejected")} pending`, "border-sky-200") +
-          card("CSF Verified", ver.length, `${cnt(ver, "approved")} active • ${cnt(ver, "suspended")} suspended`, "border-amber-300");
-      }
-
       // ---------- Admin editor ----------
       const HE_TEXT_IDS = [
         "siteName",
@@ -14568,7 +14801,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         "btn2",
         "visionTitle",
         "visionText",
-        ...ABOUT_TEXT_KEYS,
         "allQuotesTitle",
         "address",
         "phone",
@@ -14593,9 +14825,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           homeContent.quotes
             .map((q) => (q.source ? `${q.text} | ${q.source}` : q.text))
             .join("\n"),
-        );
-        ABOUT_LIST_KEYS.forEach((k) =>
-          set("he-" + k, (homeContent[k] || []).join("\n")),
         );
       }
 
@@ -14709,13 +14938,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 }
               : { text: l.slice(0, 300), source: "" };
           });
-        ABOUT_LIST_KEYS.forEach((k) => {
-          data[k] = val("he-" + k)
-            .split("\n")
-            .map((l) => l.trim().slice(0, 400))
-            .filter(Boolean)
-            .slice(0, 20);
-        });
         data.updatedAt = serverTimestamp();
         data.updatedBy = currentUser.uid;
         btn.disabled = true;
@@ -15359,11 +15581,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           ${dashCard("check-circle-2", "blue", "Attendance Rate", cur.rate + "%", "This month", "dashGo('meeting')")}
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          ${dashCard("user", "blue", "General Members", members.filter((m) => memberType(m) !== "csf_verified").length, "Standard access", "dashGo('verified')")}
-          ${dashCard("badge-check", "amber", "CSF Verified Members", members.filter((m) => memberType(m) === "csf_verified").length, "Have a CSF ID", "dashGo('verified')")}
-        </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           ${dashCard("trending-up", "emerald", "Income (This Month)", BDT(inc), "", "dashGo('finance')")}
           ${dashCard("trending-down", "red", "Expense (This Month)", BDT(exp), "", "dashGo('finance')")}
@@ -15455,7 +15672,6 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             );
 
         el.innerHTML = `
-${gfOn("dash_welcome") ? `
         <div class="rounded-3xl p-6 sm:p-8 text-white bg-gradient-to-br from-emerald-950 via-emerald-800 to-teal-700 shadow-xl relative overflow-hidden flex items-center justify-between gap-4">
           <div class="absolute -right-10 -top-10 w-48 h-48 bg-emerald-300/20 rounded-full blur-3xl"></div>
           <div class="relative min-w-0">
@@ -15465,12 +15681,11 @@ ${gfOn("dash_welcome") ? `
           </div>
           ${dashLogo("relative w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-emerald-300 bg-white p-0.5 shrink-0")}
         </div>
-` : ""}
 
-        <div id="dash-quotes-slot-member" style="${gfOn("dash_quotes") ? "" : "display:none"}"></div>
+        <div id="dash-quotes-slot-member"></div>
 
         ${
-          meetingIsLive && gfOn("dash_live_alert")
+          meetingIsLive
             ? `
         <div class="rounded-2xl p-4 bg-amber-100 border border-amber-300 flex items-center justify-between gap-3">
           <p class="text-sm font-semibold text-amber-950 flex items-center gap-2"><span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>${escapeHtml(currentMeetingTitle)} is live now!</p>
@@ -15480,21 +15695,20 @@ ${gfOn("dash_welcome") ? `
         }
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          ${gfOn("dash_stat_class") ? classCard : ""}
-          ${gfOn("dash_stat_attendance") ? dashCard("check-circle-2", "emerald", "Your Attendance", att.rate + "%", att.totalHeld ? `${att.attended}/${att.totalHeld} this month` : "This month", "dashGo('profile')") : ""}
-          ${gfOn("dash_stat_events") ? dashCard("star", "amber", "Upcoming Events", events.length, "", "dashGo('updates')") : ""}
-          ${gfOn("dash_stat_donation") ? dashCard("wallet", "purple", "Donation", BDT(paid), pend ? `${pend} pending` : "Paid", "dashGo('payments')") : ""}
+          ${classCard}
+          ${dashCard("check-circle-2", "emerald", "Your Attendance", att.rate + "%", att.totalHeld ? `${att.attended}/${att.totalHeld} this month` : "This month", "dashGo('profile')")}
+          ${dashCard("star", "amber", "Upcoming Events", events.length, "", "dashGo('updates')")}
+          ${dashCard("wallet", "purple", "Monthly Fee", BDT(paid), pend ? `${pend} pending` : "Paid", "dashGo('payments')")}
         </div>
 
         <div class="grid grid-cols-3 gap-3">
-          ${gfOn("tab_meeting") ? `<button onclick="dashGo('meeting')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="video" class="w-5 h-5 text-emerald-600"></i>Meeting</button>` : ""}
-          ${gfOn("tab_chat") ? `<button onclick="dashGo('chat')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>Group Chat</button>` : ""}
+          <button onclick="dashGo('meeting')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="video" class="w-5 h-5 text-emerald-600"></i>Meeting</button>
+          <button onclick="dashGo('chat')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>Group Chat</button>
           <button onclick="dashGo('profile')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="user-circle" class="w-5 h-5 text-emerald-600"></i>My Profile</button>
         </div>
 
-        ${gfOn("dash_gallery") ? galleryHtml() : ""}
+        ${galleryHtml()}
 
-${gfOn("dash_announcements") ? `
         <div class="glass rounded-2xl p-5">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-bold text-emerald-950">Recent Announcements</h3>
@@ -15520,9 +15734,7 @@ ${gfOn("dash_announcements") ? `
                 : '<p class="text-sm text-slate-500 py-3">No announcements yet.</p>'
             }
           </div>
-        </div>
-` : ""}`;
-        applyMemberAccessUI();
+        </div>`;
       }
 
       window.deleteUpdate = async (id) => {
@@ -16379,7 +16591,7 @@ ${joinInfo}`,
           return;
         }
         try {
-          await setMembership(targetUid, "csf_verified", newId);
+          await updateDoc(doc(db, "users", targetUid), { csfId: newId });
           await updateDoc(doc(db, "feedback", feedbackId), {
             status: "reviewed",
             assignedCsfId: newId,
@@ -16818,8 +17030,22 @@ ${joinInfo}`,
         const secTitle =
           ADMIN_SECTORS.find((s) => s.id === sectorId)?.title || sectorId;
 
+        const payload = { subAdminSectors: next };
+        if (next.length > 0 && current.length === 0) {
+          payload.designation = "Sub Admin";
+        } else if (
+          next.length === 0 &&
+          getSelectableDesignation(member) === "Sub Admin"
+        ) {
+          payload.designation = "Member";
+        }
+
         try {
-          await updateDoc(doc(db, "users", uid), { subAdminSectors: next });
+          await updateDoc(doc(db, "users", uid), payload);
+          Object.assign(member, payload);
+          renderMembers();
+          renderAdminMembersList();
+          renderSubAdminsSector();
           showToast(
             exists
               ? `Removed "${secTitle}" Sub-Admin access from ${member.name}.`
