@@ -1010,7 +1010,7 @@
             <div>
               <label
                 class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1"
-                >CSF ID (Optional)</label
+                >CSF ID (assigned by Admin)</label
               >
               <input
                 type="number"
@@ -1713,6 +1713,14 @@
           >
             <i data-lucide="wallet" class="w-4 h-4"></i>
             <span>Donation</span>
+          </button>
+          <button
+            onclick="switchTab('verified')"
+            id="tab-verified"
+            class="w-full px-4 py-3 rounded-xl font-semibold hidden items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="badge-check" class="w-4 h-4"></i>
+            <span>CSF Member Area</span>
           </button>
           <button
             onclick="switchTab('profile')"
@@ -2439,16 +2447,11 @@
               History of Darber E Chandpurishah
             </h2>
             <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              This section will contain the complete history, heritage, and
+              This section presents the history, heritage, and
               important milestones of
               <strong>DARBER E CHANDPURISHAH (EST. 1860)</strong>.
             </p>
-            <div
-              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
-            >
-              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-              <span>Details coming soon</span>
-            </div>
+            <div id="history-about-body" class="text-left space-y-4 pt-2"></div>
           </div>
         </section>
 
@@ -2474,13 +2477,13 @@
               <strong>CSF (Chandpurisha Special Force)</strong> updates,
               mission, and activities.
             </p>
-            <div
-              class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-xs font-semibold"
-            >
-              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-              <span>Details coming soon</span>
-            </div>
+            <div id="csf-about-body" class="text-left space-y-4 pt-2"></div>
           </div>
+        </section>
+
+        <!-- CSF VERIFIED MEMBER DASHBOARD -->
+        <section id="section-verified" class="hidden max-w-3xl mx-auto">
+          <div id="verified-body" class="space-y-4"></div>
         </section>
 
         <!-- 7. MY PROFILE TAB -->
@@ -2724,7 +2727,9 @@
                     type="text"
                     id="prof-csfid"
                     maxlength="40"
-                    placeholder="e.g. 2101111"
+                    readonly
+                    title="Only the Admin can assign or change a CSF ID"
+                    placeholder="Assigned by Admin"
                     class="w-full mt-1 px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
@@ -3549,6 +3554,64 @@
                           placeholder="Building a righteous, knowledgeable..."
                           class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                         ></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="border-t border-emerald-100 pt-4">
+                    <h4 class="text-sm font-bold text-emerald-900 mb-1">About Section</h4>
+                    <p class="text-[11px] text-slate-500 mb-2">Shown on the public home page (About), the in-app History tab and the CSF tab. Leave a box empty to hide that part. For lines with a title use: Title | Description.</p>
+                    <div class="space-y-3">
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">About heading</label><input id="he-aboutTitle" type="text" maxlength="60" placeholder="About Us" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">About text</label><textarea id="he-aboutText" rows="3" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Mission heading</label><input id="he-missionTitle" type="text" maxlength="60" placeholder="Our Mission" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Mission text</label><textarea id="he-missionText" rows="3" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Values heading</label><input id="he-valuesTitle" type="text" maxlength="60" placeholder="Our Core Values" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Core values (one per line: Title | Description)</label><textarea id="he-aboutValues" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Membership heading</label><input id="he-membershipTitle" type="text" maxlength="60" placeholder="Membership" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">General Member - title</label><input id="he-generalTitle" type="text" maxlength="60" placeholder="General Member" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">General Member - description</label><textarea id="he-generalText" rows="2" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">General Member - benefits (one per line)</label><textarea id="he-generalPoints" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF Verified Member - title</label><input id="he-verifiedTitle" type="text" maxlength="60" placeholder="CSF Verified Member" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF Verified Member - description</label><textarea id="he-verifiedText" rows="2" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF Verified Member - benefits (one per line)</label><textarea id="he-verifiedPoints" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">History text (History tab; blank line = new paragraph)</label><textarea id="he-historyText" rows="6" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">History milestones (one per line: Year | Event)</label><textarea id="he-historyMilestones" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF tab - about text</label><textarea id="he-csfAboutText" rows="3" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">CSF tab - activities (one per line)</label><textarea id="he-csfActivities" rows="5" placeholder="" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                       </div>
                     </div>
                   </div>
@@ -5515,6 +5578,64 @@
             </div>
 
             <!-- SUB-ADMIN ROLES SECTOR -->
+            <div id="admin-pane-verified" class="admin-sector-pane hidden">
+              <div class="glass p-4 sm:p-6 rounded-2xl space-y-4 border border-amber-200/80">
+                <h3 class="text-lg font-bold text-emerald-950 flex items-center gap-2 border-b border-emerald-100 pb-3">
+                  <i data-lucide="badge-check" class="w-5 h-5 text-amber-600"></i>
+                  <span>CSF Verified Member Management</span>
+                </h3>
+                <div id="ver-stats" class="grid grid-cols-3 gap-2"></div>
+                <div class="grid grid-cols-3 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100">
+                  <button type="button" id="ver-subtab-members" data-allow-viewonly="true" onclick="switchVerifiedTab('members')" class="py-2 px-2 rounded-xl text-xs font-bold transition">Members &amp; Membership</button>
+                  <button type="button" id="ver-subtab-features" data-allow-viewonly="true" onclick="switchVerifiedTab('features')" class="py-2 px-2 rounded-xl text-xs font-bold transition">Features Catalog</button>
+                  <button type="button" id="ver-subtab-access" data-allow-viewonly="true" onclick="switchVerifiedTab('access')" class="py-2 px-2 rounded-xl text-xs font-bold transition">General Member Access</button>
+                </div>
+
+                <div id="ver-panel-members" class="space-y-3">
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <input id="ver-search" data-allow-viewonly="true" oninput="renderVerifiedAdmin()" type="text" placeholder="Search name, email or CSF ID..." class="sm:col-span-2 w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <select id="ver-filter" data-allow-viewonly="true" onchange="renderVerifiedAdmin()" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                      <option value="all">All members</option>
+                      <option value="verified">CSF Verified</option>
+                      <option value="general">General</option>
+                      <option value="pending">Pending / Rejected</option>
+                      <option value="suspended">Suspended</option>
+                    </select>
+                  </div>
+                  <p id="ver-count" class="text-[11px] text-slate-500"></p>
+                  <div id="ver-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+
+                <div id="ver-panel-access" class="hidden space-y-3">
+                  <p class="text-xs text-slate-500">Choose what a <strong>General Member</strong> can see in the Dashboard, the app menu and the About section. Untick to hide. CSF Verified Members and Admins always get everything (plus their assigned features). Dashboard and My Profile are always available.</p>
+                  <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="setAllAccess(true)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg">Select all</button>
+                    <button type="button" onclick="setAllAccess(false)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg">Clear all</button>
+                  </div>
+                  <div id="ver-access-list" class="space-y-3"></div>
+                  <button type="button" onclick="saveMemberAccess()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition">Save General Member Features</button>
+                </div>
+
+                <div id="ver-panel-features" class="hidden space-y-4">
+                  <p class="text-xs text-slate-500">Create the features and privileges here. Then open a member and tick the features they may use. Members can only read the features assigned to them (enforced by Firestore rules).</p>
+                  <form id="ver-feature-form" onsubmit="saveVerFeature(event)" class="bg-white/60 border border-emerald-100 rounded-xl p-3 space-y-2.5">
+                    <input type="hidden" id="ver-f-id" />
+                    <input id="ver-f-title" type="text" maxlength="80" required placeholder="Feature title (e.g. Exclusive Resources)" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <input id="ver-f-desc" type="text" maxlength="200" placeholder="Short description" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <select id="ver-f-icon" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></select>
+                    <textarea id="ver-f-content" rows="4" maxlength="4000" placeholder="Member-only content / instructions (shown only to members who have this feature)" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                    <input id="ver-f-link" type="url" placeholder="Optional link (https://...)" class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <label class="flex items-center gap-2 text-xs text-slate-700"><input id="ver-f-active" type="checkbox" checked /> Active</label>
+                    <div class="flex gap-2">
+                      <button type="submit" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition">Save Feature</button>
+                      <button type="button" onclick="resetVerFeatureForm()" class="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-bold transition">Clear</button>
+                    </div>
+                  </form>
+                  <div id="ver-feature-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+              </div>
+            </div>
+
             <div id="admin-pane-subadmins" class="admin-sector-pane hidden">
               <div
                 class="glass p-6 rounded-2xl space-y-4 border border-emerald-200"
@@ -6076,6 +6197,7 @@
         arrayUnion,
         onSnapshot,
         serverTimestamp,
+        runTransaction,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       import {
         getDatabase,
@@ -6176,6 +6298,7 @@
         members: "Members & Status",
         history: "History of Darber E Chandpurishah",
         csf: "CSF",
+        verified: "CSF Member Area",
         payments: "Donation",
         profile: "My profile",
         admin: "Admin Panel",
@@ -6227,6 +6350,14 @@
           title: "Home Page Editor",
           subtitle: "Edit the public landing page",
           icon: "layout-template",
+          bg: "bg-amber-100",
+          tx: "text-amber-700",
+        },
+        {
+          id: "verified",
+          title: "CSF Verified Members",
+          subtitle: "Membership, CSF ID & features",
+          icon: "badge-check",
           bg: "bg-amber-100",
           tx: "text-amber-700",
         },
@@ -6823,6 +6954,9 @@
         } else if (sectorId === "homepage") {
           fillHomeEditor();
           updateHomeEditorPreviews();
+        } else if (sectorId === "verified") {
+          switchVerifiedTab(verTab);
+          renderVerifiedAdmin();
         } else if (sectorId === "subadmins") {
           renderSubAdminsSector();
         }
@@ -7352,6 +7486,11 @@
 
       window.switchTab = (tabName, fromHistory = false) => {
         if (!tabNames[tabName]) return;
+        if (tabName === "verified" && !isVerifiedActive()) return;
+        if (TAB_FEATURE && TAB_FEATURE[tabName] && !gfOn(TAB_FEATURE[tabName])) {
+          showToast("This section is not available for your membership type.", "error");
+          return;
+        }
         if (tabName === "admin" && !hasAdminPanelAccess()) return;
         activeTab = tabName;
         Object.keys(tabNames).forEach((t) => {
@@ -7382,6 +7521,12 @@
         }
         if (tabName === "csf") {
           renderHelpDeskUI();
+        }
+        if (tabName === "csf" || tabName === "history") {
+          renderAboutSections();
+        }
+        if (tabName === "verified") {
+          renderVerifiedDashboard();
         }
         if (tabName === "dashboard") {
           renderDashboard();
@@ -7721,7 +7866,7 @@
           pendingRegistrationProfile = {
             name,
             age,
-            csfId,
+            csfIdRequested: csfId,
             phone,
             fatherName,
             motherName,
@@ -7765,6 +7910,18 @@
         });
 
       function cleanupAllDataListeners() {
+        try {
+          if (featuresUnsub) featuresUnsub();
+        } catch (_) {}
+        featuresUnsub = null;
+        premiumFeatures = [];
+        myFeatures = [];
+        myFeaturesKey = "";
+        try {
+          if (accessUnsub) accessUnsub();
+        } catch (_) {}
+        accessUnsub = null;
+        memberAccess = {};
         appDataUnsubs.forEach((u) => {
           try {
             u();
@@ -8101,6 +8258,7 @@
               );
               updateNavUserUI();
               updateProfileCsfIdBadge();
+              onMembershipChanged();
               const csfIdInput = document.getElementById("prof-csfid");
               if (csfIdInput && document.activeElement !== csfIdInput) {
                 csfIdInput.value = currentUserProfile.csfId || "";
@@ -8143,6 +8301,7 @@
             renderMembers();
             renderPendingApprovals();
             renderAdminMembersList();
+            renderVerifiedAdmin();
             renderSubAdminsSector();
             renderAdminSectorsGrid();
             updateEmailRecipientStats();
@@ -8894,6 +9053,7 @@
             <div class="flex flex-wrap gap-1.5 pt-1">
               <button type="button" data-allow-viewonly="true" onclick="openMemberModal('${m.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-semibold">Full Info</button>
               <button type="button" ${canEditReg ? "" : "disabled"} onclick="approveMember('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold ${canEditReg ? "" : "opacity-50 cursor-not-allowed"}">Approve</button>
+              ${m.membershipRejected ? `<span class="text-[10px] px-2 py-1 rounded-full font-bold bg-red-100 text-red-700 self-center">Rejected</span>` : `<button type="button" ${canEditReg ? "" : "disabled"} onclick="rejectMembership('${m.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold ${canEditReg ? "" : "opacity-50 cursor-not-allowed"}">Reject</button>`}
               <button type="button" ${canEditReg ? "" : "disabled"} onclick="deleteMember('${m.id}', '${safeNameJs}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-semibold ${canEditReg ? "" : "opacity-50 cursor-not-allowed"}">Delete</button>
             </div>
           </div>
@@ -8914,7 +9074,10 @@
 
       window.approveMember = async (uid) => {
         if (!requireSectorEdit("members")) return;
-        await updateDoc(doc(db, "users", uid), { approved: true });
+        await updateDoc(doc(db, "users", uid), {
+          approved: true,
+          membershipRejected: false,
+        });
         showToast("Member approved!");
       };
 
@@ -9394,9 +9557,14 @@
       };
 
       function updateProfileCsfIdBadge() {
+        try {
+          renderAboutSections();
+        } catch (_) {}
         const badge = document.getElementById("prof-csfid-badge");
         const badgeText = document.getElementById("prof-csfid-badge-text");
-        const val = (currentUserProfile?.csfId || "").trim();
+        const val = isVerifiedActive()
+          ? (currentUserProfile?.csfId || "").trim()
+          : "";
         if (badge && badgeText) {
           if (val) {
             badgeText.innerText = `CSF ID: ${val}`;
@@ -9478,7 +9646,6 @@
           const updated = {
             name: document.getElementById("prof-name").value.trim(),
             age: document.getElementById("prof-age").value.trim(),
-            csfId: csfIdInput ? csfIdInput.value.trim() : "",
             designation: document
               .getElementById("prof-designation")
               .value.trim(),
@@ -13314,6 +13481,51 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         visionTitle: "Our Vision",
         visionText:
           "Building a righteous, knowledgeable and united community under the guidance of Allah.",
+        aboutTitle: "About Us",
+        aboutText:
+          "Chandpurisha Special Force (CSF) is the official member community of Darber E Chandpurishah (est. 1860) - a place for spiritual growth, unity, learning and service, with online meetings, notices, group chat and donations in one portal.",
+        missionTitle: "Our Mission",
+        missionText:
+          "To bring members together in faith, knowledge and service, strengthening brotherhood and helping the community.",
+          /*
+        valuesTitle: "Our Core Values",
+        aboutValues: [
+          "Spiritual Growth | Strengthening faith and character through remembrance and guidance.",
+          "Unity & Brotherhood | Standing together as one community.",
+          "Knowledge & Learning | Learning and sharing beneficial knowledge.",
+          "Community Service | Serving people and the community with sincerity.",
+        ],*/
+        membershipTitle: "Membership", //membership card
+        generalTitle: "General Member",
+        generalText:
+          "Every registered member whose account has been approved by the Admin.",
+        generalPoints: [
+          "Dashboard, updates & notices",
+          "Online meetings and group chat",
+          /*"Members list and status",*/
+          "Ateendance sheet",
+          "Help Desk support",
+        ],
+        verifiedTitle: "CSF Verified Member",
+        verifiedText:
+          "A member who has been given an official CSF ID by the Admin. Apply from My Profile; the Admin reviews and assigns it.",
+        verifiedPoints: [
+          "Everything a General Member gets",
+          "Official CSF ID shown on your profile",
+          "Recognised as an official CSF member",
+          "CSF ID used to match your records (e.g. annual donation sheet)",
+        ],
+        historyText:
+          "Darber E Chandpurishah was established in 1860. Its complete history and heritage are shared here by the Admin.",
+        historyMilestones: ["1860 | Darber E Chandpurishah established"],
+        csfAboutText:
+        "CSF (Chandpurisha Special Force) is the member force of Darber E Chandpurishah, working together for faith, unity and service.",
+        csfActivities:[
+          "Online meetings and spiritual gatherings",
+          "Updates & notices for members",
+          "Community service and donations",
+          "Help Desk for advice and complaints",
+        ],
         allQuotesTitle: "All Quotes",
         quotes: [
           {
@@ -13342,6 +13554,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         "graduation-cap",
         "handshake",
       ];
+      const ABOUT_TEXT_KEYS = [
+        "aboutTitle", "aboutText", "missionTitle", "missionText", "valuesTitle",
+        "membershipTitle", "generalTitle", "generalText", "verifiedTitle",
+        "verifiedText", "historyText", "csfAboutText",
+      ];
+      const ABOUT_LIST_KEYS = [
+        "aboutValues", "generalPoints", "verifiedPoints",
+        "historyMilestones", "csfActivities",
+      ];
       let homeContent = JSON.parse(JSON.stringify(HOME_DEFAULTS));
       let homeImages = { logo: "", hero: "", quotes: "" };
       const HOME_IMG_DOCS = {
@@ -13365,6 +13586,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           title: d.features?.[i]?.title ?? f.title,
         }));
         out.quotes = Array.isArray(d.quotes) ? d.quotes : HOME_DEFAULTS.quotes;
+        ABOUT_LIST_KEYS.forEach((k) => {
+          out[k] = Array.isArray(d[k])
+            ? d[k].filter((x) => typeof x === "string")
+            : HOME_DEFAULTS[k];
+        });
         return out;
       }
       const safeImg = (v) =>
@@ -13379,6 +13605,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             renderHomeIfVisible();
             fillHomeEditor();
             renderDashQuotes();
+            renderAboutSections();
           },
           () => {},
         );
@@ -13606,9 +13833,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               .join("")}
           </section>
 
-          <section id="home-about" class="text-center py-6 space-y-2">
-            <h2 class="text-xl sm:text-2xl font-extrabold vision-title flex items-center justify-center gap-3"><span class="w-10 h-0.5 bg-amber-400"></span>${e(c.visionTitle)}<span class="w-10 h-0.5 bg-amber-400"></span></h2>
-            <p class="text-sm sm:text-base vision-text max-w-xl mx-auto">${e(c.visionText)}</p>
+          <section id="home-about" class="py-6 space-y-8">
+            ${aboutPublicHtml(c)}
           </section>
 
           ${
@@ -13646,6 +13872,690 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         if (window.lucide) lucide.createIcons();
       }
 
+      // ================= ABOUT SECTION =================
+      // CSF Verified Member = a member who holds a CSF ID (assigned by Admin).
+      // General Member = any other approved member.
+      function isCsfVerifiedMember(p = currentUserProfile) {
+        return isVerifiedActive(p);
+      }
+      function aboutPair(line) {
+        const i = String(line).indexOf("|");
+        return i > 0
+          ? [line.slice(0, i).trim(), line.slice(i + 1).trim()]
+          : ["", String(line).trim()];
+      }
+      function aboutHeading(title) {
+        return title
+          ? `<h2 class="text-xl sm:text-2xl font-extrabold vision-title flex items-center justify-center gap-3"><span class="w-10 h-0.5 bg-amber-400"></span>${escapeHtml(title)}<span class="w-10 h-0.5 bg-amber-400"></span></h2>`
+          : "";
+      }
+      function aboutValuesHtml(c) {
+        const items = (c.aboutValues || [])
+          .map((l) => {
+            const [ti, de] = aboutPair(l);
+            return `<div class="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm text-left">${ti ? `<p class="text-sm font-bold text-emerald-950">${escapeHtml(ti)}</p>` : ""}<p class="text-xs text-slate-600 mt-1">${escapeHtml(de)}</p></div>`;
+          })
+          .join("");
+        if (!items) return "";
+        return `<div class="space-y-3">${aboutHeading(c.valuesTitle)}<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl mx-auto">${items}</div></div>`;
+      }
+      function aboutMembershipHtml(c, ctx) {
+        const e = escapeHtml;
+        const inApp = ctx === "app" && currentUserProfile;
+        const verified = inApp && isCsfVerifiedMember();
+        const general = inApp && !verified;
+        const pts = (arr) =>
+          (arr || [])
+            .map(
+              (p) =>
+                `<li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-600"></i><span>${e(p)}</span></li>`,
+            )
+            .join("");
+        const tag = (on) =>
+          on
+            ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Your membership</span>`
+            : "";
+        const btn = (js, label) =>
+          `<button onclick="${js}" class="mt-3 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-full transition">${e(label)}</button>`;
+        const card = (icon, title, text, points, on, action) =>
+          `<div class="bg-white border ${on ? "border-amber-300 ring-2 ring-amber-200" : "border-emerald-100"} rounded-2xl p-4 shadow-sm text-left space-y-2">
+            <div class="flex items-center justify-between gap-2"><p class="text-sm font-bold text-emerald-950 flex items-center gap-2"><i data-lucide="${icon}" class="w-4 h-4 text-emerald-700"></i>${e(title)}</p>${tag(on)}</div>
+            ${text ? `<p class="text-xs text-slate-600">${e(text)}</p>` : ""}
+            ${points ? `<ul class="text-xs text-slate-700 space-y-1">${points}</ul>` : ""}
+            ${action || ""}
+          </div>`;
+        const gp = pts(c.generalPoints);
+        const vp = pts(c.verifiedPoints);
+        if (!c.generalTitle && !c.verifiedTitle) return "";
+        const joinBtn =
+          ctx === "app"
+            ? ""
+            : btn("openAuth('register')", c.btn1 || "Join Our Community");
+        const applyBtn = general
+          ? btn("switchTab('profile')", "Apply for CSF ID")
+          : ctx === "app"
+            ? ""
+            : "";
+        return `<div class="space-y-3">${aboutHeading(c.membershipTitle)}<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl mx-auto">
+          ${c.generalTitle ? card("user", c.generalTitle, c.generalText, gp, general, joinBtn) : ""}
+          ${c.verifiedTitle ? card("badge-check", c.verifiedTitle, c.verifiedText, vp, verified, applyBtn) : ""}
+        </div></div>`;
+      }
+      function aboutPublicHtml(c) {
+        const e = escapeHtml;
+        const vm = [
+          c.visionText && [c.visionTitle, c.visionText],
+          c.missionText && [c.missionTitle, c.missionText],
+        ].filter(Boolean);
+        return `
+          <div class="text-center space-y-2">
+            ${aboutHeading(c.aboutTitle || c.visionTitle)}
+            ${c.aboutText ? `<p class="text-sm sm:text-base vision-text max-w-2xl mx-auto">${e(c.aboutText)}</p>` : ""}
+          </div>
+          ${
+            vm.length
+              ? `<div class="grid grid-cols-1 ${vm.length > 1 ? "sm:grid-cols-2" : ""} gap-3 max-w-3xl mx-auto">${vm
+                  .map(
+                    ([ti, tx]) =>
+                      `<div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm text-left"><p class="text-sm font-bold text-emerald-950 mb-1">${e(ti)}</p><p class="text-sm text-slate-600">${e(tx)}</p></div>`,
+                  )
+                  .join("")}</div>`
+              : ""
+          }
+          ${aboutValuesHtml(c)}
+          ${aboutMembershipHtml(c, "public")}`;
+      }
+      function renderAboutSections() {
+        try {
+          const c = homeContent;
+          const e = escapeHtml;
+          const h = document.getElementById("history-about-body");
+          if (h) {
+            const paras = String(c.historyText || "")
+              .split(/\n{2,}/)
+              .map((p) => p.trim())
+              .filter(Boolean)
+              .map(
+                (p) =>
+                  `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${e(p)}</p>`,
+              )
+              .join("");
+            const ms = (c.historyMilestones || [])
+              .map((l) => {
+                const [yr, tx] = aboutPair(l);
+                return `<li class="flex gap-3"><span class="shrink-0 w-14 text-xs font-extrabold text-amber-700 pt-0.5">${e(yr)}</span><span class="text-sm text-slate-700 border-l-2 border-emerald-200 pl-3">${e(tx)}</span></li>`;
+              })
+              .join("");
+            h.innerHTML = !gfOn("about_history") ? aboutNoAccessHtml() : `${paras}${ms ? `<div class="space-y-2"><p class="text-sm font-bold text-emerald-900">Milestones</p><ul class="space-y-3">${ms}</ul></div>` : ""}`;
+          }
+          const s = document.getElementById("csf-about-body");
+          if (s) {
+            const acts = (c.csfActivities || [])
+              .map(
+                (a) =>
+                  `<li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-600"></i><span>${e(a)}</span></li>`,
+              )
+              .join("");
+            s.innerHTML = `
+              ${gfOn("about_intro") && c.csfAboutText ? `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${e(c.csfAboutText)}</p>` : ""}
+              ${gfOn("about_mission") && c.missionText ? `<div class="bg-white border border-emerald-100 rounded-2xl p-4"><p class="text-sm font-bold text-emerald-950 mb-1">${e(c.missionTitle)}</p><p class="text-sm text-slate-600">${e(c.missionText)}</p></div>` : ""}
+              ${gfOn("about_activities") && acts ? `<div class="space-y-2"><p class="text-sm font-bold text-emerald-900">Activities</p><ul class="text-sm text-slate-700 space-y-1.5">${acts}</ul></div>` : ""}
+              ${gfOn("about_values") ? aboutValuesHtml(c) : ""}
+              ${gfOn("about_membership") ? aboutMembershipHtml(c, "app") : ""}`;
+          }
+          if (window.lucide) lucide.createIcons();
+        } catch (_) {}
+      }
+
+      // ================= MEMBERSHIP: GENERAL vs CSF VERIFIED =================
+      let premiumFeatures = [];
+      let myFeatures = [];
+      let myFeaturesKey = "";
+      let featuresUnsub = null;
+      let verTab = "members";
+      const FEATURE_ICONS = ["star", "book-open", "shield", "globe", "sparkles", "graduation-cap", "handshake", "heart", "landmark", "users"];
+      const STATUS_UI = {
+        pending: ["Pending", "bg-amber-100 text-amber-800"],
+        approved: ["Approved", "bg-emerald-100 text-emerald-800"],
+        rejected: ["Rejected", "bg-red-100 text-red-700"],
+        suspended: ["Suspended", "bg-slate-200 text-slate-700"],
+      };
+      function memberType(m) {
+        return m?.membershipType === "csf_verified" ? "csf_verified" : "general";
+      }
+      function memberStatus(m) {
+        if (m?.disabled) return "suspended";
+        if (m?.approved === false) return m?.membershipRejected ? "rejected" : "pending";
+        return "approved";
+      }
+      function isVerifiedActive(p = currentUserProfile) {
+        return !!p && memberType(p) === "csf_verified" && !!String(p.csfId || "").trim() && p.approved !== false && !p.disabled;
+      }
+      function canManageVerified() {
+        return canEditSector("verified") || canEditSector("members");
+      }
+      function statusBadgeHtmlM(m) {
+        const [label, cls] = STATUS_UI[memberStatus(m)];
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${cls}">${label}</span>`;
+      }
+      function typeBadgeHtml(m) {
+        return memberType(m) === "csf_verified"
+          ? `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">CSF Verified</span>`
+          : `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">General</span>`;
+      }
+      function requireVerifiedEdit() {
+        if (canManageVerified()) return true;
+        showToast("View-only mode: only the Main Admin or an assigned Sub-Admin can change memberships.", "error");
+        return false;
+      }
+
+      // Unique CSF ID registry: csfIds/{lowercased id} -> { uid }. Firestore rules only allow
+      // CREATE on that collection (never update), so two members can never share an ID.
+      async function setMembership(uid, type, csfIdRaw = "") {
+        const uref = doc(db, "users", uid);
+        if (type !== "csf_verified") {
+          await updateDoc(uref, { membershipType: "general", memberFeatures: [], membershipUpdatedAt: serverTimestamp() });
+          return;
+        }
+        const id = String(csfIdRaw || "").trim();
+        if (!/^[A-Za-z0-9_-]{3,40}$/.test(id)) {
+          throw new Error("CSF ID must be 3-40 characters: letters, numbers, - or _ only.");
+        }
+        const key = id.toLowerCase();
+        if (allMembers.some((m) => m.id !== uid && String(m.csfId || "").trim().toLowerCase() === key)) {
+          throw new Error("This CSF ID is already used by another member.");
+        }
+        await runTransaction(db, async (tx) => {
+          const idRef = doc(db, "csfIds", key);
+          const idSnap = await tx.get(idRef);
+          const uSnap = await tx.get(uref);
+          if (!uSnap.exists()) throw new Error("Member not found.");
+          if (idSnap.exists() && idSnap.data().uid !== uid) {
+            throw new Error("This CSF ID is already assigned to another member.");
+          }
+          const oldKey = String(uSnap.data().csfId || "").trim().toLowerCase();
+          let oldRef = null;
+          let oldSnap = null;
+          if (oldKey && oldKey !== key) {
+            oldRef = doc(db, "csfIds", oldKey);
+            oldSnap = await tx.get(oldRef);
+          }
+          if (oldSnap && oldSnap.exists() && oldSnap.data().uid === uid) tx.delete(oldRef);
+          if (!idSnap.exists()) {
+            tx.set(idRef, { uid, csfId: id, assignedBy: currentUser.uid, assignedAt: serverTimestamp() });
+          }
+          tx.update(uref, { membershipType: "csf_verified", csfId: id, membershipUpdatedAt: serverTimestamp() });
+        });
+      }
+
+      window.rejectMembership = async (uid) => {
+        if (!requireVerifiedEdit()) return;
+        if (!confirm("Reject this membership request? The member will stay unable to log in to the app.")) return;
+        try {
+          await updateDoc(doc(db, "users", uid), { approved: false, membershipRejected: true });
+          showToast("Membership request rejected.", "warn");
+        } catch (err) {
+          showToast("Failed: " + err.message, "error");
+        }
+      };
+
+      function syncFeaturesListener() {
+        const need = canManageVerified() && hasAdminPanelAccess();
+        if (need && !featuresUnsub) {
+          featuresUnsub = onSnapshot(
+            collection(db, "premiumFeatures"),
+            (snap) => {
+              premiumFeatures = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
+              renderVerifiedAdmin();
+            },
+            () => {},
+          );
+        } else if (!need && featuresUnsub) {
+          featuresUnsub();
+          featuresUnsub = null;
+          premiumFeatures = [];
+        }
+      }
+
+      async function loadMyFeatures() {
+        if (!isVerifiedActive()) {
+          myFeatures = [];
+          return;
+        }
+        const ids = Array.isArray(currentUserProfile.memberFeatures) ? currentUserProfile.memberFeatures.slice(0, 50) : [];
+        const out = await Promise.all(
+          ids.map(async (id) => {
+            try {
+              const s = await getDoc(doc(db, "premiumFeatures", id));
+              return s.exists() ? { id, ...s.data() } : null;
+            } catch (_) {
+              return null; // not permitted by rules => not shown
+            }
+          }),
+        );
+        myFeatures = out.filter((f) => f && f.active !== false);
+        if (activeTab === "verified") renderVerifiedDashboard();
+      }
+
+      function onMembershipChanged() {
+        try {
+          const v = isVerifiedActive();
+          const tab = document.getElementById("tab-verified");
+          if (tab) {
+            tab.classList.toggle("hidden", !v);
+            tab.classList.toggle("flex", v);
+          }
+          if (!v && activeTab === "verified") switchTab("dashboard");
+          syncFeaturesListener();
+          listenMemberAccess();
+          applyMemberAccessUI();
+          const key = v ? JSON.stringify(currentUserProfile.memberFeatures || []) : "";
+          if (key !== myFeaturesKey) {
+            myFeaturesKey = key;
+            loadMyFeatures();
+          }
+          if (activeTab === "verified") renderVerifiedDashboard();
+          renderAboutSections();
+          const pv = document.getElementById("pending-view");
+          if (pv && currentUserProfile?.membershipRejected && currentUserProfile?.approved === false) {
+            let n = document.getElementById("pending-rejected-note");
+            if (!n) {
+              n = document.createElement("p");
+              n.id = "pending-rejected-note";
+              n.className = "text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl p-3 mt-3";
+              pv.firstElementChild?.appendChild(n);
+            }
+            n.innerText = "Your membership request was not approved. Please contact the Admin.";
+          }
+        } catch (_) {}
+      }
+
+      function renderVerifiedDashboard() {
+        const el = document.getElementById("verified-body");
+        if (!el || !isVerifiedActive()) return;
+        const e = escapeHtml;
+        const p = currentUserProfile;
+        const c = homeContent;
+        const feats = myFeatures
+          .map((f) => {
+            const link = safeLink(f.link);
+            return `<div class="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm space-y-2">
+              <div class="flex items-center gap-2"><i data-lucide="${e(FEATURE_ICONS.includes(f.icon) ? f.icon : "star")}" class="w-5 h-5 text-emerald-700"></i><p class="font-bold text-emerald-950 text-sm">${e(f.title)}</p></div>
+              ${f.description ? `<p class="text-xs text-slate-600">${e(f.description)}</p>` : ""}
+              ${f.content ? `<div class="text-sm text-slate-700 whitespace-pre-line bg-emerald-50/60 rounded-xl p-3">${e(f.content)}</div>` : ""}
+              ${link ? `<a href="${e(link)}" target="_blank" rel="noopener noreferrer" class="inline-block bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-full transition">Open</a>` : ""}
+            </div>`;
+          })
+          .join("");
+        el.innerHTML = `
+          <div class="glass p-5 sm:p-6 rounded-3xl space-y-3">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <h2 class="text-xl font-extrabold text-emerald-950 flex items-center gap-2"><i data-lucide="badge-check" class="w-6 h-6 text-amber-600"></i>CSF Member Area</h2>
+              <div class="flex gap-1.5">${typeBadgeHtml(p)}${statusBadgeHtmlM(p)}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-white border border-emerald-100 rounded-2xl p-3"><p class="text-[11px] text-slate-500">CSF ID</p><p class="text-lg font-extrabold text-emerald-900 break-all">${e(p.csfId)}</p></div>
+              <div class="bg-white border border-emerald-100 rounded-2xl p-3"><p class="text-[11px] text-slate-500">Membership</p><p class="text-lg font-extrabold text-emerald-900">CSF Verified</p></div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-emerald-900">Your features &amp; privileges</h3>
+            ${feats || `<div class="bg-white/70 border border-emerald-100 rounded-2xl p-6 text-center text-sm text-slate-500">No features have been assigned to you yet. The Admin will assign them.</div>`}
+          </div>
+          <div class="glass p-5 rounded-3xl space-y-3">
+            <h3 class="text-sm font-bold text-emerald-900">About CSF</h3>
+            ${c.csfAboutText ? `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${e(c.csfAboutText)}</p>` : ""}
+            ${aboutMembershipHtml(c, "app")}
+          </div>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // ---- Admin: members & membership
+      window.switchVerifiedTab = (tab) => {
+        verTab = ["features", "access"].includes(tab) ? tab : "members";
+        ["members", "features", "access"].forEach((k) => {
+          document.getElementById(`ver-panel-${k}`)?.classList.toggle("hidden", k !== verTab);
+          const b = document.getElementById(`ver-subtab-${k}`);
+          if (b) {
+            b.classList.toggle("bg-white", k === verTab);
+            b.classList.toggle("shadow-sm", k === verTab);
+            b.classList.toggle("text-emerald-900", k === verTab);
+            b.classList.toggle("text-slate-500", k !== verTab);
+          }
+        });
+        const sel = document.getElementById("ver-f-icon");
+        if (sel && !sel.options.length) {
+          sel.innerHTML = FEATURE_ICONS.map((i) => `<option value="${i}">${i}</option>`).join("");
+        }
+      };
+
+      window.renderVerifiedAdmin = () => {
+        const list = document.getElementById("ver-list");
+        if (!list || !hasAdminPanelAccess()) return;
+        renderVerifiedStats();
+        fillAccessEditor(false);
+        const e = escapeHtml;
+        const q = (document.getElementById("ver-search")?.value || "").trim().toLowerCase();
+        const f = document.getElementById("ver-filter")?.value || "all";
+        const rows = allMembers
+          .filter((m) => {
+            if (q && !(`${m.name || ""} ${m.email || ""} ${m.csfId || ""}`.toLowerCase().includes(q))) return false;
+            const st = memberStatus(m);
+            if (f === "verified") return memberType(m) === "csf_verified";
+            if (f === "general") return memberType(m) === "general";
+            if (f === "pending") return st === "pending" || st === "rejected";
+            if (f === "suspended") return st === "suspended";
+            return true;
+          })
+          .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+        const cnt = document.getElementById("ver-count");
+        if (cnt) {
+          const v = allMembers.filter((m) => memberType(m) === "csf_verified").length;
+          cnt.innerText = `${rows.length} shown • ${v} CSF Verified • ${allMembers.length - v} General`;
+        }
+        list.innerHTML = rows.length
+          ? rows
+              .map((m) => `<div class="bg-white/85 border border-emerald-100 rounded-xl p-3 flex flex-col gap-2">
+                <div class="flex items-start justify-between gap-2">
+                  <div class="min-w-0"><p class="font-bold text-slate-900 truncate">${e(m.name)}</p><p class="text-[11px] text-slate-500 truncate">${e(m.email)}</p></div>
+                  <div class="flex flex-col items-end gap-1 shrink-0">${typeBadgeHtml(m)}${statusBadgeHtmlM(m)}</div>
+                </div>
+                <p class="text-[11px] text-slate-600">${m.csfId ? `<strong>CSF ID:</strong> ${e(m.csfId)}` : "No CSF ID"}${memberType(m) === "csf_verified" ? ` • ${(m.memberFeatures || []).length} feature(s)` : ""}</p>
+                <button type="button" data-allow-viewonly="true" onclick="openVerifiedManage('${m.id}')" class="self-start bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition">Manage</button>
+              </div>`)
+              .join("")
+          : `<p class="text-xs text-slate-400 col-span-full">No members match.</p>`;
+
+        const fl = document.getElementById("ver-feature-list");
+        if (fl) {
+          fl.innerHTML = premiumFeatures.length
+            ? premiumFeatures
+                .map((x) => `<div class="bg-white/85 border border-emerald-100 rounded-xl p-3 space-y-1.5">
+                  <p class="font-bold text-sm text-emerald-950">${e(x.title)} ${x.active === false ? `<span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full">Inactive</span>` : ""}</p>
+                  <p class="text-xs text-slate-600">${e(x.description || "")}</p>
+                  <div class="flex gap-1.5"><button type="button" onclick="editVerFeature('${x.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-semibold">Edit</button><button type="button" onclick="deleteVerFeature('${x.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-3 py-1.5 rounded-lg font-semibold">Delete</button></div>
+                </div>`)
+                .join("")
+            : `<p class="text-xs text-slate-400 col-span-full">No features created yet.</p>`;
+        }
+        if (window.lucide) lucide.createIcons();
+      };
+
+      window.closeVerifiedManage = () => document.getElementById("ver-manage-modal")?.remove();
+
+      window.openVerifiedManage = (uid) => {
+        if (!hasAdminPanelAccess()) return;
+        const m = allMembers.find((x) => x.id === uid);
+        if (!m) return;
+        closeVerifiedManage();
+        const e = escapeHtml;
+        const can = canManageVerified();
+        const st = memberStatus(m);
+        const assigned = Array.isArray(m.memberFeatures) ? m.memberFeatures : [];
+        const dis = can ? "" : "disabled";
+        const feats = premiumFeatures.length
+          ? premiumFeatures.map((f) => `<label class="flex items-start gap-2 text-xs bg-white border border-emerald-100 rounded-xl p-2.5"><input type="checkbox" class="ver-feat-cb mt-0.5" value="${e(f.id)}" ${assigned.includes(f.id) ? "checked" : ""} ${dis} /><span><strong>${e(f.title)}</strong>${f.active === false ? " (inactive)" : ""}<br><span class="text-slate-500">${e(f.description || "")}</span></span></label>`).join("")
+          : `<p class="text-xs text-slate-400">No features yet. Create them in the Features Catalog tab.</p>`;
+        const btn = (cls, js, label) => `<button type="button" ${dis} onclick="${js}" class="${cls} text-xs font-bold px-3 py-1.5 rounded-lg ${can ? "" : "opacity-50"}">${label}</button>`;
+        const actions = [];
+        if (st === "pending" || st === "rejected") actions.push(btn("bg-emerald-600 text-white", `verSetStatus('${uid}','approve')`, "Approve"));
+        if (st === "pending") actions.push(btn("bg-amber-100 text-amber-800", `verSetStatus('${uid}','reject')`, "Reject"));
+        if (st === "approved") actions.push(btn("bg-slate-200 text-slate-800", `verSetStatus('${uid}','suspend')`, "Suspend"));
+        if (st === "suspended") actions.push(btn("bg-emerald-600 text-white", `verSetStatus('${uid}','activate')`, "Activate"));
+        const wrap = document.createElement("div");
+        wrap.id = "ver-manage-modal";
+        wrap.className = "fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-3";
+        wrap.innerHTML = `<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 space-y-4">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0"><p class="font-extrabold text-emerald-950 truncate">${e(m.name)}</p><p class="text-xs text-slate-500 truncate">${e(m.email)}</p></div>
+            <button type="button" onclick="closeVerifiedManage()" class="bg-slate-100 hover:bg-slate-200 p-1.5 rounded-lg" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">${typeBadgeHtml(m)}${statusBadgeHtmlM(m)}${actions.join("")}</div>
+          ${m.csfIdRequested && !m.csfId ? `<p class="text-[11px] text-slate-500">ID entered at registration: <strong>${e(m.csfIdRequested)}</strong></p>` : ""}
+          <div class="space-y-2">
+            <label class="block text-[11px] font-semibold text-slate-600">Membership type</label>
+            <select id="ver-m-type" ${dis} class="${'w-full px-3.5 py-2.5 border border-emerald-200 rounded-xl text-sm'}">
+              <option value="general" ${memberType(m) === "general" ? "selected" : ""}>General Member</option>
+              <option value="csf_verified" ${memberType(m) === "csf_verified" ? "selected" : ""}>CSF Verified Member</option>
+            </select>
+            <label class="block text-[11px] font-semibold text-slate-600">CSF ID (unique, required for CSF Verified)</label>
+            <input id="ver-m-csf" ${dis} type="text" maxlength="40" value="${e(m.csfId || m.csfIdRequested || "")}" placeholder="e.g. CSF-0101" class="w-full px-3.5 py-2.5 border border-emerald-200 rounded-xl text-sm" />
+          </div>
+          <div class="space-y-2"><p class="text-[11px] font-semibold text-slate-600">Features (CSF Verified only)</p><div class="space-y-1.5">${feats}</div></div>
+          ${can ? `<button type="button" onclick="saveVerifiedManage('${uid}')" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl text-sm font-bold transition">Save Membership</button>` : `<p class="text-xs text-amber-700">View-only: you cannot change memberships.</p>`}
+        </div>`;
+        document.body.appendChild(wrap);
+        wrap.addEventListener("click", (ev) => { if (ev.target === wrap) closeVerifiedManage(); });
+        if (window.lucide) lucide.createIcons();
+      };
+
+      window.verSetStatus = async (uid, action) => {
+        if (!requireVerifiedEdit()) return;
+        const m = allMembers.find((x) => x.id === uid);
+        if (m?.role === "admin" && !isMainAdmin()) {
+          showToast("Only the Main Admin can change another Main Admin.", "error");
+          return;
+        }
+        const patch = {
+          approve: { approved: true, membershipRejected: false },
+          reject: { approved: false, membershipRejected: true },
+          suspend: { disabled: true },
+          activate: { disabled: false },
+        }[action];
+        if (!patch) return;
+        try {
+          await updateDoc(doc(db, "users", uid), patch);
+          showToast("Membership status updated.");
+          closeVerifiedManage();
+        } catch (err) {
+          showToast("Failed: " + err.message, "error");
+        }
+      };
+
+      window.saveVerifiedManage = async (uid) => {
+        if (!requireVerifiedEdit()) return;
+        const m = allMembers.find((x) => x.id === uid);
+        if (!m) return;
+        const type = document.getElementById("ver-m-type").value;
+        const id = document.getElementById("ver-m-csf").value.trim();
+        const ids = [...document.querySelectorAll(".ver-feat-cb:checked")].map((c) => c.value);
+        try {
+          if (type === "csf_verified") {
+            if (m.approved === false) throw new Error("Approve this member first, then make them CSF Verified.");
+            await setMembership(uid, "csf_verified", id);
+            await updateDoc(doc(db, "users", uid), { memberFeatures: ids });
+          } else {
+            await setMembership(uid, "general");
+          }
+          showToast("Membership saved.");
+          closeVerifiedManage();
+        } catch (err) {
+          showToast(err.message || "Failed to save membership.", "error");
+        }
+      };
+
+      // ---- Admin: features catalog
+      window.resetVerFeatureForm = () => {
+        document.getElementById("ver-feature-form")?.reset();
+        const idEl = document.getElementById("ver-f-id");
+        if (idEl) idEl.value = "";
+        const a = document.getElementById("ver-f-active");
+        if (a) a.checked = true;
+      };
+      window.editVerFeature = (id) => {
+        const f = premiumFeatures.find((x) => x.id === id);
+        if (!f) return;
+        document.getElementById("ver-f-id").value = id;
+        document.getElementById("ver-f-title").value = f.title || "";
+        document.getElementById("ver-f-desc").value = f.description || "";
+        document.getElementById("ver-f-icon").value = FEATURE_ICONS.includes(f.icon) ? f.icon : "star";
+        document.getElementById("ver-f-content").value = f.content || "";
+        document.getElementById("ver-f-link").value = f.link || "";
+        document.getElementById("ver-f-active").checked = f.active !== false;
+        document.getElementById("ver-feature-form").scrollIntoView({ behavior: "smooth", block: "center" });
+      };
+      window.saveVerFeature = async (ev) => {
+        ev.preventDefault();
+        if (!requireVerifiedEdit()) return;
+        const val = (id) => document.getElementById(id).value.trim();
+        const data = {
+          title: val("ver-f-title").slice(0, 80),
+          description: val("ver-f-desc").slice(0, 200),
+          icon: val("ver-f-icon") || "star",
+          content: val("ver-f-content").slice(0, 4000),
+          link: safeLink(val("ver-f-link")),
+          active: document.getElementById("ver-f-active").checked,
+          updatedAt: serverTimestamp(),
+        };
+        if (!data.title) return;
+        try {
+          const id = val("ver-f-id");
+          if (id) await setDoc(doc(db, "premiumFeatures", id), data, { merge: true });
+          else await addDoc(collection(db, "premiumFeatures"), { ...data, createdAt: serverTimestamp() });
+          showToast("Feature saved.");
+          resetVerFeatureForm();
+        } catch (err) {
+          showToast("Failed: " + err.message, "error");
+        }
+      };
+      window.deleteVerFeature = async (id) => {
+        if (!requireVerifiedEdit()) return;
+        if (!confirm("Delete this feature? Members will lose access to it.")) return;
+        try {
+          await deleteDoc(doc(db, "premiumFeatures", id));
+          showToast("Feature deleted.", "warn");
+        } catch (err) {
+          showToast("Failed: " + err.message, "error");
+        }
+      };
+
+      // ================= GENERAL MEMBER ACCESS (admin chooses features) =================
+      var memberAccess = {};
+      var accessUnsub = null;
+      var TAB_FEATURE = {
+        updates: "tab_updates", meeting: "tab_meeting", chat: "tab_chat",
+        members: "tab_members", history: "tab_history", csf: "tab_csf", payments: "tab_payments",
+      };
+      var MEMBER_FEATURE_GROUPS = [
+        { title: "Dashboard", items: [
+          ["dash_welcome", "Welcome banner", "Greeting banner with the member's name"],
+          ["dash_quotes", "Spiritual quotes slider", "Quotes shown on the dashboard"],
+          ["dash_live_alert", "Live meeting alert", "\"Class is live now - Join\" banner"],
+          ["dash_stat_class", "Next Class / Event card", "Shows live class or next event"],
+          ["dash_stat_attendance", "Attendance card", "Member's monthly attendance %"],
+          ["dash_stat_events", "Upcoming Events card", "Number of upcoming events"],
+          ["dash_stat_donation", "Donation summary card", "Paid amount and pending requests"],
+          ["dash_gallery", "Photo gallery", "Gallery of uploaded photos"],
+          ["dash_announcements", "Recent Announcements", "Latest 5 updates list"],
+          ["dash_notice", "Dashboard notice bar", "Admin notice shown at the top"],
+          ["dash_feedback", "Advice / Complaint box", "Form to send advice or complaints"],
+        ] },
+        { title: "App sections (menu)", items: [
+          ["tab_updates", "Updates & Notice", "Notices, events, documents, links"],
+          ["tab_meeting", "Online Meeting", "Join live classes / meetings"],
+          ["tab_chat", "Group Chat", "Member group chat"],
+          ["tab_members", "Members & Status", "Members list and online status"],
+          ["tab_history", "History of Darber E Chandpurishah", "History tab"],
+          ["tab_csf", "CSF tab", "CSF information tab"],
+          ["tab_payments", "Donation", "Donation / payment requests"],
+        ] },
+        { title: "About section (inside the app)", items: [
+          ["about_intro", "About CSF text", "Intro text on the CSF tab"],
+          ["about_mission", "Mission", "Mission card on the CSF tab"],
+          ["about_values", "Core values", "Values cards"],
+          ["about_membership", "Membership levels", "General vs CSF Verified comparison"],
+          ["about_history", "History text & milestones", "Content of the History tab"],
+          ["about_activities", "CSF activities list", "Activities on the CSF tab"],
+        ] },
+      ];
+      function gfOn(id) {
+        if (!currentUserProfile) return true;
+        if (hasAdminPanelAccess() || isVerifiedActive()) return true;
+        return memberAccess[id] !== false;
+      }
+      function aboutNoAccessHtml() {
+        return `<p class="text-sm text-slate-500 bg-white/70 border border-emerald-100 rounded-2xl p-4 text-center">This content is not available for your membership type.</p>`;
+      }
+      function applyMemberAccessUI() {
+        try {
+          Object.entries(TAB_FEATURE).forEach(([tab, f]) => {
+            const b = document.getElementById("tab-" + tab);
+            if (b) b.style.display = gfOn(f) ? "" : "none";
+          });
+          const fb = document.getElementById("dash-feedback-card");
+          if (fb) fb.style.display = gfOn("dash_feedback") ? "" : "none";
+          const dn = document.getElementById("dash-notice");
+          if (dn) dn.style.display = gfOn("dash_notice") ? "" : "none";
+          if (TAB_FEATURE[activeTab] && !gfOn(TAB_FEATURE[activeTab])) switchTab("dashboard");
+        } catch (_) {}
+      }
+      function listenMemberAccess() {
+        if (accessUnsub || !currentUser) return;
+        accessUnsub = onSnapshot(
+          doc(db, "settings", "memberAccess"),
+          (snap) => {
+            memberAccess = (snap.exists() && snap.data().general) || {};
+            applyMemberAccessUI();
+            renderAboutSections();
+            if (activeTab === "dashboard") {
+              try { renderDashboard(); } catch (_) {}
+            }
+            fillAccessEditor(true);
+          },
+          () => {},
+        );
+      }
+      function fillAccessEditor(force) {
+        const box = document.getElementById("ver-access-list");
+        if (!box) return;
+        if (!force && box.dataset.dirty === "1") return;
+        if (force && box.dataset.dirty === "1" && box.contains(document.activeElement)) return;
+        const e = escapeHtml;
+        box.innerHTML = MEMBER_FEATURE_GROUPS.map((g) => `
+          <div class="bg-white/60 border border-emerald-100 rounded-xl p-3 space-y-2">
+            <p class="text-sm font-bold text-emerald-900">${e(g.title)}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${g.items.map(([id, title, desc]) => `<label class="flex items-start gap-2 text-xs bg-white border border-emerald-100 rounded-xl p-2.5 cursor-pointer"><input type="checkbox" data-fid="${id}" class="mt-0.5" ${memberAccess[id] === false ? "" : "checked"} onchange="document.getElementById('ver-access-list').dataset.dirty='1'" /><span><strong>${e(title)}</strong><br><span class="text-slate-500">${e(desc)}</span></span></label>`).join("")}
+            </div>
+          </div>`).join("");
+        box.dataset.dirty = "0";
+      }
+      window.setAllAccess = (on) => {
+        const box = document.getElementById("ver-access-list");
+        if (!box) return;
+        box.querySelectorAll("input[data-fid]").forEach((cb) => (cb.checked = on));
+        box.dataset.dirty = "1";
+      };
+      window.saveMemberAccess = async () => {
+        if (!requireVerifiedEdit()) return;
+        const box = document.getElementById("ver-access-list");
+        const general = {};
+        box.querySelectorAll("input[data-fid]").forEach((cb) => {
+          if (!cb.checked) general[cb.dataset.fid] = false;
+        });
+        try {
+          await setDoc(doc(db, "settings", "memberAccess"), { general, updatedAt: serverTimestamp(), updatedBy: currentUser.uid });
+          box.dataset.dirty = "0";
+          showToast("General Member features saved.");
+        } catch (err) {
+          showToast("Failed to save: " + err.message, "error");
+        }
+      };
+      function renderVerifiedStats() {
+        const el = document.getElementById("ver-stats");
+        if (!el) return;
+        const total = allMembers.length;
+        const ver = allMembers.filter((m) => memberType(m) === "csf_verified");
+        const gen = allMembers.filter((m) => memberType(m) !== "csf_verified");
+        const cnt = (arr, s) => arr.filter((m) => memberStatus(m) === s).length;
+        const card = (label, n, sub, cls) => `<div class="bg-white border ${cls} rounded-2xl p-3 text-center shadow-sm"><p class="text-[11px] text-slate-500">${label}</p><p class="text-2xl font-extrabold text-emerald-950">${n}</p><p class="text-[10px] text-slate-500">${sub}</p></div>`;
+        el.innerHTML =
+          card("Total Members", total, `${cnt(allMembers, "approved")} approved`, "border-emerald-100") +
+          card("General Members", gen.length, `${cnt(gen, "approved")} approved • ${cnt(gen, "pending") + cnt(gen, "rejected")} pending`, "border-sky-200") +
+          card("CSF Verified", ver.length, `${cnt(ver, "approved")} active • ${cnt(ver, "suspended")} suspended`, "border-amber-300");
+      }
+
       // ---------- Admin editor ----------
       const HE_TEXT_IDS = [
         "siteName",
@@ -13658,6 +14568,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         "btn2",
         "visionTitle",
         "visionText",
+        ...ABOUT_TEXT_KEYS,
         "allQuotesTitle",
         "address",
         "phone",
@@ -13682,6 +14593,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           homeContent.quotes
             .map((q) => (q.source ? `${q.text} | ${q.source}` : q.text))
             .join("\n"),
+        );
+        ABOUT_LIST_KEYS.forEach((k) =>
+          set("he-" + k, (homeContent[k] || []).join("\n")),
         );
       }
 
@@ -13795,6 +14709,13 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 }
               : { text: l.slice(0, 300), source: "" };
           });
+        ABOUT_LIST_KEYS.forEach((k) => {
+          data[k] = val("he-" + k)
+            .split("\n")
+            .map((l) => l.trim().slice(0, 400))
+            .filter(Boolean)
+            .slice(0, 20);
+        });
         data.updatedAt = serverTimestamp();
         data.updatedBy = currentUser.uid;
         btn.disabled = true;
@@ -14438,6 +15359,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           ${dashCard("check-circle-2", "blue", "Attendance Rate", cur.rate + "%", "This month", "dashGo('meeting')")}
         </div>
 
+        <div class="grid grid-cols-2 gap-3">
+          ${dashCard("user", "blue", "General Members", members.filter((m) => memberType(m) !== "csf_verified").length, "Standard access", "dashGo('verified')")}
+          ${dashCard("badge-check", "amber", "CSF Verified Members", members.filter((m) => memberType(m) === "csf_verified").length, "Have a CSF ID", "dashGo('verified')")}
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           ${dashCard("trending-up", "emerald", "Income (This Month)", BDT(inc), "", "dashGo('finance')")}
           ${dashCard("trending-down", "red", "Expense (This Month)", BDT(exp), "", "dashGo('finance')")}
@@ -14529,6 +15455,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             );
 
         el.innerHTML = `
+${gfOn("dash_welcome") ? `
         <div class="rounded-3xl p-6 sm:p-8 text-white bg-gradient-to-br from-emerald-950 via-emerald-800 to-teal-700 shadow-xl relative overflow-hidden flex items-center justify-between gap-4">
           <div class="absolute -right-10 -top-10 w-48 h-48 bg-emerald-300/20 rounded-full blur-3xl"></div>
           <div class="relative min-w-0">
@@ -14538,11 +15465,12 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           </div>
           ${dashLogo("relative w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-emerald-300 bg-white p-0.5 shrink-0")}
         </div>
+` : ""}
 
-        <div id="dash-quotes-slot-member"></div>
+        <div id="dash-quotes-slot-member" style="${gfOn("dash_quotes") ? "" : "display:none"}"></div>
 
         ${
-          meetingIsLive
+          meetingIsLive && gfOn("dash_live_alert")
             ? `
         <div class="rounded-2xl p-4 bg-amber-100 border border-amber-300 flex items-center justify-between gap-3">
           <p class="text-sm font-semibold text-amber-950 flex items-center gap-2"><span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>${escapeHtml(currentMeetingTitle)} is live now!</p>
@@ -14552,20 +15480,21 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         }
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          ${classCard}
-          ${dashCard("check-circle-2", "emerald", "Your Attendance", att.rate + "%", att.totalHeld ? `${att.attended}/${att.totalHeld} this month` : "This month", "dashGo('profile')")}
-          ${dashCard("star", "amber", "Upcoming Events", events.length, "", "dashGo('updates')")}
-          ${dashCard("wallet", "purple", "Donation", BDT(paid), pend ? `${pend} pending` : "Paid", "dashGo('payments')")}
+          ${gfOn("dash_stat_class") ? classCard : ""}
+          ${gfOn("dash_stat_attendance") ? dashCard("check-circle-2", "emerald", "Your Attendance", att.rate + "%", att.totalHeld ? `${att.attended}/${att.totalHeld} this month` : "This month", "dashGo('profile')") : ""}
+          ${gfOn("dash_stat_events") ? dashCard("star", "amber", "Upcoming Events", events.length, "", "dashGo('updates')") : ""}
+          ${gfOn("dash_stat_donation") ? dashCard("wallet", "purple", "Donation", BDT(paid), pend ? `${pend} pending` : "Paid", "dashGo('payments')") : ""}
         </div>
 
         <div class="grid grid-cols-3 gap-3">
-          <button onclick="dashGo('meeting')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="video" class="w-5 h-5 text-emerald-600"></i>Meeting</button>
-          <button onclick="dashGo('chat')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>Group Chat</button>
+          ${gfOn("tab_meeting") ? `<button onclick="dashGo('meeting')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="video" class="w-5 h-5 text-emerald-600"></i>Meeting</button>` : ""}
+          ${gfOn("tab_chat") ? `<button onclick="dashGo('chat')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>Group Chat</button>` : ""}
           <button onclick="dashGo('profile')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="user-circle" class="w-5 h-5 text-emerald-600"></i>My Profile</button>
         </div>
 
-        ${galleryHtml()}
+        ${gfOn("dash_gallery") ? galleryHtml() : ""}
 
+${gfOn("dash_announcements") ? `
         <div class="glass rounded-2xl p-5">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-bold text-emerald-950">Recent Announcements</h3>
@@ -14591,7 +15520,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 : '<p class="text-sm text-slate-500 py-3">No announcements yet.</p>'
             }
           </div>
-        </div>`;
+        </div>
+` : ""}`;
+        applyMemberAccessUI();
       }
 
       window.deleteUpdate = async (id) => {
@@ -15448,7 +16379,7 @@ ${joinInfo}`,
           return;
         }
         try {
-          await updateDoc(doc(db, "users", targetUid), { csfId: newId });
+          await setMembership(targetUid, "csf_verified", newId);
           await updateDoc(doc(db, "feedback", feedbackId), {
             status: "reviewed",
             assignedCsfId: newId,
