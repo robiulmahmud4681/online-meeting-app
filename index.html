@@ -3061,6 +3061,10 @@
                 id="mypay-monthly-grid"
                 class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2"
               ></div>
+              <div
+                id="mypay-extra-box"
+                class="grid grid-cols-1 sm:grid-cols-3 gap-2"
+              ></div>
               <p class="text-[11px] text-slate-500">
                 প্রতি মাসে নির্ধারিত ৳11 (Token Donation) দেওয়া আবশ্যক। যেকোনো
                 বকেয়া (Not Paid) মাসের ঘরে ক্লিক করলে ফর্মে ওই মাস ও ৳11 বসে
@@ -3087,8 +3091,10 @@
               >
                 <p class="font-bold">3-Step Token Donation Process:</p>
                 <p>
-                  <strong>1. Send Request:</strong> Monthly minimum is
-                  <strong>৳11</strong> (amounts above ৳11 count as Extra).
+                  <strong>1. Send Request:</strong> Each month is
+                  <strong>৳11</strong>. A larger amount is automatically spread
+                  over your unpaid months (৳11 each); anything left after all 12
+                  months goes to <strong>Extra Donation</strong>.
                   <strong>2. Send Money &amp; Submit Proof:</strong> After Admin
                   approves, send the amount to Collector's number above and
                   submit your <strong>Sender Number &amp; TrxID</strong>.
@@ -3109,9 +3115,9 @@
                       min="1"
                       step="1"
                       required
-                      value="11"
+                      value="11 "
                       oninput="updateTokenExtraHint()"
-                      placeholder="Monthly Fee Amount (৳11+) *"
+                      placeholder="Minimum Donation: ৳11 or *"
                       class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                     <p
@@ -11443,19 +11449,42 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             ? Number(sheetSource.monthlyFee)
             : 11;
         const val = Math.floor(Number(amtEl.value) || 0);
-        if (val > fixed) {
-          hintEl.className = "text-[11px] font-bold text-amber-700 mt-1";
-          hintEl.textContent = `Regular Monthly: ৳${fixed} + Extra Fund: ৳${val - fixed}`;
-        } else if (val === fixed) {
-          hintEl.className = "text-[11px] font-semibold text-emerald-700 mt-1";
-          hintEl.textContent = `Standard Monthly Token Fee: ৳${fixed}`;
-        } else if (val > 0) {
-          hintEl.className = "text-[11px] font-semibold text-slate-600 mt-1";
-          hintEl.textContent = `Partial payment (৳${fixed - val} remaining for full ৳${fixed} monthly fee)`;
-        } else {
+        if (!(val > 0)) {
           hintEl.className = "text-[11px] font-semibold text-red-600 mt-1";
           hintEl.textContent = `Mandatory monthly fee: ৳${fixed}`;
+          return;
         }
+        let base = Array(12).fill(0);
+        try {
+          if (currentUser) {
+            const st = getMemberMonthlyFeeState(
+              { ...currentUserProfile, id: currentUser.uid },
+              allPayments.filter((p) => p.uid === currentUser.uid),
+            );
+            base = st.months.map((m) =>
+              Math.min(fixed, m.effectivePaid + (m.hasPending ? m.pendingAmt : 0)),
+            );
+          }
+        } catch (_) {}
+        const r = allocateDonationToMonths(val, base, fixed);
+        const covered = [];
+        r.allocation.forEach((al, i) => {
+          if (al > 0)
+            covered.push(
+              ANNUAL_MONTH_NAMES[i] +
+                (r.months[i] < fixed ? ` (৳${r.months[i]}/${fixed})` : ""),
+            );
+        });
+        const allocated = r.allocation.reduce((s, v) => s + v, 0);
+        let msg = covered.length
+          ? `Months: ${covered.join(", ")} = ৳${allocated}`
+          : "All 12 months already paid";
+        if (r.extra > 0) msg += ` • Extra Donation: ৳${r.extra}`;
+        hintEl.className =
+          r.extra > 0
+            ? "text-[11px] font-bold text-amber-700 mt-1"
+            : "text-[11px] font-semibold text-emerald-700 mt-1";
+        hintEl.textContent = msg;
       };
 
       function renderPaymentInfo() {
@@ -11603,27 +11632,73 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             (mName && (r.name || "").trim().toLowerCase() === mName),
         );
 
-        const sheetMonths = normalizeAnnualMonths(matchedRow?.months);
-        const confirmedMonths = Array(12).fill(0);
+        const sheetRaw = normalizeAnnualMonths(matchedRow?.months);
+        const sheetExtra = Math.max(0, Math.round(Number(matchedRow?.extra) || 0));
+        const labelConfirmed = Array(12).fill(0); // confirmed payments without an allocation record (legacy)
+        const allocConfirmed = Array(12).fill(0); // confirmed token payments allocated on confirmation
+        let allocExtra = 0;
         const pendingMonths = Array(12).fill(0);
+        const pendingTokens = [];
         const paymentsList = Array.isArray(memberPaymentsOverride)
           ? memberPaymentsOverride
           : allPayments.filter((p) => p.uid === mUid);
 
         paymentsList.forEach((p) => {
-          const mIdx = parseAnnualMonthIndexForYear(
-            p.month,
-            p.createdAt,
-            targetYear,
-          );
-          if (mIdx < 0 || mIdx > 11) return;
           const amt = Math.round(Number(p.amount || 0));
           if (isPaymentConfirmed(p)) {
-            confirmedMonths[mIdx] += amt;
+            if (p.allocation?.applied) {
+              if (Number(p.allocation.year) === targetYear) {
+                const am = normalizeAnnualMonths(p.allocation.months);
+                for (let i = 0; i < 12; i++) allocConfirmed[i] += am[i];
+                allocExtra += Math.max(
+                  0,
+                  Math.round(Number(p.allocation.extra) || 0),
+                );
+              }
+              return;
+            }
+            const mIdx = parseAnnualMonthIndexForYear(
+              p.month,
+              p.createdAt,
+              targetYear,
+            );
+            if (mIdx < 0 || mIdx > 11) return;
+            labelConfirmed[mIdx] += amt;
           } else if (isPaymentPending(p)) {
+            if (isTokenDonationPayment(p)) {
+              if (resolveAllocationYear(p) === targetYear) pendingTokens.push(p);
+              return;
+            }
+            const mIdx = parseAnnualMonthIndexForYear(
+              p.month,
+              p.createdAt,
+              targetYear,
+            );
+            if (mIdx < 0 || mIdx > 11) return;
             pendingMonths[mIdx] += amt;
           }
         });
+
+        const normalized = normalizeMonthsAndExtra(
+          sheetRaw.map((v, i) =>
+            Math.max(v, labelConfirmed[i], allocConfirmed[i]),
+          ),
+          Math.max(sheetExtra, allocExtra),
+          monthlyFee,
+        );
+        const confirmedMonths = normalized.months;
+
+        // Pending token requests are previewed against the months still unpaid
+        let runningMonths = confirmedMonths.slice();
+        let pendingExtra = 0;
+        pendingTokens
+          .sort((a, b) => tsToDate(a.createdAt) - tsToDate(b.createdAt))
+          .forEach((p) => {
+            const r = allocateDonationToMonths(p.amount, runningMonths, monthlyFee);
+            for (let i = 0; i < 12; i++) pendingMonths[i] += r.allocation[i];
+            runningMonths = r.months;
+            pendingExtra += r.extra;
+          });
 
         const curMonthIdx =
           targetYear < curCalendarYear
@@ -11635,10 +11710,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         let paidCount = 0;
         const dueMonths = [];
         const months = ANNUAL_MONTH_NAMES.map((shortName, idx) => {
-          const effectivePaid = Math.max(
-            sheetMonths[idx],
-            confirmedMonths[idx],
-          );
+          const effectivePaid = confirmedMonths[idx];
           const hasPending =
             pendingMonths[idx] > 0 && effectivePaid < monthlyFee;
           const isDueWindow = idx <= curMonthIdx;
@@ -11662,14 +11734,13 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
         const curDueObj = dueMonths.find((d) => d.idx === curMonthIdx) || null;
         const curMonthPaid =
-          curMonthIdx >= 0
-            ? Math.max(sheetMonths[curMonthIdx], confirmedMonths[curMonthIdx])
-            : monthlyFee;
+          curMonthIdx >= 0 ? confirmedMonths[curMonthIdx] : monthlyFee;
         const curMonthPending =
           curMonthIdx >= 0 &&
           pendingMonths[curMonthIdx] > 0 &&
           curMonthPaid < monthlyFee;
         const totalDueAmt = dueMonths.reduce((s, d) => s + d.remaining, 0);
+        const regularTotal = confirmedMonths.reduce((s, v) => s + v, 0);
 
         return {
           targetYear,
@@ -11681,6 +11752,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           curDueObj,
           curMonthPending,
           months,
+          regularTotal,
+          extraDonation: normalized.extra,
+          pendingExtra,
+          grandTotal: regularTotal + normalized.extra,
         };
       }
 
@@ -11771,6 +11846,22 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         });
 
         gridEl.innerHTML = monthCards.join("");
+        const extraBoxEl = document.getElementById("mypay-extra-box");
+        if (extraBoxEl) {
+          extraBoxEl.innerHTML = `
+            <div class="rounded-xl p-3 border bg-emerald-50 border-emerald-200">
+              <p class="text-[11px] font-bold text-emerald-900">12-Month Donation Total</p>
+              <p class="text-base font-extrabold text-emerald-700 mt-0.5">${BDT(state.regularTotal)} <span class="text-[11px] font-semibold text-emerald-600">/ ${BDT(monthlyFee * 12)}</span></p>
+            </div>
+            <div class="rounded-xl p-3 border bg-amber-50 border-amber-200">
+              <p class="text-[11px] font-bold text-amber-900">Extra Donation</p>
+              <p class="text-base font-extrabold text-amber-700 mt-0.5">${BDT(state.extraDonation)}</p>
+            </div>
+            <div class="rounded-xl p-3 border bg-slate-50 border-slate-200">
+              <p class="text-[11px] font-bold text-slate-700">Total Donated (${targetYear})</p>
+              <p class="text-base font-extrabold text-slate-800 mt-0.5">${BDT(state.grandTotal)}</p>
+            </div>`;
+        }
         if (titleEl) {
           titleEl.textContent = `Token Donation • Monthly ৳${monthlyFee} Status (${targetYear})`;
         }
@@ -12594,19 +12685,29 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             createdAt: serverTimestamp(),
             createdBy: currentUser.uid,
           });
-          await updateDoc(doc(db, "payments", id), {
-            status: "approved",
-            collectorConfirmed: true,
-            trxId,
-            paymentMethod,
-            collectorName,
-            receiptNo,
-            adminNote: "",
-            confirmedAt: serverTimestamp(),
-            confirmedBy: currentUser.uid,
-            reviewedAt: serverTimestamp(),
-            reviewedBy: currentUser.uid,
-          });
+          let allocation = null;
+          if (isTokenDonationPayment(p) && !p.allocation?.applied) {
+            allocation = await applyTokenDonationAllocation(p);
+          }
+          try {
+            await updateDoc(doc(db, "payments", id), {
+              status: "approved",
+              collectorConfirmed: true,
+              trxId,
+              paymentMethod,
+              collectorName,
+              receiptNo,
+              adminNote: "",
+              confirmedAt: serverTimestamp(),
+              confirmedBy: currentUser.uid,
+              reviewedAt: serverTimestamp(),
+              reviewedBy: currentUser.uid,
+              ...(allocation ? { allocation } : {}),
+            });
+          } catch (e) {
+            if (allocation) await reverseTokenDonationAllocation(p, allocation);
+            throw e;
+          }
           if (p.uid) {
             createAppNotification({
               type: "payment",
@@ -12619,8 +12720,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               authorName: collectorName,
             });
           }
+          const allocNote = allocation
+            ? ` Allocated: ${allocation.months.filter((v) => v > 0).length} month(s)${allocation.extra > 0 ? ` + Extra Donation ${BDT(allocation.extra)}` : ""}.`
+            : "";
           showToast(
-            `Confirmed! Money Receipt ${receiptNo} with signature & seal is now ready.`,
+            `Confirmed! Money Receipt ${receiptNo} with signature & seal is now ready.${allocNote}`,
           );
         } catch (err) {
           showToast("Confirmation failed: " + err.message, "error");
@@ -12639,9 +12743,19 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         );
         if (reason === null) return;
         try {
+          if (p.allocation?.applied) {
+            const reversed = await reverseTokenDonationAllocation(p);
+            if (!reversed) {
+              return showToast(
+                "Could not undo the month allocation (is the year closed?). Payment not cancelled.",
+                "error",
+              );
+            }
+          }
           await updateDoc(doc(db, "payments", id), {
             status: "rejected",
             collectorConfirmed: false,
+            allocation: null,
             adminNote: reason.trim(),
             reviewedAt: serverTimestamp(),
             reviewedBy: currentUser.uid,
@@ -12690,7 +12804,29 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const signatureImg = confirmed
           ? paymentSettings.receiptSignature || ""
           : "";
+        // "Clear" status: all 12 months of the year are fully paid
+        let yearClear = "";
+        if (confirmed) {
+          try {
+            const st = getMemberMonthlyFeeState(
+              {
+                id: p.uid,
+                uid: p.uid,
+                csfId: p.csfId || member?.csfId || "",
+                name: p.name || member?.name || "",
+              },
+              allPayments.filter((x) => x.uid === p.uid),
+            );
+            const payYear = /\b(20\d{2})\b/.test(String(p.month || ""))
+              ? resolveAllocationYear(p)
+              : createdD.getFullYear();
+            if (st.paidCount >= 12 && payYear === st.targetYear) {
+              yearClear = `CLEAR - All 12 months paid (${st.targetYear})`;
+            }
+          } catch (_) {}
+        }
         return {
+          yearClear,
           p,
           confirmed,
           amountNum,
@@ -12790,6 +12926,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 ${rowHtml("Month / Period", r.month)}
                 ${rowHtml("Payment Method", r.method)}
                 ${r.confirmed && r.trxId ? rowHtml("Transaction Ref", r.trxId) : ""}
+                ${r.yearClear ? rowHtml("Year Status", r.yearClear) : ""}
               </div>
 
               <div class="receipt-amount-box mt-3 border-2 border-emerald-800 bg-emerald-50 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
@@ -12963,6 +13100,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         ];
         if (r.confirmed && r.trxId) {
           rows.push(["Transaction Ref", r.trxId]);
+        }
+        if (r.yearClear) {
+          rows.push(["Year Status", r.yearClear]);
         }
 
         let y = top + 54;
@@ -13458,6 +13598,173 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         return out;
       }
 
+      // ===== Monthly donation allocation (fixed fee per month, overflow -> next unpaid month -> Extra Donation) =====
+      function allocateDonationToMonths(amount, paidMonths, fee) {
+        const f = Number(fee) > 0 ? Math.round(Number(fee)) : 11;
+        let left = Math.max(0, Math.round(Number(amount) || 0));
+        const base = normalizeAnnualMonths(paidMonths).map((v) =>
+          Math.min(Math.round(v), f),
+        );
+        const allocation = Array(12).fill(0);
+        for (let i = 0; i < 12 && left > 0; i++) {
+          const room = f - base[i];
+          if (room <= 0) continue;
+          const put = Math.min(room, left);
+          allocation[i] = put;
+          left -= put;
+        }
+        return {
+          allocation,
+          extra: left,
+          months: base.map((v, i) => v + allocation[i]),
+        };
+      }
+
+      // Caps every month at the fixed fee. Any overflow is moved to unpaid months first, remainder -> Extra Donation.
+      function normalizeMonthsAndExtra(months, extra, fee) {
+        const f = Number(fee) > 0 ? Math.round(Number(fee)) : 11;
+        let overflow = 0;
+        const capped = normalizeAnnualMonths(months).map((v) => {
+          const r = Math.round(v);
+          const c = Math.min(r, f);
+          overflow += r - c;
+          return c;
+        });
+        const res = allocateDonationToMonths(overflow, capped, f);
+        return {
+          months: res.months,
+          extra: Math.max(0, Math.round(Number(extra) || 0)) + res.extra,
+        };
+      }
+
+      function isTokenDonationPayment(p) {
+        if (p?.donationMode) return p.donationMode === "token";
+        return /token donation|monthly\s*৳?\s*11/i.test(
+          `${p?.category || ""} ${p?.purpose || ""} ${p?.donationType || ""}`,
+        );
+      }
+
+      function resolveAllocationYear(p) {
+        const m = String(p?.month || "").match(/\b(20\d{2})\b/);
+        if (m) return Number(m[1]);
+        return (
+          Number(publicAnnualFund?.activeYear) || new Date().getFullYear()
+        );
+      }
+
+      function annualRowMatches(r, uid, csfId, name) {
+        const c = (csfId || "").trim().toLowerCase();
+        const n = (name || "").trim().toLowerCase();
+        return (
+          (uid && (r.uid === uid || r.id === uid)) ||
+          (c && (r.csfId || "").trim().toLowerCase() === c) ||
+          (n && (r.name || "").trim().toLowerCase() === n)
+        );
+      }
+
+      // Confirmed payments that pre-date allocation records are folded into empty cells (same rule as "Sync Donations").
+      function foldLegacyConfirmedIntoRow(sheet, row) {
+        const sums = Array(12).fill(0);
+        allPayments.filter(isPaymentConfirmed).forEach((p) => {
+          if (p.allocation?.applied) return;
+          if (!annualRowMatches(row, p.uid || "", p.csfId, p.name)) return;
+          const mIdx = parseAnnualMonthIndexForYear(
+            p.month,
+            p.createdAt,
+            sheet.year,
+          );
+          if (mIdx < 0 || mIdx > 11) return;
+          sums[mIdx] += Math.round(Number(p.amount || 0));
+        });
+        for (let i = 0; i < 12; i++) {
+          if (sums[i] > 0 && !(row.months[i] > 0)) row.months[i] = sums[i];
+        }
+      }
+
+      async function applyTokenDonationAllocation(p) {
+        try {
+          const yr = resolveAllocationYear(p);
+          const sheet = getOrCreateAnnualSheet(yr);
+          if (sheet.status === "closed") return null;
+          const fee = Number(sheet.monthlyFee) > 0 ? Number(sheet.monthlyFee) : 11;
+          const uid = p.uid || "";
+          const csfId = (p.csfId || "").trim();
+          const name = (p.name || "Member").trim();
+          let row = sheet.members.find((r) =>
+            annualRowMatches(r, uid, csfId, name),
+          );
+          let createdRow = false;
+          if (!row) {
+            row = {
+              id: uid || "m_" + Math.random().toString(36).slice(2, 9),
+              uid,
+              csfId,
+              name,
+              months: Array(12).fill(0),
+              extra: 0,
+            };
+            sheet.members.push(row);
+            createdRow = true;
+          }
+          const prevMonths = row.months.slice();
+          const prevExtra = row.extra || 0;
+          foldLegacyConfirmedIntoRow(sheet, row);
+          const n = normalizeMonthsAndExtra(row.months, row.extra, fee);
+          const r = allocateDonationToMonths(p.amount, n.months, fee);
+          row.months = r.months;
+          row.extra = n.extra + r.extra;
+          const ok = await saveAnnualSheetToCloud(sheet);
+          if (!ok) {
+            row.months = prevMonths;
+            row.extra = prevExtra;
+            if (createdRow) {
+              const ix = sheet.members.indexOf(row);
+              if (ix >= 0) sheet.members.splice(ix, 1);
+            }
+            return null;
+          }
+          return {
+            applied: true,
+            year: yr,
+            monthlyFee: fee,
+            amount: Math.round(Number(p.amount) || 0),
+            months: r.allocation,
+            extra: r.extra,
+          };
+        } catch (_) {
+          return null;
+        }
+      }
+
+      async function reverseTokenDonationAllocation(p, allocation = p?.allocation) {
+        try {
+          if (!allocation?.applied) return true;
+          const sheet = getOrCreateAnnualSheet(Number(allocation.year));
+          if (sheet.status === "closed") return false;
+          const row = sheet.members.find((r) =>
+            annualRowMatches(r, p.uid || "", p.csfId, p.name),
+          );
+          if (!row) return true;
+          const prevMonths = row.months.slice();
+          const prevExtra = row.extra || 0;
+          const am = normalizeAnnualMonths(allocation.months);
+          row.months = row.months.map((v, i) => Math.max(0, v - am[i]));
+          row.extra = Math.max(
+            0,
+            (row.extra || 0) - Math.round(Number(allocation.extra) || 0),
+          );
+          const ok = await saveAnnualSheetToCloud(sheet);
+          if (!ok) {
+            row.months = prevMonths;
+            row.extra = prevExtra;
+            return false;
+          }
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
       function buildSeedMembersFromPortal() {
         return allMembers
           .filter((m) => m.approved !== false && (m.name || "").trim())
@@ -13504,6 +13811,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             csfId: (m.csfId || "").trim(),
             name: (m.name || "Member").trim(),
             months: normalizeAnnualMonths(m.months),
+            extra: Math.max(0, Math.round(Number(m.extra) || 0)),
           }),
         );
         return sheet;
@@ -13521,6 +13829,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           let rowExtra = 0;
           let rowTotal = 0;
           const months = normalizeAnnualMonths(m.months);
+          const rowExtraFund = Math.max(0, Math.round(Number(m.extra) || 0));
           months.forEach((val, idx) => {
             if (val > 0) {
               monthTotals[idx] += val;
@@ -13533,6 +13842,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               }
             }
           });
+          rowExtra += rowExtraFund;
+          rowTotal += rowExtraFund;
           regularTotal += rowReg;
           extraTotal += rowExtra;
           grandTotal += rowTotal;
@@ -13576,6 +13887,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                       csfId: m.csfId || "",
                       name: m.name || "",
                       months: normalizeAnnualMonths(m.months),
+                      extra: Math.max(0, Math.round(Number(m.extra) || 0)),
                     }),
                   ),
                 },
@@ -13605,6 +13917,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 csfId: m.csfId || "",
                 name: m.name || "",
                 months: normalizeAnnualMonths(m.months),
+                extra: Math.max(0, Math.round(Number(m.extra) || 0)),
               })),
               updatedAt: serverTimestamp(),
               updatedBy: currentUserProfile?.name || "Admin",
@@ -13614,9 +13927,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           );
           await mirrorAnnualSheetForMembers(sheet);
           setAnnualSaveStatus("Saved to Cloud ✓", false);
+          return true;
         } catch (err) {
           setAnnualSaveStatus("Save failed!", true);
           showToast("Failed to save annual sheet: " + err.message, "error");
+          return false;
         }
       }
 
@@ -13906,8 +14221,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const cls = annualInputColorClass(val, fixed);
         if (cls) inputEl.classList.add(cls);
 
-        let rowExtra = 0;
-        let rowTotal = 0;
+        let rowExtra = Math.max(0, Math.round(Number(member.extra) || 0));
+        let rowTotal = rowExtra;
         member.months.forEach((v) => {
           rowTotal += v;
           if (v > fixed) rowExtra += v - fixed;
@@ -14107,6 +14422,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const aggregated = {};
 
         confirmed.forEach((p) => {
+          if (p.allocation?.applied) return; // already allocated on confirmation
           const mIdx = parseAnnualMonthIndexForYear(
             p.month,
             p.createdAt,
@@ -14149,7 +14465,17 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           }
         });
 
-        if (!updatedCells) {
+        // Re-balance: no month may hold more than the fixed fee; overflow -> unpaid months -> Extra Donation
+        let rebalancedRows = 0;
+        sheet.members.forEach((row) => {
+          const before = JSON.stringify([row.months, row.extra || 0]);
+          const n = normalizeMonthsAndExtra(row.months, row.extra, sheet.monthlyFee);
+          row.months = n.months;
+          row.extra = n.extra;
+          if (JSON.stringify([row.months, row.extra]) !== before) rebalancedRows++;
+        });
+
+        if (!updatedCells && !rebalancedRows) {
           return showToast(
             `No new empty cells to fill from confirmed donations in ${sheet.year}.`,
           );
@@ -14157,7 +14483,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         renderAnnualSheet();
         await saveAnnualSheetToCloud(sheet);
         showToast(
-          `Filled ${updatedCells} empty month cell(s) from confirmed donations!`,
+          `Filled ${updatedCells} empty month cell(s) and re-balanced ${rebalancedRows} member row(s) (max ৳${sheet.monthlyFee}/month, rest in Extra Donation).`,
         );
       };
 
