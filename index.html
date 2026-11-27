@@ -307,6 +307,33 @@
       .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(10) {
         animation-delay: 0.37s;
       }
+      .nav-drawer.nav-drawer-open .nav-menu-items > button:nth-child(11) {
+        animation-delay: 0.4s;
+      }
+      .annual-extra-input {
+        width: 72px;
+        text-align: center;
+        padding: 5px 4px;
+        border: 1px solid #fcd34d;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: #fffbeb;
+        color: #92400e;
+        outline: none;
+        transition:
+          border-color 0.15s ease,
+          background-color 0.15s ease;
+      }
+      .annual-extra-input:focus {
+        border-color: #d97706;
+        box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+      }
+      html.dark .annual-extra-input {
+        background: #1e293b;
+        border-color: #b45309;
+        color: #fde68a;
+      }
       #hamburger-btn {
         transition:
           transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
@@ -1643,21 +1670,6 @@
             <span>Online Meeting</span>
           </button>
           <button
-            onclick="switchTab('chat')"
-            id="tab-chat"
-            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center justify-between hover:bg-emerald-50 transition"
-          >
-            <span class="flex items-center gap-3">
-              <i data-lucide="message-square" class="w-4 h-4"></i>
-              <span>Group Chat</span>
-            </span>
-            <span
-              id="chat-unread-badge"
-              class="hidden bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold"
-              >New</span
-            >
-          </button>
-          <button
             onclick="switchTab('members')"
             id="tab-members"
             class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
@@ -1690,6 +1702,22 @@
           >
             <i data-lucide="wallet" class="w-4 h-4"></i>
             <span>Monthly Fee</span>
+          </button>
+          <button
+            onclick="switchTab('events')"
+            id="tab-events"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="calendar-days" class="w-4 h-4"></i>
+            <span>Events</span>
+          </button>
+          <button
+            onclick="switchTab('publication')"
+            id="tab-publication"
+            class="w-full px-4 py-3 rounded-xl font-semibold flex items-center gap-3 hover:bg-emerald-50 transition"
+          >
+            <i data-lucide="book-open-text" class="w-4 h-4"></i>
+            <span>Publication</span>
           </button>
           <button
             onclick="switchTab('profile')"
@@ -1743,6 +1771,22 @@
       ></div>
 
       <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1">
+        <div
+          id="general-no-access-card"
+          class="hidden glass max-w-xl mx-auto p-6 sm:p-8 rounded-3xl text-center space-y-3 border border-amber-200 my-6"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto"
+          >
+            <i data-lucide="lock" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-extrabold text-emerald-950">
+            Access Restricted
+          </h3>
+          <p id="general-no-access-msg" class="text-sm text-slate-600">
+            This section is currently restricted for General Users by Admin.
+          </p>
+        </div>
         <!-- 1. UPDATES & RESOURCES TAB -->
         <!-- 0. DASHBOARD TAB (admin & member views) -->
         <section id="section-dashboard" class="space-y-5">
@@ -3115,7 +3159,7 @@
                       min="1"
                       step="1"
                       required
-                      value="11 "
+                      value="11"
                       oninput="updateTokenExtraHint()"
                       placeholder="Minimum Donation: ৳11 or *"
                       class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500"
@@ -3279,6 +3323,229 @@
             </h3>
             <div id="mypay-list" class="space-y-2"></div>
           </div>
+        </section>
+
+        <!-- EVENTS TAB -->
+        <section id="section-events" class="hidden space-y-5">
+          <div
+            class="glass p-5 sm:p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4 border border-emerald-200/80"
+          >
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div
+                class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="calendar-days" class="w-6 h-6"></i>
+              </div>
+              <div class="min-w-0">
+                <h2 class="text-xl sm:text-2xl font-extrabold text-emerald-950">
+                  Events
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500">
+                  Upcoming programs, gatherings, workshops &amp; special days
+                </p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span
+                id="events-upcoming-pill"
+                class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
+              >
+                0 Upcoming
+              </span>
+              <button
+                type="button"
+                id="events-add-btn"
+                onclick="openEventEditorModal()"
+                class="hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-sm items-center gap-1.5 transition"
+              >
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Add Event</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="glass p-3.5 sm:p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 border border-emerald-100"
+          >
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button
+                type="button"
+                id="ev-filter-all"
+                onclick="setEventFilter('all')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition"
+              >
+                All Events
+              </button>
+              <button
+                type="button"
+                id="ev-filter-upcoming"
+                onclick="setEventFilter('upcoming')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Upcoming
+              </button>
+              <button
+                type="button"
+                id="ev-filter-past"
+                onclick="setEventFilter('past')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Past
+              </button>
+              <button
+                type="button"
+                id="ev-filter-going"
+                onclick="setEventFilter('going')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Going
+              </button>
+            </div>
+            <div
+              class="flex flex-wrap items-center gap-2 flex-1 sm:flex-initial justify-end"
+            >
+              <select
+                id="events-category-filter"
+                onchange="renderEvents()"
+                class="px-3 py-2 bg-white/90 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="all">All Categories</option>
+                <option value="Mahfil / Gathering">Mahfil / Gathering</option>
+                <option value="Meeting">Meeting</option>
+                <option value="Charity / Relief">Charity / Relief</option>
+                <option value="Training / Workshop">Training / Workshop</option>
+                <option value="Special Day">Special Day</option>
+                <option value="Other">Other</option>
+              </select>
+              <input
+                type="search"
+                id="events-search"
+                oninput="renderEvents()"
+                placeholder="Search events..."
+                class="px-3 py-2 bg-white/90 border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 w-44 sm:w-52"
+              />
+            </div>
+          </div>
+
+          <div
+            id="events-grid"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          ></div>
+        </section>
+
+        <!-- PUBLICATION TAB -->
+        <section id="section-publication" class="hidden space-y-5">
+          <div
+            class="glass p-5 sm:p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4 border border-emerald-200/80"
+          >
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div
+                class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="book-open-text" class="w-6 h-6"></i>
+              </div>
+              <div class="min-w-0">
+                <h2 class="text-xl sm:text-2xl font-extrabold text-emerald-950">
+                  Publication
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500">
+                  Official articles, magazines, books, journals &amp; reports
+                </p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span
+                id="pub-count-pill"
+                class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
+              >
+                0 Publications
+              </span>
+              <button
+                type="button"
+                id="pub-add-btn"
+                onclick="openPublicationEditorModal()"
+                class="hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-sm items-center gap-1.5 transition"
+              >
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Add Publication</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="glass p-3.5 sm:p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 border border-emerald-100"
+          >
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button
+                type="button"
+                id="pub-filter-all"
+                onclick="setPublicationFilter('all')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition"
+              >
+                All
+              </button>
+              <button
+                type="button"
+                id="pub-filter-Article"
+                onclick="setPublicationFilter('Article')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Article
+              </button>
+              <button
+                type="button"
+                id="pub-filter-Magazine"
+                onclick="setPublicationFilter('Magazine')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Magazine
+              </button>
+              <button
+                type="button"
+                id="pub-filter-Book"
+                onclick="setPublicationFilter('Book')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Book
+              </button>
+              <button
+                type="button"
+                id="pub-filter-Journal"
+                onclick="setPublicationFilter('Journal')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Journal
+              </button>
+              <button
+                type="button"
+                id="pub-filter-Newsletter"
+                onclick="setPublicationFilter('Newsletter')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Newsletter
+              </button>
+              <button
+                type="button"
+                id="pub-filter-Report"
+                onclick="setPublicationFilter('Report')"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition"
+              >
+                Report
+              </button>
+            </div>
+            <input
+              type="search"
+              id="pub-search"
+              oninput="renderPublications()"
+              placeholder="Search title, author, issue..."
+              class="px-3 py-2 bg-white/90 border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-56"
+            />
+          </div>
+
+          <div
+            id="publications-grid"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          ></div>
         </section>
 
         <section id="section-admin" class="hidden space-y-6">
@@ -4648,8 +4915,115 @@
                           ></i>
                           <span>Download Excel (.csv)</span>
                         </button>
+                        <button
+                          type="button"
+                          id="fin-annual-save-btn"
+                          onclick="flushAnnualCellSave(true)"
+                          class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 transition shadow-sm"
+                        >
+                          <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                          <span>Save Sheet</span>
+                        </button>
                       </div>
                     </div>
+
+                    <!-- MANUAL DATA ENTRY BAR FOR ADMIN / SUB-ADMIN -->
+                    <form
+                      id="fin-annual-manual-entry-box"
+                      onsubmit="submitAnnualManualEntry(event)"
+                      class="bg-emerald-50/75 border border-emerald-200 rounded-xl p-3 space-y-2.5"
+                    >
+                      <div
+                        class="flex items-center justify-between gap-2 flex-wrap"
+                      >
+                        <p
+                          class="text-xs font-extrabold text-emerald-950 flex items-center gap-1.5"
+                        >
+                          <i
+                            data-lucide="pen-line"
+                            class="w-3.5 h-3.5 text-emerald-700"
+                          ></i>
+                          <span>Manual Data Entry (Admin / Sub-Admin)</span>
+                        </p>
+                        <span class="text-[11px] text-slate-600">
+                          Type directly in any table cell below or use this
+                          quick entry form
+                        </span>
+                      </div>
+                      <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2"
+                      >
+                        <select
+                          id="fin-annual-entry-member"
+                          required
+                          class="lg:col-span-2 px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option value="">Select Member...</option>
+                        </select>
+                        <select
+                          id="fin-annual-entry-target"
+                          class="px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option value="0">January (Jan)</option>
+                          <option value="1">February (Feb)</option>
+                          <option value="2">March (Mar)</option>
+                          <option value="3">April (Apr)</option>
+                          <option value="4">May (May)</option>
+                          <option value="5">June (Jun)</option>
+                          <option value="6">July (Jul)</option>
+                          <option value="7">August (Aug)</option>
+                          <option value="8">September (Sep)</option>
+                          <option value="9">October (Oct)</option>
+                          <option value="10">November (Nov)</option>
+                          <option value="11">December (Dec)</option>
+                          <option value="auto">
+                            Auto-Allocate (Unpaid Months)
+                          </option>
+                          <option value="extra">Extra Donation Column</option>
+                        </select>
+                        <select
+                          id="fin-annual-entry-mode"
+                          class="px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option value="set">Set Amount (=)</option>
+                          <option value="add">Add Amount (+)</option>
+                        </select>
+                        <input
+                          id="fin-annual-entry-amount"
+                          type="number"
+                          min="0"
+                          step="1"
+                          required
+                          value="11"
+                          placeholder="Amount (৳)"
+                          class="px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                        <button
+                          id="fin-annual-entry-submit"
+                          type="submit"
+                          class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+                        >
+                          <i
+                            data-lucide="check-circle-2"
+                            class="w-3.5 h-3.5"
+                          ></i>
+                          <span>Apply Entry</span>
+                        </button>
+                      </div>
+                      <label
+                        class="inline-flex items-center gap-2 text-[11px] font-semibold text-emerald-900 cursor-pointer"
+                      >
+                        <input
+                          id="fin-annual-entry-ledger"
+                          type="checkbox"
+                          class="w-3.5 h-3.5 accent-emerald-600"
+                        />
+                        <span
+                          >Also record this amount in Income Ledger (Cash /
+                          Manual Collection)</span
+                        >
+                      </label>
+                    </form>
 
                     <div
                       class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"
@@ -4882,10 +5256,13 @@
                           Open Updates &amp; Notice
                         </option>
                         <option value="meeting">Open Online Meeting</option>
-                        <option value="chat">Open Group Chat</option>
                         <option value="members">
                           Open Members &amp; Status
                         </option>
+                        <option value="events">Open Events</option>
+                        <option value="publication">Open Publication</option>
+                        <option value="payments">Open Monthly Fee</option>
+                        <option value="chat">Open Group Chat</option>
                       </select>
                     </div>
                     <textarea
@@ -5764,6 +6141,196 @@
                 <div id="admin-subadmins-list" class="space-y-3"></div>
               </div>
             </div>
+
+            <!-- GENERAL USER ACCESS PERMISSIONS SECTOR -->
+            <div
+              id="admin-pane-general_access"
+              class="admin-sector-pane hidden"
+            >
+              <div
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200/80"
+              >
+                <div
+                  class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-3"
+                >
+                  <div>
+                    <h3
+                      class="text-lg font-bold text-emerald-950 flex items-center gap-2"
+                    >
+                      <i
+                        data-lucide="sliders-horizontal"
+                        class="w-5 h-5 text-indigo-600"
+                      ></i>
+                      <span>General User Website Access</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                      Select which tabs and features users with the
+                      <strong>General User</strong> designation can access.
+                      Admins, Sub-Admins, and regular Members are unaffected.
+                    </p>
+                  </div>
+                  <span
+                    id="general-access-user-count"
+                    class="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200"
+                  >
+                    0 General Users
+                  </span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onclick="applyGeneralAccessPreset('all')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition"
+                  >
+                    Allow All
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyGeneralAccessPreset('public')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 transition"
+                  >
+                    Public Info Only (Dashboard, Updates, CSF, Events,
+                    Publication, Profile)
+                  </button>
+                  <button
+                    type="button"
+                    onclick="applyGeneralAccessPreset('minimal')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition"
+                  >
+                    Minimal (Dashboard, Events, Publication, Profile)
+                  </button>
+                </div>
+
+                <div class="space-y-2.5">
+                  <p
+                    class="text-xs font-extrabold uppercase tracking-wider text-slate-600"
+                  >
+                    Allowed Website Tabs for General Users
+                  </p>
+                  <div
+                    id="general-access-tabs-grid"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"
+                  ></div>
+                </div>
+
+                <div class="space-y-2.5 pt-2 border-t border-emerald-100">
+                  <p
+                    class="text-xs font-extrabold uppercase tracking-wider text-slate-600"
+                  >
+                    Feature Permissions for General Users
+                  </p>
+                  <div
+                    id="general-access-features-grid"
+                    class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"
+                  ></div>
+                </div>
+
+                <div class="space-y-1.5 pt-2 border-t border-emerald-100">
+                  <label
+                    for="general-access-msg"
+                    class="block text-xs font-bold text-slate-600"
+                    >Restriction Notice Message</label
+                  >
+                  <input
+                    id="general-access-msg"
+                    type="text"
+                    placeholder="This section is restricted for General Users by Admin."
+                    class="w-full px-3.5 py-2.5 bg-white/85 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+
+                <div class="flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    id="general-access-save-btn"
+                    onclick="saveGeneralUserAccess()"
+                    class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm transition"
+                  >
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save General User Access</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- EVENTS MANAGER SECTOR -->
+            <div id="admin-pane-events" class="admin-sector-pane hidden">
+              <div
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200/80"
+              >
+                <div
+                  class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-3"
+                >
+                  <div>
+                    <h3
+                      class="text-lg font-bold text-emerald-950 flex items-center gap-2"
+                    >
+                      <i
+                        data-lucide="calendar-days"
+                        class="w-5 h-5 text-violet-600"
+                      ></i>
+                      <span>Events Manager</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                      Create, edit, or delete organization events shown in the
+                      Events tab.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onclick="openEventEditorModal()"
+                    class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-sm"
+                  >
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>+ New Event</span>
+                  </button>
+                </div>
+                <div
+                  id="admin-events-list"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-3"
+                ></div>
+              </div>
+            </div>
+
+            <!-- PUBLICATION MANAGER SECTOR -->
+            <div id="admin-pane-publication" class="admin-sector-pane hidden">
+              <div
+                class="glass p-4 sm:p-6 rounded-2xl space-y-5 border border-emerald-200/80"
+              >
+                <div
+                  class="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 pb-3"
+                >
+                  <div>
+                    <h3
+                      class="text-lg font-bold text-emerald-950 flex items-center gap-2"
+                    >
+                      <i
+                        data-lucide="book-open-text"
+                        class="w-5 h-5 text-rose-600"
+                      ></i>
+                      <span>Publication Manager</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                      Publish books, articles, magazines, journals &amp; reports
+                      in the Publication tab.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onclick="openPublicationEditorModal()"
+                    class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-sm"
+                  >
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>+ New Publication</span>
+                  </button>
+                </div>
+                <div
+                  id="admin-publications-list"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-3"
+                ></div>
+              </div>
+            </div>
           </div>
         </section>
       </main>
@@ -6327,6 +6894,275 @@
       </div>
     </div>
 
+    <!-- ================= EVENT EDITOR MODAL ================= -->
+    <div
+      id="event-editor-modal"
+      class="hidden fixed inset-0 z-[72] bg-emerald-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+      onclick="if (event.target === this) closeEventEditorModal();"
+    >
+      <div
+        class="bg-white border border-emerald-200 rounded-3xl shadow-2xl max-w-xl w-full p-5 sm:p-6 space-y-4 my-auto"
+      >
+        <div
+          class="flex items-center justify-between gap-2 border-b border-emerald-100 pb-3"
+        >
+          <h3
+            id="event-editor-title"
+            class="text-base sm:text-lg font-extrabold text-emerald-950 flex items-center gap-2"
+          >
+            <i data-lucide="calendar-plus" class="w-5 h-5 text-violet-600"></i>
+            <span>Add New Event</span>
+          </h3>
+          <button
+            type="button"
+            onclick="closeEventEditorModal()"
+            class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <form
+          id="event-editor-form"
+          onsubmit="saveEventForm(event)"
+          class="space-y-3"
+        >
+          <input type="hidden" id="ev-edit-id" value="" />
+          <input
+            type="text"
+            id="ev-title"
+            required
+            placeholder="Event Title *"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <select
+              id="ev-category"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="Mahfil / Gathering">Mahfil / Gathering</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Charity / Relief">Charity / Relief</option>
+              <option value="Training / Workshop">Training / Workshop</option>
+              <option value="Special Day">Special Day</option>
+              <option value="Other">Other</option>
+            </select>
+            <input
+              type="date"
+              id="ev-date"
+              required
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            <input
+              type="text"
+              id="ev-time"
+              placeholder="Time (e.g. 8:00 PM)"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+          <input
+            type="text"
+            id="ev-location"
+            placeholder="Venue / Location or Online Link"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <input
+            type="url"
+            id="ev-image"
+            placeholder="Cover Image URL (Optional)"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <textarea
+            id="ev-description"
+            rows="4"
+            required
+            placeholder="Event details, schedule &amp; instructions *"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          ></textarea>
+          <label
+            class="flex items-center gap-2 text-xs font-semibold text-emerald-900 cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              id="ev-notify"
+              checked
+              class="w-4 h-4 accent-emerald-600"
+            />
+            <span>Send in-app notification to members</span>
+          </label>
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onclick="closeEventEditorModal()"
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="ev-save-btn"
+              class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow transition"
+            >
+              Save Event
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= EVENT DETAIL MODAL ================= -->
+    <div
+      id="event-detail-modal"
+      class="hidden fixed inset-0 z-[72] bg-emerald-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+      onclick="if (event.target === this) closeEventDetailModal();"
+    >
+      <div
+        class="bg-white border border-emerald-200 rounded-3xl shadow-2xl max-w-xl w-full overflow-hidden my-auto"
+      >
+        <div id="event-detail-body"></div>
+      </div>
+    </div>
+
+    <!-- ================= PUBLICATION EDITOR MODAL ================= -->
+    <div
+      id="publication-editor-modal"
+      class="hidden fixed inset-0 z-[72] bg-emerald-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+      onclick="if (event.target === this) closePublicationEditorModal();"
+    >
+      <div
+        class="bg-white border border-emerald-200 rounded-3xl shadow-2xl max-w-xl w-full p-5 sm:p-6 space-y-4 my-auto"
+      >
+        <div
+          class="flex items-center justify-between gap-2 border-b border-emerald-100 pb-3"
+        >
+          <h3
+            id="pub-editor-title"
+            class="text-base sm:text-lg font-extrabold text-emerald-950 flex items-center gap-2"
+          >
+            <i data-lucide="book-plus" class="w-5 h-5 text-rose-600"></i>
+            <span>Add New Publication</span>
+          </h3>
+          <button
+            type="button"
+            onclick="closePublicationEditorModal()"
+            class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <form
+          id="pub-editor-form"
+          onsubmit="savePublicationForm(event)"
+          class="space-y-3"
+        >
+          <input type="hidden" id="pub-edit-id" value="" />
+          <input
+            type="text"
+            id="pub-title"
+            required
+            placeholder="Publication Title *"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <select
+              id="pub-category"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="Article">Article</option>
+              <option value="Magazine">Magazine</option>
+              <option value="Book">Book</option>
+              <option value="Journal">Journal</option>
+              <option value="Newsletter">Newsletter</option>
+              <option value="Report">Report</option>
+            </select>
+            <input
+              type="text"
+              id="pub-author"
+              placeholder="Author / Editor"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            <input
+              type="text"
+              id="pub-issue"
+              placeholder="Issue / Edition (e.g. Vol 2)"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <input
+              type="date"
+              id="pub-date"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            <input
+              type="url"
+              id="pub-cover"
+              placeholder="Cover Image URL (Optional)"
+              class="px-3 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+          <input
+            type="url"
+            id="pub-file-url"
+            placeholder="PDF / Google Drive / Document Link (Optional)"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <textarea
+            id="pub-summary"
+            rows="2"
+            required
+            placeholder="Short summary / abstract *"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          ></textarea>
+          <textarea
+            id="pub-content"
+            rows="5"
+            placeholder="Full article / publication text (Optional if linking PDF)"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+          ></textarea>
+          <label
+            class="flex items-center gap-2 text-xs font-semibold text-emerald-900 cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              id="pub-notify"
+              checked
+              class="w-4 h-4 accent-emerald-600"
+            />
+            <span>Send in-app notification to members</span>
+          </label>
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onclick="closePublicationEditorModal()"
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="pub-save-btn"
+              class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow transition"
+            >
+              Save Publication
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= PUBLICATION READER MODAL ================= -->
+    <div
+      id="publication-reader-modal"
+      class="hidden fixed inset-0 z-[72] bg-emerald-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+      onclick="if (event.target === this) closePublicationReaderModal();"
+    >
+      <div
+        class="bg-white border border-emerald-200 rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden my-auto"
+      >
+        <div id="publication-reader-body"></div>
+      </div>
+    </div>
+
     <!-- ================= FIREBASE & APP LOGIC ================= -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -6401,6 +7237,42 @@
       let allMessages = [];
       let allAttendance = [];
       let allNotifications = [];
+      let allEvents = [];
+      let allPublications = [];
+      let eventStatusFilter = "all";
+      let pubCategoryFilter = "all";
+      let eventsUnsub = null;
+      let publicationsUnsub = null;
+      let generalAccessUnsub = null;
+      let eventsPermissionDenied = false;
+      let publicationsPermissionDenied = false;
+      let annualDirtyYear = null;
+      const DEFAULT_GENERAL_ACCESS = {
+        tabs: {
+          dashboard: true,
+          updates: true,
+          meeting: true,
+          members: true,
+          csf: true,
+          payments: true,
+          events: true,
+          publication: true,
+          profile: true,
+        },
+        features: {
+          viewMemberDetails: true,
+          useGroupChat: true,
+          submitFeedback: true,
+          rsvpEvents: true,
+        },
+        restrictedMessage:
+          "This section is restricted for General Users by Admin.",
+      };
+      let generalUserAccess = {
+        tabs: { ...DEFAULT_GENERAL_ACCESS.tabs },
+        features: { ...DEFAULT_GENERAL_ACCESS.features },
+        restrictedMessage: DEFAULT_GENERAL_ACCESS.restrictedMessage,
+      };
       let helpDeskSettings = {
         enabled: true,
         title: "CSF Help Desk (WhatsApp)",
@@ -6483,7 +7355,9 @@
         members: "Members & Status",
         csf: "CSF",
         payments: "Monthly Fee",
-        profile: "My profile",
+        events: "Events",
+        publication: "Publication",
+        profile: "My Profile",
         admin: "Admin Panel",
       };
 
@@ -6521,6 +7395,22 @@
           tx: "text-red-700",
         },
         {
+          id: "events",
+          title: "Events Manager",
+          subtitle: "Create, edit & manage upcoming events",
+          icon: "calendar-days",
+          bg: "bg-violet-100",
+          tx: "text-violet-700",
+        },
+        {
+          id: "publication",
+          title: "Publication Manager",
+          subtitle: "Articles, books, magazines & reports",
+          icon: "book-open-text",
+          bg: "bg-rose-100",
+          tx: "text-rose-700",
+        },
+        {
           id: "helpdesk",
           title: "CSF Help Desk",
           subtitle: "WhatsApp link, advice & complaints",
@@ -6537,6 +7427,14 @@
           tx: "text-amber-700",
         },
         {
+          id: "general_access",
+          title: "General User Access",
+          subtitle: "Control tabs & features for General Users",
+          icon: "sliders-horizontal",
+          bg: "bg-indigo-100",
+          tx: "text-indigo-700",
+        },
+        {
           id: "subadmins",
           title: "Sub-Admin Roles",
           subtitle: "Assign sub-admins per sector",
@@ -6549,16 +7447,21 @@
         registrations: "members",
         add_member: "members",
         payments: "finance",
+        annual: "finance",
+        annual_sheet: "finance",
         attendance: "live_meeting",
         notifications: "updates",
         dashboard_notice: "updates",
         feedback: "helpdesk",
+        publications: "publication",
       };
       function normalizeSectorId(id) {
         return SECTOR_ALIASES[id] || id;
       }
       const VALID_ADMIN_SECTOR_IDS = new Set(
-        ADMIN_SECTORS.map((s) => s.id).filter((id) => id !== "subadmins"),
+        ADMIN_SECTORS.map((s) => s.id).filter(
+          (id) => id !== "subadmins" && id !== "general_access",
+        ),
       );
 
       let activeAdminSector = null;
@@ -6595,8 +7498,50 @@
       function canEditSector(sectorId, profile = currentUserProfile) {
         if (isMainAdmin(profile)) return true;
         const norm = normalizeSectorId(sectorId);
-        if (!norm || norm === "subadmins") return false;
+        if (!norm || norm === "subadmins" || norm === "general_access")
+          return false;
         return getUserSubAdminSectors(profile).includes(norm);
+      }
+
+      function isGeneralUser(profile = currentUserProfile) {
+        if (!profile) return false;
+        if (
+          isMainAdmin(profile) ||
+          getUserSubAdminSectors(profile).length > 0
+        ) {
+          return false;
+        }
+        return getSelectableDesignation(profile) === "General User";
+      }
+
+      function canUseGeneralFeature(featKey, profile = currentUserProfile) {
+        if (!isGeneralUser(profile)) return true;
+        return generalUserAccess?.features?.[featKey] !== false;
+      }
+
+      function canAccessTab(tabName, profile = currentUserProfile) {
+        if (!tabNames[tabName]) return false;
+        if (tabName === "admin") return hasAdminPanelAccess(profile);
+        if (!isGeneralUser(profile)) return true;
+        if (tabName === "chat")
+          return canUseGeneralFeature("useGroupChat", profile);
+        const tabs = generalUserAccess?.tabs || DEFAULT_GENERAL_ACCESS.tabs;
+        return tabs[tabName] !== false;
+      }
+
+      function getGeneralAccessFirstAllowedTab(profile = currentUserProfile) {
+        const order = [
+          "dashboard",
+          "updates",
+          "meeting",
+          "members",
+          "csf",
+          "payments",
+          "events",
+          "publication",
+          "profile",
+        ];
+        return order.find((t) => canAccessTab(t, profile)) || null;
       }
 
       function requireSectorEdit(sectorId) {
@@ -6791,10 +7736,25 @@
         const platformBar = document.getElementById(
           "meeting-admin-platform-bar",
         );
+        const eventsAddBtn = document.getElementById("events-add-btn");
+        const pubAddBtn = document.getElementById("pub-add-btn");
+
+        if (eventsAddBtn) {
+          const canEv = canEditSector("events");
+          eventsAddBtn.classList.toggle("hidden", !canEv);
+          eventsAddBtn.classList.toggle("inline-flex", canEv);
+        }
+        if (pubAddBtn) {
+          const canPub = canEditSector("publication");
+          pubAddBtn.classList.toggle("hidden", !canPub);
+          pubAddBtn.classList.toggle("inline-flex", canPub);
+        }
 
         if (hasAccess) {
-          tabAdmin.classList.remove("hidden");
-          tabAdmin.classList.add("flex");
+          if (tabAdmin) {
+            tabAdmin.classList.remove("hidden");
+            tabAdmin.classList.add("flex");
+          }
           if (pdfBtn) {
             pdfBtn.classList.toggle("hidden", !hasAdminPanelAccess());
           }
@@ -6813,20 +7773,28 @@
           renderFinance();
           renderFeedbackSector();
           renderSubAdminsSector();
+          renderGeneralAccessAdmin();
+          renderAdminEventsList();
+          renderAdminPublicationsList();
           if (activeAdminSector) {
             applySectorReadOnlyState(activeAdminSector);
           } else {
             updateAdminHeaderUI();
           }
         } else {
-          tabAdmin.classList.add("hidden");
-          tabAdmin.classList.remove("flex");
+          if (tabAdmin) {
+            tabAdmin.classList.add("hidden");
+            tabAdmin.classList.remove("flex");
+          }
           if (pdfBtn) pdfBtn.classList.add("hidden");
           if (platformBar) platformBar.classList.add("hidden");
           if (activeTab === "admin") {
-            switchTab("updates");
+            switchTab(getGeneralAccessFirstAllowedTab() || "updates");
           }
         }
+        renderEvents();
+        renderPublications();
+        syncGeneralUserAccessUI();
         syncMeetingStageUI();
         renderHelpDeskUI();
         scheduleDashboard();
@@ -6946,10 +7914,15 @@
         ).length;
         const main = isMainAdmin();
 
+        const upcomingEventsCount = allEvents.filter(
+          (ev) => !isEventPast(ev),
+        ).length;
         const counts = {
           members: pendingRegCount,
           finance: pendingPayCount,
           helpdesk: newFeedbackCount,
+          events: upcomingEventsCount,
+          publication: allPublications.length,
         };
 
         grid.innerHTML = ADMIN_SECTORS.map((s) => {
@@ -7129,6 +8102,12 @@
         } else if (sectorId === "homepage") {
           fillHomeEditor();
           updateHomeEditorPreviews();
+        } else if (sectorId === "general_access") {
+          renderGeneralAccessAdmin();
+        } else if (sectorId === "events") {
+          renderAdminEventsList();
+        } else if (sectorId === "publication") {
+          renderAdminPublicationsList();
         } else if (sectorId === "subadmins") {
           renderSubAdminsSector();
         }
@@ -7321,7 +8300,10 @@
           if (banner) banner.classList.add("hidden");
           return;
         }
-        if (currentUserProfile.approved === false) {
+        if (
+          currentUserProfile.approved === false ||
+          (isGeneralUser() && !canAccessTab("payments"))
+        ) {
           banner.classList.add("hidden");
           return;
         }
@@ -7777,27 +8759,69 @@
       window.switchTab = (tabName, fromHistory = false) => {
         if (!tabNames[tabName]) return;
         if (tabName === "admin" && !hasAdminPanelAccess()) return;
+        if (!canAccessTab(tabName)) {
+          const fallback = getGeneralAccessFirstAllowedTab();
+          if (!fromHistory) {
+            showToast(
+              generalUserAccess.restrictedMessage ||
+                "This section is restricted for General Users by Admin.",
+              "warn",
+            );
+          }
+          if (fallback && fallback !== tabName) {
+            if (fromHistory) {
+              switchTab(fallback, true);
+            }
+            return;
+          }
+          activeTab = tabName;
+          Object.keys(tabNames).forEach((t) => {
+            document.getElementById(`section-${t}`)?.classList.add("hidden");
+            document
+              .getElementById(`tab-${t}`)
+              ?.classList.remove("menu-item-active");
+          });
+          const noAccCard = document.getElementById("general-no-access-card");
+          const noAccMsg = document.getElementById("general-no-access-msg");
+          if (noAccMsg) {
+            noAccMsg.textContent =
+              generalUserAccess.restrictedMessage ||
+              DEFAULT_GENERAL_ACCESS.restrictedMessage;
+          }
+          noAccCard?.classList.remove("hidden");
+          closeNavMenu();
+          lucide.createIcons();
+          return;
+        }
+
+        document
+          .getElementById("general-no-access-card")
+          ?.classList.add("hidden");
         activeTab = tabName;
         Object.keys(tabNames).forEach((t) => {
           const sec = document.getElementById(`section-${t}`);
-          sec.classList.add("hidden");
-          sec.classList.remove("section-enter");
+          if (sec) {
+            sec.classList.add("hidden");
+            sec.classList.remove("section-enter");
+          }
           document
             .getElementById(`tab-${t}`)
-            .classList.remove("menu-item-active");
+            ?.classList.remove("menu-item-active");
         });
         const targetSec = document.getElementById(`section-${tabName}`);
-        targetSec.classList.remove("hidden");
-        void targetSec.offsetWidth;
-        targetSec.classList.add("section-enter");
+        if (targetSec) {
+          targetSec.classList.remove("hidden");
+          void targetSec.offsetWidth;
+          targetSec.classList.add("section-enter");
+        }
         document
           .getElementById(`tab-${tabName}`)
-          .classList.add("menu-item-active");
-        document.getElementById("current-page-label").innerText =
-          tabNames[tabName];
+          ?.classList.add("menu-item-active");
+        const pageLbl = document.getElementById("current-page-label");
+        if (pageLbl) pageLbl.innerText = tabNames[tabName];
 
         if (tabName === "chat") {
-          document.getElementById("chat-unread-badge").classList.add("hidden");
+          document.getElementById("chat-unread-badge")?.classList.add("hidden");
           updateHamburgerDot();
           scrollToChatBottom();
         }
@@ -7813,6 +8837,12 @@
         if (tabName === "payments") {
           renderPaymentInfo();
           renderMemberPayments();
+        }
+        if (tabName === "events") {
+          renderEvents();
+        }
+        if (tabName === "publication") {
+          renderPublications();
         }
         if (tabName === "admin") {
           if (!fromHistory) {
@@ -7846,11 +8876,7 @@
       window.navBack = () => {
         if (navIndex <= 0) return;
         let nextIdx = navIndex - 1;
-        while (
-          nextIdx >= 0 &&
-          navStack[nextIdx] === "admin" &&
-          !hasAdminPanelAccess()
-        ) {
+        while (nextIdx >= 0 && !canAccessTab(navStack[nextIdx])) {
           nextIdx--;
         }
         if (nextIdx < 0) return;
@@ -7865,11 +8891,7 @@
       window.navForward = () => {
         if (navIndex >= navStack.length - 1) return;
         let nextIdx = navIndex + 1;
-        while (
-          nextIdx < navStack.length &&
-          navStack[nextIdx] === "admin" &&
-          !hasAdminPanelAccess()
-        ) {
+        while (nextIdx < navStack.length && !canAccessTab(navStack[nextIdx])) {
           nextIdx++;
         }
         if (nextIdx >= navStack.length) return;
@@ -7889,7 +8911,7 @@
         const i = e.state && typeof e.state.i === "number" ? e.state.i : 0;
         const tab = navStack[i];
         if (!tab) return;
-        if (tab === "admin" && !hasAdminPanelAccess()) {
+        if (!canAccessTab(tab)) {
           return;
         }
         navIndex = i;
@@ -7897,13 +8919,16 @@
       });
 
       function updateHamburgerDot() {
-        const hasUnreadChat = !document
-          .getElementById("chat-unread-badge")
-          .classList.contains("hidden");
-        const hasPendingAdmin = !document
-          .getElementById("admin-pending-badge")
-          .classList.contains("hidden");
+        const chatBadge = document.getElementById("chat-unread-badge");
+        const adminBadge = document.getElementById("admin-pending-badge");
+        const hasUnreadChat = chatBadge
+          ? !chatBadge.classList.contains("hidden")
+          : false;
+        const hasPendingAdmin = adminBadge
+          ? !adminBadge.classList.contains("hidden")
+          : false;
         const dot = document.getElementById("hamburger-dot");
+        if (!dot) return;
         if (hasUnreadChat || hasPendingAdmin) dot.classList.remove("hidden");
         else dot.classList.add("hidden");
       }
@@ -8225,6 +9250,24 @@
           } catch (_) {}
           pendingApprovalUnsub = null;
         }
+        if (generalAccessUnsub) {
+          try {
+            generalAccessUnsub();
+          } catch (_) {}
+          generalAccessUnsub = null;
+        }
+        if (eventsUnsub) {
+          try {
+            eventsUnsub();
+          } catch (_) {}
+          eventsUnsub = null;
+        }
+        if (publicationsUnsub) {
+          try {
+            publicationsUnsub();
+          } catch (_) {}
+          publicationsUnsub = null;
+        }
         activeAdminSector = null;
         emailSettings = {
           enabled: true,
@@ -8240,6 +9283,7 @@
         allPayments = [];
         allFinance = [];
         annualSheets = {};
+        annualDirtyYear = null;
         publicAnnualFund = { activeYear: new Date().getFullYear(), years: {} };
         activeAnnualYear = new Date().getFullYear();
         allMembers = [];
@@ -8247,9 +9291,18 @@
         allMessages = [];
         allAttendance = [];
         allNotifications = [];
+        allEvents = [];
+        allPublications = [];
+        generalUserAccess = {
+          tabs: { ...DEFAULT_GENERAL_ACCESS.tabs },
+          features: { ...DEFAULT_GENERAL_ACCESS.features },
+          restrictedMessage: DEFAULT_GENERAL_ACCESS.restrictedMessage,
+        };
         financeErrorShown = false;
         feedbackErrorShown = false;
         feedbackPermissionDenied = false;
+        eventsPermissionDenied = false;
+        publicationsPermissionDenied = false;
       }
 
       const doLogout = async () => {
@@ -8501,6 +9554,9 @@
         listenFeedback();
         listenLiveTitle();
         listenEmailSettings();
+        listenGeneralAccess();
+        listenEvents();
+        listenPublications();
         appDataUnsubs.push(
           onSnapshot(doc(db, "deletedIds", currentUser.uid), (snap) => {
             if (snap.exists()) {
@@ -8514,10 +9570,12 @@
           onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
             if (snap.exists()) {
               const prevRole = currentUserProfile?.role;
+              const prevDesig = getSelectableDesignation(currentUserProfile);
               const prevSectors = JSON.stringify(
                 getUserSubAdminSectors(currentUserProfile),
               );
               currentUserProfile = snap.data();
+              const nextDesig = getSelectableDesignation(currentUserProfile);
               const nextSectors = JSON.stringify(
                 getUserSubAdminSectors(currentUserProfile),
               );
@@ -8529,12 +9587,13 @@
               }
               const desigInput = document.getElementById("prof-designation");
               if (desigInput) {
-                desigInput.value = getSelectableDesignation(currentUserProfile);
+                desigInput.value = nextDesig;
               }
               renderGlobalFeeReminderBanner();
               if (
                 prevRole !== currentUserProfile.role ||
-                prevSectors !== nextSectors
+                prevSectors !== nextSectors ||
+                prevDesig !== nextDesig
               ) {
                 listenFinance();
                 listenFeedback();
@@ -8544,6 +9603,8 @@
                 renderNotifications();
                 renderUpdates();
                 renderChatMessages();
+              } else {
+                syncGeneralUserAccessUI();
               }
               if (currentUserProfile.disabled) {
                 showToast(
@@ -8571,6 +9632,7 @@
             renderPendingApprovals();
             renderAdminMembersList();
             renderSubAdminsSector();
+            renderGeneralAccessAdmin();
             renderAdminSectorsGrid();
             updateEmailRecipientStats();
             renderMeetingAttendanceSheet();
@@ -8615,9 +9677,11 @@
               if (last && last.uid !== currentUser.uid) {
                 document
                   .getElementById("chat-unread-badge")
-                  .classList.remove("hidden");
+                  ?.classList.remove("hidden");
                 updateHamburgerDot();
-                showToast(`${last.name}: ${last.text.slice(0, 45)}`);
+                if (canUseGeneralFeature("useGroupChat")) {
+                  showToast(`${last.name}: ${last.text.slice(0, 45)}`);
+                }
                 playNotificationChime();
                 showBrowserNotification(
                   `Group Chat • ${last.name}`,
@@ -8791,6 +9855,13 @@
         .getElementById("chat-form")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
+          if (!canUseGeneralFeature("useGroupChat")) {
+            showToast(
+              "Group Chat is currently disabled for General Users by Admin.",
+              "warn",
+            );
+            return;
+          }
           const input = document.getElementById("chat-input");
           const text = input.value.trim();
           if (!text || !currentUserProfile) return;
@@ -9787,6 +10858,18 @@
       };
 
       window.openMemberModal = (uid) => {
+        if (
+          isGeneralUser() &&
+          uid !== currentUser?.uid &&
+          !canUseGeneralFeature("viewMemberDetails")
+        ) {
+          showToast(
+            generalUserAccess.restrictedMessage ||
+              "Viewing detailed member profiles is disabled for General Users by Admin.",
+            "warn",
+          );
+          return;
+        }
         const m = allMembers.find((x) => x.id === uid);
         if (!m) return;
 
@@ -9988,7 +11071,7 @@
               modalSubWrap.classList.toggle("hidden", !showSectors);
               if (showSectors) {
                 modalSubList.innerHTML = ADMIN_SECTORS.filter(
-                  (s) => s.id !== "subadmins",
+                  (s) => s.id !== "subadmins" && s.id !== "general_access",
                 )
                   .map((s) => {
                     const active = assigned.includes(s.id);
@@ -11300,10 +12383,26 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                     }
                   }
                 });
+                if (
+                  annualDirtyYear &&
+                  annualSheets[annualDirtyYear] &&
+                  (annualSaveTimer || annualSheets[annualDirtyYear]._draft)
+                ) {
+                  nextAnnual[annualDirtyYear] = annualSheets[annualDirtyYear];
+                }
+                Object.keys(annualSheets).forEach((k) => {
+                  const yrNum = Number(k);
+                  if (annualSheets[yrNum]?._draft && !nextAnnual[yrNum]) {
+                    nextAnnual[yrNum] = annualSheets[yrNum];
+                  }
+                });
                 annualSheets = nextAnnual;
                 if (canEditSector("finance")) {
                   Object.values(nextAnnual).forEach((s) => {
-                    if (!publicAnnualFund?.years?.[String(s.year)]) {
+                    if (
+                      !s._draft &&
+                      !publicAnnualFund?.years?.[String(s.year)]
+                    ) {
                       mirrorAnnualSheetForMembers(s);
                     }
                   });
@@ -11462,7 +12561,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               allPayments.filter((p) => p.uid === currentUser.uid),
             );
             base = st.months.map((m) =>
-              Math.min(fixed, m.effectivePaid + (m.hasPending ? m.pendingAmt : 0)),
+              Math.min(
+                fixed,
+                m.effectivePaid + (m.hasPending ? m.pendingAmt : 0),
+              ),
             );
           }
         } catch (_) {}
@@ -11633,7 +12735,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         );
 
         const sheetRaw = normalizeAnnualMonths(matchedRow?.months);
-        const sheetExtra = Math.max(0, Math.round(Number(matchedRow?.extra) || 0));
+        const sheetExtra = Math.max(
+          0,
+          Math.round(Number(matchedRow?.extra) || 0),
+        );
         const labelConfirmed = Array(12).fill(0); // confirmed payments without an allocation record (legacy)
         const allocConfirmed = Array(12).fill(0); // confirmed token payments allocated on confirmation
         let allocExtra = 0;
@@ -11666,7 +12771,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             labelConfirmed[mIdx] += amt;
           } else if (isPaymentPending(p)) {
             if (isTokenDonationPayment(p)) {
-              if (resolveAllocationYear(p) === targetYear) pendingTokens.push(p);
+              if (resolveAllocationYear(p) === targetYear)
+                pendingTokens.push(p);
               return;
             }
             const mIdx = parseAnnualMonthIndexForYear(
@@ -11694,7 +12800,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         pendingTokens
           .sort((a, b) => tsToDate(a.createdAt) - tsToDate(b.createdAt))
           .forEach((p) => {
-            const r = allocateDonationToMonths(p.amount, runningMonths, monthlyFee);
+            const r = allocateDonationToMonths(
+              p.amount,
+              runningMonths,
+              monthlyFee,
+            );
             for (let i = 0; i < 12; i++) pendingMonths[i] += r.allocation[i];
             runningMonths = r.months;
             pendingExtra += r.extra;
@@ -13647,9 +14757,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
       function resolveAllocationYear(p) {
         const m = String(p?.month || "").match(/\b(20\d{2})\b/);
         if (m) return Number(m[1]);
-        return (
-          Number(publicAnnualFund?.activeYear) || new Date().getFullYear()
-        );
+        return Number(publicAnnualFund?.activeYear) || new Date().getFullYear();
       }
 
       function annualRowMatches(r, uid, csfId, name) {
@@ -13686,7 +14794,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           const yr = resolveAllocationYear(p);
           const sheet = getOrCreateAnnualSheet(yr);
           if (sheet.status === "closed") return null;
-          const fee = Number(sheet.monthlyFee) > 0 ? Number(sheet.monthlyFee) : 11;
+          const fee =
+            Number(sheet.monthlyFee) > 0 ? Number(sheet.monthlyFee) : 11;
           const uid = p.uid || "";
           const csfId = (p.csfId || "").trim();
           const name = (p.name || "Member").trim();
@@ -13736,7 +14845,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         }
       }
 
-      async function reverseTokenDonationAllocation(p, allocation = p?.allocation) {
+      async function reverseTokenDonationAllocation(
+        p,
+        allocation = p?.allocation,
+      ) {
         try {
           if (!allocation?.applied) return true;
           const sheet = getOrCreateAnnualSheet(Number(allocation.year));
@@ -13900,7 +15012,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
       }
 
       async function saveAnnualSheetToCloud(sheet, extraFields = {}) {
-        if (!canEditSector("finance")) return;
+        if (!canEditSector("finance")) return false;
         const yr = Number(sheet.year);
         setAnnualSaveStatus("Saving to cloud...", true);
         try {
@@ -13925,6 +15037,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             },
             { merge: true },
           );
+          delete sheet._draft;
+          if (annualDirtyYear === yr) annualDirtyYear = null;
           await mirrorAnnualSheetForMembers(sheet);
           setAnnualSaveStatus("Saved to Cloud ✓", false);
           return true;
@@ -13937,8 +15051,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
       function scheduleAnnualSheetSave(sheet) {
         clearTimeout(annualSaveTimer);
+        annualDirtyYear = Number(sheet.year);
         setAnnualSaveStatus("Unsaved changes...", true);
         annualSaveTimer = setTimeout(() => {
+          annualSaveTimer = null;
           saveAnnualSheetToCloud(sheet);
         }, 450);
       }
@@ -13967,6 +15083,52 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             return `<option value="${y}" ${y === activeAnnualYear ? "selected" : ""}>Year ${y} (${st})</option>`;
           })
           .join("");
+      }
+
+      function populateAnnualManualEntryMembers(sheet) {
+        const sel = document.getElementById("fin-annual-entry-member");
+        if (!sel || !sheet) return;
+        const prevVal = sel.value;
+        const opts = ['<option value="">Select Member...</option>'];
+        const existingUids = new Set();
+        const existingNames = new Set();
+        sheet.members.forEach((m, idx) => {
+          if (m.uid) existingUids.add(m.uid);
+          if (m.id) existingUids.add(m.id);
+          if (m.name) existingNames.add(m.name.trim().toLowerCase());
+          opts.push(
+            `<option value="row:${idx}">${escapeHtml(m.name || "Member")}${m.csfId ? ` (${escapeHtml(m.csfId)})` : ""}</option>`,
+          );
+        });
+        const extraPortal = allMembers
+          .filter(
+            (pm) =>
+              pm.approved !== false &&
+              (pm.name || "").trim() &&
+              !existingUids.has(pm.id) &&
+              !(pm.uid && existingUids.has(pm.uid)) &&
+              !existingNames.has(pm.name.trim().toLowerCase()),
+          )
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || "")),
+          );
+        if (extraPortal.length) {
+          opts.push(
+            `<optgroup label="Portal Members (Not in ${sheet.year} sheet yet)">${extraPortal
+              .map(
+                (pm) =>
+                  `<option value="portal:${pm.id}">+ ${escapeHtml(pm.name)}${pm.csfId ? ` (${escapeHtml(pm.csfId)})` : ""}</option>`,
+              )
+              .join("")}</optgroup>`,
+          );
+        }
+        sel.innerHTML = opts.join("");
+        if (
+          prevVal &&
+          Array.from(sel.options).some((o) => o.value === prevVal)
+        ) {
+          sel.value = prevVal;
+        }
       }
 
       function updateAnnualSummaryCardsAndFooter(sheet) {
@@ -14082,6 +15244,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               })
               .join("");
 
+            const directExtra = Math.max(0, Math.round(Number(m.extra) || 0));
+            const overflowExtra = Math.max(0, rowStat.rowExtra - directExtra);
+
             return `
               <tr data-annual-row="${idx}">
                 <td class="annual-member-col">
@@ -14089,7 +15254,26 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                   ${m.csfId ? `<div class="text-[10px] font-semibold text-emerald-700">${escapeHtml(m.csfId)}</div>` : ""}
                 </td>
                 ${monthsHtml}
-                <td id="fin-annual-row-extra-${idx}" class="font-bold text-amber-700">৳${rowStat.rowExtra.toLocaleString("en-US")}</td>
+                <td id="fin-annual-row-extra-${idx}" class="font-bold text-amber-700">
+                  ${
+                    editable
+                      ? `<div class="flex flex-col items-center gap-0.5">
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="0"
+                            value="${directExtra > 0 ? directExtra : ""}"
+                            oninput="onAnnualExtraInput(${idx}, this)"
+                            onblur="flushAnnualCellSave()"
+                            title="Direct Extra Donation (৳)"
+                            class="annual-extra-input"
+                          />
+                          <span id="fin-annual-row-extra-note-${idx}" class="text-[10px] font-semibold text-amber-700 ${overflowExtra > 0 ? "" : "hidden"}">+৳${overflowExtra} (=৳${rowStat.rowExtra})</span>
+                        </div>`
+                      : `৳${rowStat.rowExtra.toLocaleString("en-US")}`
+                  }
+                </td>
                 <td id="fin-annual-row-total-${idx}" class="font-extrabold text-emerald-800">৳${rowStat.rowTotal.toLocaleString("en-US")}</td>
                 ${
                   editable
@@ -14124,12 +15308,17 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
       window.renderAnnualSheet = () => {
         const activeEl = document.activeElement;
-        if (
+        const manualBox = document.getElementById(
+          "fin-annual-manual-entry-box",
+        );
+        const isEditingSheet =
           activeEl &&
-          activeEl.classList &&
-          activeEl.classList.contains("annual-month-input") &&
-          financeSubTab === "annual"
-        ) {
+          financeSubTab === "annual" &&
+          ((activeEl.classList &&
+            (activeEl.classList.contains("annual-month-input") ||
+              activeEl.classList.contains("annual-extra-input"))) ||
+            (manualBox && manualBox.contains(activeEl)));
+        if (isEditingSheet) {
           populateAnnualYearSelector();
           return;
         }
@@ -14140,6 +15329,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const editable = !isClosed && canEdit;
 
         populateAnnualYearSelector();
+        populateAnnualManualEntryMembers(sheet);
 
         const badge = document.getElementById("fin-annual-status-badge");
         if (badge) {
@@ -14191,6 +15381,13 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           "fin-annual-add-btn",
           "fin-annual-sync-members-btn",
           "fin-annual-sync-pay-btn",
+          "fin-annual-save-btn",
+          "fin-annual-entry-member",
+          "fin-annual-entry-target",
+          "fin-annual-entry-mode",
+          "fin-annual-entry-amount",
+          "fin-annual-entry-ledger",
+          "fin-annual-entry-submit",
         ].forEach((id) => {
           const el = document.getElementById(id);
           if (el) {
@@ -14211,6 +15408,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         let val = Math.floor(Number(inputEl.value));
         if (!Number.isFinite(val) || val < 0) val = 0;
         member.months[monthIdx] = val;
+        annualDirtyYear = Number(sheet.year);
 
         const fixed = Number(sheet.monthlyFee) || 11;
         inputEl.classList.remove(
@@ -14221,21 +15419,31 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const cls = annualInputColorClass(val, fixed);
         if (cls) inputEl.classList.add(cls);
 
-        let rowExtra = Math.max(0, Math.round(Number(member.extra) || 0));
-        let rowTotal = rowExtra;
+        const directExtra = Math.max(0, Math.round(Number(member.extra) || 0));
+        let overflowExtra = 0;
+        let rowTotal = directExtra;
         member.months.forEach((v) => {
           rowTotal += v;
-          if (v > fixed) rowExtra += v - fixed;
+          if (v > fixed) overflowExtra += v - fixed;
         });
+        const rowExtra = directExtra + overflowExtra;
 
         const extraEl = document.getElementById(
           `fin-annual-row-extra-${memberIdx}`,
         );
+        const extraNoteEl = document.getElementById(
+          `fin-annual-row-extra-note-${memberIdx}`,
+        );
+        if (extraNoteEl) {
+          extraNoteEl.textContent = `+৳${overflowExtra} (=৳${rowExtra})`;
+          extraNoteEl.classList.toggle("hidden", !(overflowExtra > 0));
+        } else if (extraEl && !extraEl.querySelector("input")) {
+          extraEl.textContent = `৳${rowExtra.toLocaleString("en-US")}`;
+        }
+
         const totalEl = document.getElementById(
           `fin-annual-row-total-${memberIdx}`,
         );
-        if (extraEl)
-          extraEl.textContent = `৳${rowExtra.toLocaleString("en-US")}`;
         if (totalEl)
           totalEl.textContent = `৳${rowTotal.toLocaleString("en-US")}`;
 
@@ -14243,12 +15451,193 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         scheduleAnnualSheetSave(sheet);
       };
 
-      window.flushAnnualCellSave = () => {
+      window.onAnnualExtraInput = (memberIdx, inputEl) => {
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed" || !canEditSector("finance")) return;
+        const member = sheet.members[memberIdx];
+        if (!member) return;
+
+        let val = Math.floor(Number(inputEl.value));
+        if (!Number.isFinite(val) || val < 0) val = 0;
+        member.extra = val;
+        annualDirtyYear = Number(sheet.year);
+
+        const fixed = Number(sheet.monthlyFee) || 11;
+        let overflowExtra = 0;
+        let rowTotal = val;
+        member.months.forEach((v) => {
+          rowTotal += v;
+          if (v > fixed) overflowExtra += v - fixed;
+        });
+        const rowExtra = val + overflowExtra;
+
+        const extraNoteEl = document.getElementById(
+          `fin-annual-row-extra-note-${memberIdx}`,
+        );
+        if (extraNoteEl) {
+          extraNoteEl.textContent = `+৳${overflowExtra} (=৳${rowExtra})`;
+          extraNoteEl.classList.toggle("hidden", !(overflowExtra > 0));
+        }
+        const totalEl = document.getElementById(
+          `fin-annual-row-total-${memberIdx}`,
+        );
+        if (totalEl)
+          totalEl.textContent = `৳${rowTotal.toLocaleString("en-US")}`;
+
+        updateAnnualSummaryCardsAndFooter(sheet);
+        scheduleAnnualSheetSave(sheet);
+      };
+
+      window.flushAnnualCellSave = async (manualTrigger = false) => {
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        const hasPending = Boolean(
+          annualSaveTimer ||
+          annualDirtyYear === Number(sheet.year) ||
+          sheet._draft,
+        );
         if (annualSaveTimer) {
           clearTimeout(annualSaveTimer);
           annualSaveTimer = null;
-          const sheet = getOrCreateAnnualSheet(activeAnnualYear);
-          if (sheet.status !== "closed") saveAnnualSheetToCloud(sheet);
+        }
+        if (!canEditSector("finance")) return;
+        if (sheet.status === "closed") {
+          if (manualTrigger) {
+            showToast("This year is closed & locked.", "warn");
+          }
+          return;
+        }
+        if (manualTrigger || hasPending) {
+          const ok = await saveAnnualSheetToCloud(sheet);
+          if (manualTrigger && ok) {
+            showToast(`Annual Sheet (${sheet.year}) saved to cloud!`);
+          }
+        }
+      };
+
+      window.submitAnnualManualEntry = async (e) => {
+        e.preventDefault();
+        if (!requireSectorEdit("finance")) return;
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        if (sheet.status === "closed") {
+          return showToast(
+            `Year ${sheet.year} is closed. Switch to an active year or reopen it first.`,
+            "warn",
+          );
+        }
+
+        const memberVal =
+          document.getElementById("fin-annual-entry-member")?.value || "";
+        const targetVal =
+          document.getElementById("fin-annual-entry-target")?.value || "0";
+        const modeVal =
+          document.getElementById("fin-annual-entry-mode")?.value || "set";
+        const amtRaw = Number(
+          document.getElementById("fin-annual-entry-amount")?.value,
+        );
+        const recordLedger = Boolean(
+          document.getElementById("fin-annual-entry-ledger")?.checked,
+        );
+
+        if (!memberVal) {
+          return showToast("Please select a member.", "error");
+        }
+        if (!Number.isFinite(amtRaw) || amtRaw < 0) {
+          return showToast("Enter a valid non-negative amount.", "error");
+        }
+        const amt = Math.round(amtRaw);
+        const fixed = Number(sheet.monthlyFee) || 11;
+
+        let row = null;
+        if (memberVal.startsWith("row:")) {
+          const idx = Number(memberVal.slice(4));
+          row = sheet.members[idx];
+        } else if (memberVal.startsWith("portal:")) {
+          const uid = memberVal.slice(7);
+          const pm = allMembers.find((x) => x.id === uid);
+          if (pm) {
+            row = sheet.members.find((r) =>
+              annualRowMatches(r, pm.id, pm.csfId, pm.name),
+            );
+            if (!row) {
+              row = {
+                id: pm.uid || pm.id,
+                uid: pm.uid || pm.id,
+                csfId: (pm.csfId || "").trim(),
+                name: (pm.name || "Member").trim(),
+                months: Array(12).fill(0),
+                extra: 0,
+              };
+              sheet.members.push(row);
+            }
+          }
+        }
+        if (!row) {
+          return showToast("Selected member could not be found.", "error");
+        }
+
+        let targetLabel = "";
+        if (targetVal === "extra") {
+          const curExtra = Math.max(0, Math.round(Number(row.extra) || 0));
+          row.extra = modeVal === "add" ? curExtra + amt : amt;
+          targetLabel = "Extra Donation";
+        } else if (targetVal === "auto") {
+          if (modeVal === "set") {
+            const alloc = allocateDonationToMonths(
+              amt,
+              Array(12).fill(0),
+              fixed,
+            );
+            row.months = alloc.months;
+            row.extra = alloc.extra;
+          } else {
+            const norm = normalizeMonthsAndExtra(row.months, row.extra, fixed);
+            const alloc = allocateDonationToMonths(amt, norm.months, fixed);
+            row.months = alloc.months;
+            row.extra = norm.extra + alloc.extra;
+          }
+          targetLabel = "Auto-Allocated Months";
+        } else {
+          const mIdx = Number(targetVal);
+          if (!(mIdx >= 0 && mIdx <= 11)) {
+            return showToast("Invalid month target.", "error");
+          }
+          const curVal = Math.max(0, Math.round(Number(row.months[mIdx]) || 0));
+          row.months[mIdx] = modeVal === "add" ? curVal + amt : amt;
+          targetLabel = FULL_MONTH_NAMES[mIdx];
+        }
+
+        annualDirtyYear = Number(sheet.year);
+        if (recordLedger && amt > 0) {
+          try {
+            await addDoc(collection(db, "finance"), {
+              type: "income",
+              category:
+                targetVal === "extra"
+                  ? "Extra Donation"
+                  : "Monthly Subscription",
+              amount: amt,
+              date: localDateStr(),
+              note: `Manual Sheet Entry • ${row.name}${row.csfId ? ` (${row.csfId})` : ""} • ${targetLabel} ${sheet.year}`,
+              source: "manual_annual_entry",
+              memberUid: row.uid || "",
+              createdAt: serverTimestamp(),
+              createdBy: currentUser?.uid || "",
+            });
+          } catch (_) {}
+        }
+
+        const btn = document.getElementById("fin-annual-entry-submit");
+        if (btn) btn.disabled = true;
+        try {
+          const ok = await saveAnnualSheetToCloud(sheet);
+          renderAnnualSheet();
+          if (ok) {
+            showToast(
+              `Updated ${row.name} (${targetLabel} • ${sheet.year}): ${BDT(amt)}.`,
+            );
+          }
+        } finally {
+          if (btn) btn.disabled = false;
         }
       };
 
@@ -14469,10 +15858,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         let rebalancedRows = 0;
         sheet.members.forEach((row) => {
           const before = JSON.stringify([row.months, row.extra || 0]);
-          const n = normalizeMonthsAndExtra(row.months, row.extra, sheet.monthlyFee);
+          const n = normalizeMonthsAndExtra(
+            row.months,
+            row.extra,
+            sheet.monthlyFee,
+          );
           row.months = n.months;
           row.extra = n.extra;
-          if (JSON.stringify([row.months, row.extra]) !== before) rebalancedRows++;
+          if (JSON.stringify([row.months, row.extra]) !== before)
+            rebalancedRows++;
         });
 
         if (!updatedCells && !rebalancedRows) {
@@ -15667,6 +17061,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             "profile",
             "updates",
             "members",
+            "csf",
+            "events",
+            "publication",
           ].includes(target)
         ) {
           switchTab(target);
@@ -15689,6 +17086,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           attendance: ["live_meeting", "attendance"],
           helpdesk: ["helpdesk", "whatsapp"],
           feedback: ["helpdesk", "feedback"],
+          "admin-events": ["events", null],
+          "admin-publication": ["publication", null],
+          general_access: ["general_access", null],
           subadmins: ["subadmins", null],
         };
         const mapped = targetMap[target];
@@ -15927,6 +17327,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               <button onclick="dashGo('requests')" class="flex items-center gap-2 bg-white/80 hover:bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2.5 text-sm font-semibold text-emerald-900 transition"><i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i>Payment Requests</button>
               <button onclick="dashGo('finance')" class="flex items-center gap-2 bg-white/80 hover:bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2.5 text-sm font-semibold text-emerald-900 transition"><i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-600"></i>Income / Expense</button>
               <button onclick="dashGo('meeting')" class="flex items-center gap-2 bg-white/80 hover:bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2.5 text-sm font-semibold text-emerald-900 transition"><i data-lucide="video" class="w-4 h-4 text-emerald-600"></i>Meeting &amp; Attendance</button>
+              <button onclick="dashGo('admin-events')" class="flex items-center gap-2 bg-white/80 hover:bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2.5 text-sm font-semibold text-emerald-900 transition"><i data-lucide="calendar-days" class="w-4 h-4 text-violet-600"></i>Manage Events</button>
+              <button onclick="dashGo('admin-publication')" class="flex items-center gap-2 bg-white/80 hover:bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2.5 text-sm font-semibold text-emerald-900 transition"><i data-lucide="book-open-text" class="w-4 h-4 text-rose-600"></i>Manage Publications</button>
             </div>
           </div>
         </div>
@@ -15962,8 +17364,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const el = document.getElementById("dash-member");
         const name = currentUserProfile?.name || "Member";
         const att = calcMonthlyAttendance(currentUser.uid, currentMonthStr());
-        const events = allUpdates.filter((u) => u.type === "event");
-        const nextEvent = events[0];
+        const upcomingEvents = allEvents.filter((ev) => !isEventPast(ev));
+        const updateEvents = allUpdates.filter((u) => u.type === "event");
+        const nextEvent = upcomingEvents[0] || updateEvents[0];
+        const totalEventsCount = upcomingEvents.length || updateEvents.length;
         const mine = allPayments.filter((p) => p.uid === currentUser.uid);
         const paid = mine
           .filter(isPaymentConfirmed)
@@ -15977,25 +17381,119 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           link: "Link",
         };
 
-        const classCard = meetingIsLive
-          ? dashCard(
-              "radio",
-              "red",
-              "Class / Meeting",
-              "Live now",
-              escapeHtml(currentMeetingTitle),
-              "dashGo('meeting')",
-            )
-          : dashCard(
-              "calendar-days",
-              "blue",
-              "Next Class / Event",
-              nextEvent
-                ? `<span class="text-base">${escapeHtml(nextEvent.title || "")}</span>`
-                : '<span class="text-base">Not scheduled</span>',
+        const allowMeeting = canAccessTab("meeting");
+        const allowUpdates = canAccessTab("updates");
+        const allowPayments = canAccessTab("payments");
+        const allowEvents = canAccessTab("events");
+        const allowPublication = canAccessTab("publication");
+        const allowProfile = canAccessTab("profile");
+        const allowChat = canUseGeneralFeature("useGroupChat");
+
+        const cards = [];
+        if (allowMeeting) {
+          cards.push(
+            meetingIsLive
+              ? dashCard(
+                  "radio",
+                  "red",
+                  "Class / Meeting",
+                  "Live now",
+                  escapeHtml(currentMeetingTitle),
+                  "dashGo('meeting')",
+                )
+              : dashCard(
+                  "calendar-days",
+                  "blue",
+                  "Next Class / Event",
+                  nextEvent
+                    ? `<span class="text-base">${escapeHtml(nextEvent.title || "")}</span>`
+                    : '<span class="text-base">Not scheduled</span>',
+                  "",
+                  allowEvents
+                    ? "dashGo('events')"
+                    : allowUpdates
+                      ? "dashGo('updates')"
+                      : "",
+                ),
+          );
+        }
+        if (allowProfile || allowMeeting) {
+          cards.push(
+            dashCard(
+              "check-circle-2",
+              "emerald",
+              "Your Attendance",
+              att.rate + "%",
+              att.totalHeld
+                ? `${att.attended}/${att.totalHeld} this month`
+                : "This month",
+              allowProfile ? "dashGo('profile')" : "",
+            ),
+          );
+        }
+        if (allowEvents || allowUpdates) {
+          cards.push(
+            dashCard(
+              "star",
+              "amber",
+              "Upcoming Events",
+              totalEventsCount,
               "",
-              "dashGo('updates')",
-            );
+              allowEvents ? "dashGo('events')" : "dashGo('updates')",
+            ),
+          );
+        }
+        if (allowPayments) {
+          cards.push(
+            dashCard(
+              "wallet",
+              "purple",
+              "Monthly Fee",
+              BDT(paid),
+              pend ? `${pend} pending` : "Paid",
+              "dashGo('payments')",
+            ),
+          );
+        }
+        if (allowPublication && cards.length < 4) {
+          cards.push(
+            dashCard(
+              "book-open-text",
+              "sky",
+              "Publications",
+              allPublications.length,
+              "Articles & Books",
+              "dashGo('publication')",
+            ),
+          );
+        }
+
+        const quickActions = [];
+        if (allowMeeting) {
+          quickActions.push(
+            `<button onclick="dashGo('meeting')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="video" class="w-5 h-5 text-emerald-600"></i>Meeting</button>`,
+          );
+        }
+        if (allowEvents) {
+          quickActions.push(
+            `<button onclick="dashGo('events')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="calendar-days" class="w-5 h-5 text-violet-600"></i>Events</button>`,
+          );
+        }
+        if (allowPublication) {
+          quickActions.push(
+            `<button onclick="dashGo('publication')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="book-open-text" class="w-5 h-5 text-rose-600"></i>Publication</button>`,
+          );
+        }
+        if (allowChat) {
+          quickActions.push(
+            `<button onclick="dashGo('chat')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>Group Chat</button>`,
+          );
+        }
+        if (allowProfile) {
+          quickActions.push(
+            `<button onclick="dashGo('profile')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="user-circle" class="w-5 h-5 text-emerald-600"></i>My Profile</button>`,
+          );
+        }
 
         el.innerHTML = `
         <div class="rounded-3xl p-6 sm:p-8 text-white bg-gradient-to-br from-emerald-950 via-emerald-800 to-teal-700 shadow-xl relative overflow-hidden flex items-center justify-between gap-4">
@@ -16011,7 +17509,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         <div id="dash-quotes-slot-member"></div>
 
         ${
-          meetingIsLive
+          meetingIsLive && allowMeeting
             ? `
         <div class="rounded-2xl p-4 bg-amber-100 border border-amber-300 flex items-center justify-between gap-3">
           <p class="text-sm font-semibold text-amber-950 flex items-center gap-2"><span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>${escapeHtml(currentMeetingTitle)} is live now!</p>
@@ -16020,22 +17518,23 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             : ""
         }
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          ${classCard}
-          ${dashCard("check-circle-2", "emerald", "Your Attendance", att.rate + "%", att.totalHeld ? `${att.attended}/${att.totalHeld} this month` : "This month", "dashGo('profile')")}
-          ${dashCard("star", "amber", "Upcoming Events", events.length, "", "dashGo('updates')")}
-          ${dashCard("wallet", "purple", "Monthly Fee", BDT(paid), pend ? `${pend} pending` : "Paid", "dashGo('payments')")}
-        </div>
+        ${
+          cards.length
+            ? `<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">${cards.join("")}</div>`
+            : ""
+        }
 
-        <div class="grid grid-cols-3 gap-3">
-          <button onclick="dashGo('meeting')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="video" class="w-5 h-5 text-emerald-600"></i>Meeting</button>
-          <button onclick="dashGo('chat')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>Group Chat</button>
-          <button onclick="dashGo('profile')" class="glass rounded-2xl py-3 text-sm font-semibold text-emerald-900 hover:shadow-lg transition flex flex-col items-center gap-1"><i data-lucide="user-circle" class="w-5 h-5 text-emerald-600"></i>My Profile</button>
-        </div>
+        ${
+          quickActions.length
+            ? `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-${Math.min(5, quickActions.length)} gap-3">${quickActions.join("")}</div>`
+            : ""
+        }
 
-        ${galleryHtml()}
+        ${allowUpdates ? galleryHtml() : ""}
 
-        <div class="glass rounded-2xl p-5">
+        ${
+          allowUpdates
+            ? `<div class="glass rounded-2xl p-5">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-bold text-emerald-950">Recent Announcements</h3>
             <button onclick="dashGo('updates')" class="text-xs font-semibold text-emerald-700 hover:underline">View All →</button>
@@ -16060,7 +17559,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 : '<p class="text-sm text-slate-500 py-3">No announcements yet.</p>'
             }
           </div>
-        </div>`;
+        </div>`
+            : ""
+        }`;
       }
 
       window.deleteUpdate = async (id) => {
@@ -16933,6 +18434,13 @@ ${joinInfo}`,
       window.submitFeedback = async (e) => {
         e.preventDefault();
         if (!currentUser || !currentUserProfile) return;
+        if (!canUseGeneralFeature("submitFeedback")) {
+          showToast(
+            "Submitting Advice & Complaints is currently disabled for General Users by Admin.",
+            "warn",
+          );
+          return;
+        }
         const type = document.getElementById("fb-type")?.value || "advice";
         const subject = (
           document.getElementById("fb-subject")?.value || ""
@@ -17202,7 +18710,9 @@ ${joinInfo}`,
       function populateSubAdminSectorFilter() {
         const sel = document.getElementById("subadmin-sector-filter");
         if (!sel || sel.options.length > 1) return;
-        ADMIN_SECTORS.filter((s) => s.id !== "subadmins").forEach((s) => {
+        ADMIN_SECTORS.filter(
+          (s) => s.id !== "subadmins" && s.id !== "general_access",
+        ).forEach((s) => {
           const opt = document.createElement("option");
           opt.value = s.id;
           opt.textContent = s.title;
@@ -17224,7 +18734,7 @@ ${joinInfo}`,
           document.getElementById("subadmin-sector-filter")?.value || "all";
         const main = isMainAdmin();
         const assignableSectors = ADMIN_SECTORS.filter(
-          (s) => s.id !== "subadmins",
+          (s) => s.id !== "subadmins" && s.id !== "general_access",
         );
 
         const eligible = allMembers
@@ -17380,6 +18890,1134 @@ ${joinInfo}`,
         } catch (err) {
           showToast("Failed to update Sub-Admin role: " + err.message, "error");
         }
+      };
+
+      // ================= GENERAL USER ACCESS CONTROL =================
+      const GENERAL_ACCESS_TAB_OPTIONS = [
+        {
+          key: "dashboard",
+          label: "Dashboard",
+          desc: "Overview & quick cards",
+        },
+        {
+          key: "updates",
+          label: "Updates & Notice",
+          desc: "Notices, alerts & gallery",
+        },
+        {
+          key: "meeting",
+          label: "Online Meeting",
+          desc: "Live classes & attendance",
+        },
+        {
+          key: "members",
+          label: "Members & Status",
+          desc: "Member directory & status",
+        },
+        { key: "csf", label: "CSF", desc: "CSF info & help desk" },
+        {
+          key: "payments",
+          label: "Monthly Fee",
+          desc: "Token & free donations",
+        },
+        { key: "events", label: "Events", desc: "Programs & upcoming events" },
+        {
+          key: "publication",
+          label: "Publication",
+          desc: "Books, articles & journals",
+        },
+        {
+          key: "profile",
+          label: "My Profile",
+          desc: "Personal profile & stats",
+        },
+      ];
+
+      const GENERAL_ACCESS_FEATURE_OPTIONS = [
+        {
+          key: "viewMemberDetails",
+          label: "View Other Members' Full Profile",
+          desc: "Allow opening member profile modals from directory",
+        },
+        {
+          key: "useGroupChat",
+          label: "Access & Send Group Chat",
+          desc: "Allow reading and sending messages in Group Chat",
+        },
+        {
+          key: "submitFeedback",
+          label: "Submit Advice / Complaints",
+          desc: "Allow sending feedback from Dashboard",
+        },
+        {
+          key: "rsvpEvents",
+          label: "RSVP to Events (Going)",
+          desc: "Allow marking Going on Events",
+        },
+      ];
+
+      function normalizeGeneralAccessData(raw = {}) {
+        const tabs = { ...DEFAULT_GENERAL_ACCESS.tabs };
+        if (raw.tabs && typeof raw.tabs === "object") {
+          Object.keys(tabs).forEach((k) => {
+            if (typeof raw.tabs[k] === "boolean") tabs[k] = raw.tabs[k];
+          });
+        }
+        const features = { ...DEFAULT_GENERAL_ACCESS.features };
+        if (raw.features && typeof raw.features === "object") {
+          Object.keys(features).forEach((k) => {
+            if (typeof raw.features[k] === "boolean")
+              features[k] = raw.features[k];
+          });
+        }
+        return {
+          tabs,
+          features,
+          restrictedMessage:
+            String(raw.restrictedMessage || "").trim() ||
+            DEFAULT_GENERAL_ACCESS.restrictedMessage,
+        };
+      }
+
+      function listenGeneralAccess() {
+        if (generalAccessUnsub) {
+          try {
+            generalAccessUnsub();
+          } catch (_) {}
+          generalAccessUnsub = null;
+        }
+        if (!currentUser || !auth.currentUser) return;
+        generalAccessUnsub = onSnapshot(
+          doc(db, "settings", "general_access"),
+          (snap) => {
+            generalUserAccess = snap.exists()
+              ? normalizeGeneralAccessData(snap.data())
+              : normalizeGeneralAccessData({});
+            syncGeneralUserAccessUI();
+            if (hasAdminPanelAccess()) {
+              renderGeneralAccessAdmin();
+            }
+          },
+          () => {
+            generalUserAccess = normalizeGeneralAccessData({});
+            syncGeneralUserAccessUI();
+          },
+        );
+      }
+
+      function syncGeneralUserAccessUI() {
+        const navOrder = [
+          "dashboard",
+          "updates",
+          "meeting",
+          "members",
+          "csf",
+          "payments",
+          "events",
+          "publication",
+          "profile",
+        ];
+        navOrder.forEach((tabKey) => {
+          const btn = document.getElementById(`tab-${tabKey}`);
+          if (!btn) return;
+          const allowed = canAccessTab(tabKey);
+          btn.classList.toggle("hidden", !allowed);
+          btn.classList.toggle("flex", allowed);
+        });
+
+        const banner = document.getElementById("live-meeting-banner");
+        if (banner && currentMeetingActive && !canAccessTab("meeting")) {
+          banner.classList.add("hidden");
+        } else if (banner && currentMeetingActive && canAccessTab("meeting")) {
+          banner.classList.remove("hidden");
+        }
+
+        const fbForm = document.getElementById("dash-feedback-form");
+        if (fbForm) {
+          const fbAllowed = canUseGeneralFeature("submitFeedback");
+          const card = fbForm.closest(".glass");
+          if (card) card.classList.toggle("hidden", !fbAllowed);
+        }
+
+        if (
+          currentUserProfile &&
+          activeTab !== "admin" &&
+          !canAccessTab(activeTab)
+        ) {
+          const firstAllowed = getGeneralAccessFirstAllowedTab();
+          if (firstAllowed && firstAllowed !== activeTab) {
+            switchTab(firstAllowed, true);
+          } else {
+            Object.keys(tabNames).forEach((t) => {
+              document.getElementById(`section-${t}`)?.classList.add("hidden");
+            });
+            const noAccMsg = document.getElementById("general-no-access-msg");
+            if (noAccMsg) {
+              noAccMsg.textContent =
+                generalUserAccess.restrictedMessage ||
+                DEFAULT_GENERAL_ACCESS.restrictedMessage;
+            }
+            document
+              .getElementById("general-no-access-card")
+              ?.classList.remove("hidden");
+          }
+        } else {
+          document
+            .getElementById("general-no-access-card")
+            ?.classList.add("hidden");
+        }
+
+        renderGlobalFeeReminderBanner();
+        if (activeTab === "dashboard") scheduleDashboard();
+      }
+
+      window.renderGeneralAccessAdmin = () => {
+        const tabsGrid = document.getElementById("general-access-tabs-grid");
+        const featGrid = document.getElementById(
+          "general-access-features-grid",
+        );
+        const countEl = document.getElementById("general-access-user-count");
+        const msgInput = document.getElementById("general-access-msg");
+        if (!tabsGrid || !featGrid || !hasAdminPanelAccess()) return;
+
+        const genCount = allMembers.filter(
+          (m) => m.approved !== false && isGeneralUser(m),
+        ).length;
+        if (countEl) {
+          countEl.textContent = `${genCount} General User${genCount === 1 ? "" : "s"}`;
+        }
+        if (msgInput && document.activeElement !== msgInput) {
+          msgInput.value =
+            generalUserAccess.restrictedMessage ||
+            DEFAULT_GENERAL_ACCESS.restrictedMessage;
+        }
+
+        const main = isMainAdmin();
+        tabsGrid.innerHTML = GENERAL_ACCESS_TAB_OPTIONS.map((t) => {
+          const checked = generalUserAccess.tabs[t.key] !== false;
+          return `
+            <label class="flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition ${
+              checked
+                ? "bg-emerald-50/90 border-emerald-300"
+                : "bg-white/80 border-slate-200"
+            } ${main ? "" : "opacity-70 cursor-not-allowed"}">
+              <input
+                type="checkbox"
+                ${checked ? "checked" : ""}
+                ${main ? "" : "disabled"}
+                onchange="toggleGeneralAccessTab('${t.key}')"
+                class="w-4 h-4 mt-0.5 accent-emerald-600 shrink-0"
+              />
+              <span class="min-w-0">
+                <span class="block text-xs font-extrabold text-slate-800">${escapeHtml(t.label)}</span>
+                <span class="block text-[11px] text-slate-500">${escapeHtml(t.desc)}</span>
+              </span>
+            </label>`;
+        }).join("");
+
+        featGrid.innerHTML = GENERAL_ACCESS_FEATURE_OPTIONS.map((f) => {
+          const checked = generalUserAccess.features[f.key] !== false;
+          return `
+            <label class="flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition ${
+              checked
+                ? "bg-indigo-50/80 border-indigo-200"
+                : "bg-white/80 border-slate-200"
+            } ${main ? "" : "opacity-70 cursor-not-allowed"}">
+              <input
+                type="checkbox"
+                ${checked ? "checked" : ""}
+                ${main ? "" : "disabled"}
+                onchange="toggleGeneralAccessFeature('${f.key}')"
+                class="w-4 h-4 mt-0.5 accent-indigo-600 shrink-0"
+              />
+              <span class="min-w-0">
+                <span class="block text-xs font-extrabold text-slate-800">${escapeHtml(f.label)}</span>
+                <span class="block text-[11px] text-slate-500">${escapeHtml(f.desc)}</span>
+              </span>
+            </label>`;
+        }).join("");
+
+        if (activeTab === "admin" && activeAdminSector === "general_access") {
+          applySectorReadOnlyState("general_access");
+        }
+        lucide.createIcons();
+      };
+
+      window.toggleGeneralAccessTab = (tabKey) => {
+        if (!isMainAdmin()) return;
+        generalUserAccess.tabs[tabKey] = !(
+          generalUserAccess.tabs[tabKey] !== false
+        );
+        renderGeneralAccessAdmin();
+      };
+
+      window.toggleGeneralAccessFeature = (featKey) => {
+        if (!isMainAdmin()) return;
+        generalUserAccess.features[featKey] = !(
+          generalUserAccess.features[featKey] !== false
+        );
+        renderGeneralAccessAdmin();
+      };
+
+      window.applyGeneralAccessPreset = (preset) => {
+        if (!isMainAdmin()) return;
+        if (preset === "all") {
+          generalUserAccess.tabs = { ...DEFAULT_GENERAL_ACCESS.tabs };
+          generalUserAccess.features = { ...DEFAULT_GENERAL_ACCESS.features };
+        } else if (preset === "public") {
+          generalUserAccess.tabs = {
+            dashboard: true,
+            updates: true,
+            meeting: false,
+            members: false,
+            csf: true,
+            payments: false,
+            events: true,
+            publication: true,
+            profile: true,
+          };
+          generalUserAccess.features = {
+            viewMemberDetails: false,
+            useGroupChat: false,
+            submitFeedback: true,
+            rsvpEvents: true,
+          };
+        } else if (preset === "minimal") {
+          generalUserAccess.tabs = {
+            dashboard: true,
+            updates: false,
+            meeting: false,
+            members: false,
+            csf: false,
+            payments: false,
+            events: true,
+            publication: true,
+            profile: true,
+          };
+          generalUserAccess.features = {
+            viewMemberDetails: false,
+            useGroupChat: false,
+            submitFeedback: false,
+            rsvpEvents: true,
+          };
+        }
+        renderGeneralAccessAdmin();
+      };
+
+      window.saveGeneralUserAccess = async () => {
+        if (!isMainAdmin()) {
+          return showToast(
+            "Only Main Admin can update General User access settings.",
+            "error",
+          );
+        }
+        const msgEl = document.getElementById("general-access-msg");
+        const msg =
+          (msgEl?.value || "").trim() ||
+          DEFAULT_GENERAL_ACCESS.restrictedMessage;
+        generalUserAccess.restrictedMessage = msg;
+        const btn = document.getElementById("general-access-save-btn");
+        if (btn) btn.disabled = true;
+        try {
+          await setDoc(
+            doc(db, "settings", "general_access"),
+            {
+              tabs: generalUserAccess.tabs,
+              features: generalUserAccess.features,
+              restrictedMessage: msg,
+              updatedAt: serverTimestamp(),
+              updatedBy: currentUserProfile?.name || "Admin",
+            },
+            { merge: true },
+          );
+          syncGeneralUserAccessUI();
+          showToast("General User website access settings saved!");
+        } catch (err) {
+          showToast(
+            "Failed to save access settings: " + (err?.message || err),
+            "error",
+          );
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      // ================= EVENTS TAB & ADMIN MANAGER =================
+      function isSafeHttpUrl(url = "") {
+        return /^https?:\/\//i.test(String(url || "").trim());
+      }
+
+      function isEventPast(ev) {
+        const d = String(ev?.date || "").trim();
+        if (!d) return false;
+        return d < localDateStr();
+      }
+
+      function listenEvents() {
+        if (eventsUnsub) {
+          try {
+            eventsUnsub();
+          } catch (_) {}
+          eventsUnsub = null;
+        }
+        if (!currentUser || !auth.currentUser) return;
+        eventsPermissionDenied = false;
+        eventsUnsub = onSnapshot(
+          query(collection(db, "events"), orderBy("date", "asc")),
+          (snap) => {
+            eventsPermissionDenied = false;
+            allEvents = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+            renderEvents();
+            renderAdminEventsList();
+            renderAdminSectorsGrid();
+            scheduleDashboard();
+          },
+          (err) => {
+            if (err?.code === "permission-denied") {
+              eventsPermissionDenied = true;
+            }
+            allEvents = [];
+            renderEvents();
+            renderAdminEventsList();
+          },
+        );
+      }
+
+      window.setEventFilter = (filter = "all") => {
+        eventStatusFilter = filter;
+        ["all", "upcoming", "past", "going"].forEach((k) => {
+          const b = document.getElementById(`ev-filter-${k}`);
+          if (!b) return;
+          const active = k === filter;
+          b.className = active
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition";
+        });
+        renderEvents();
+      };
+
+      window.renderEvents = () => {
+        const grid = document.getElementById("events-grid");
+        const pill = document.getElementById("events-upcoming-pill");
+        if (!grid) return;
+
+        const upcomingCount = allEvents.filter((ev) => !isEventPast(ev)).length;
+        if (pill) pill.textContent = `${upcomingCount} Upcoming`;
+
+        if (eventsPermissionDenied) {
+          grid.innerHTML = `<div class="col-span-full glass p-6 rounded-2xl text-center text-sm text-amber-800 border border-amber-200">Events collection needs Firestore read/write rules enabled in Firebase Console.</div>`;
+          return;
+        }
+
+        const catFilter =
+          document.getElementById("events-category-filter")?.value || "all";
+        const q = (document.getElementById("events-search")?.value || "")
+          .trim()
+          .toLowerCase();
+        const uid = currentUser?.uid || "";
+        const canManage = canEditSector("events");
+        const canRsvp = canUseGeneralFeature("rsvpEvents");
+
+        const filtered = allEvents.filter((ev) => {
+          const past = isEventPast(ev);
+          const going =
+            Array.isArray(ev.attendees) && ev.attendees.includes(uid);
+          if (eventStatusFilter === "upcoming" && past) return false;
+          if (eventStatusFilter === "past" && !past) return false;
+          if (eventStatusFilter === "going" && !going) return false;
+          if (catFilter !== "all" && ev.category !== catFilter) return false;
+          if (q) {
+            const hay =
+              `${ev.title || ""} ${ev.location || ""} ${ev.description || ""} ${ev.category || ""}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+
+        if (!filtered.length) {
+          grid.innerHTML = `<div class="col-span-full glass p-8 rounded-2xl text-center text-sm text-slate-500">No events found for this filter.</div>`;
+          return;
+        }
+
+        grid.innerHTML = filtered
+          .map((ev) => {
+            const past = isEventPast(ev);
+            const isToday = ev.date === localDateStr();
+            const attendees = Array.isArray(ev.attendees) ? ev.attendees : [];
+            const isGoing = uid && attendees.includes(uid);
+            const cover = isSafeHttpUrl(ev.imageUrl)
+              ? `<img src="${escapeHtml(ev.imageUrl)}" alt="${escapeHtml(ev.title || "")}" class="w-full h-40 object-cover border-b border-emerald-100" />`
+              : `<div class="w-full h-24 bg-gradient-to-br from-emerald-800 via-teal-700 to-violet-700 flex items-center justify-center text-white/90"><i data-lucide="calendar-days" class="w-8 h-8"></i></div>`;
+
+            const statusBadge = isToday
+              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">Today</span>`
+              : past
+                ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Past</span>`
+                : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Upcoming</span>`;
+
+            return `
+              <div class="glass rounded-2xl overflow-hidden border border-emerald-100 flex flex-col justify-between hover:shadow-xl transition">
+                <div>
+                  ${cover}
+                  <div class="p-4 space-y-2">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-100 text-violet-800">${escapeHtml(ev.category || "Event")}</span>
+                      ${statusBadge}
+                    </div>
+                    <h3 class="text-base font-extrabold text-emerald-950 leading-snug">${escapeHtml(ev.title || "")}</h3>
+                    <div class="text-xs text-slate-600 space-y-1">
+                      <p class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i><span>${escapeHtml(ev.date || "TBA")}${ev.time ? ` • ${escapeHtml(ev.time)}` : ""}</span></p>
+                      ${ev.location ? `<p class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i><span class="truncate">${escapeHtml(ev.location)}</span></p>` : ""}
+                    </div>
+                    <p class="text-xs text-slate-600 line-clamp-3">${escapeHtml(ev.description || "")}</p>
+                  </div>
+                </div>
+                <div class="px-4 py-3 border-t border-emerald-100/80 flex items-center justify-between gap-2 flex-wrap">
+                  <div class="flex items-center gap-1.5">
+                    ${
+                      canRsvp
+                        ? `<button type="button" onclick="toggleEventRsvp('${ev.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition inline-flex items-center gap-1 ${
+                            isGoing
+                              ? "bg-emerald-700 text-white shadow-sm"
+                              : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200"
+                          }">
+                            <i data-lucide="${isGoing ? "check" : "user-plus"}" class="w-3.5 h-3.5"></i>
+                            <span>${isGoing ? "Going" : "Join"} (${attendees.length})</span>
+                          </button>`
+                        : `<span class="text-[11px] font-semibold text-slate-500">${attendees.length} Going</span>`
+                    }
+                    <button type="button" onclick="openEventDetailModal('${ev.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Details</button>
+                  </div>
+                  ${
+                    canManage
+                      ? `<div class="flex items-center gap-1">
+                          <button type="button" onclick="openEventEditorModal('${ev.id}')" class="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 transition" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                          <button type="button" onclick="deleteEventItem('${ev.id}')" class="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition" title="Delete"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>`
+                      : ""
+                  }
+                </div>
+              </div>`;
+          })
+          .join("");
+        lucide.createIcons();
+      };
+
+      window.openEventEditorModal = (id = "") => {
+        if (!requireSectorEdit("events")) return;
+        const modal = document.getElementById("event-editor-modal");
+        const titleEl = document.getElementById("event-editor-title");
+        const ev = id ? allEvents.find((x) => x.id === id) : null;
+        document.getElementById("ev-edit-id").value = ev?.id || "";
+        document.getElementById("ev-title").value = ev?.title || "";
+        document.getElementById("ev-category").value =
+          ev?.category || "Mahfil / Gathering";
+        document.getElementById("ev-date").value = ev?.date || todayDateStr();
+        document.getElementById("ev-time").value = ev?.time || "";
+        document.getElementById("ev-location").value = ev?.location || "";
+        document.getElementById("ev-image").value = ev?.imageUrl || "";
+        document.getElementById("ev-description").value = ev?.description || "";
+        document.getElementById("ev-notify").checked = !ev;
+        if (titleEl) {
+          titleEl.querySelector("span").textContent = ev
+            ? "Edit Event"
+            : "Add New Event";
+        }
+        modal?.classList.remove("hidden");
+        lucide.createIcons();
+      };
+
+      window.closeEventEditorModal = () => {
+        document.getElementById("event-editor-modal")?.classList.add("hidden");
+      };
+
+      window.saveEventForm = async (e) => {
+        e.preventDefault();
+        if (!requireSectorEdit("events")) return;
+        const id = (document.getElementById("ev-edit-id")?.value || "").trim();
+        const title = (document.getElementById("ev-title")?.value || "").trim();
+        const category =
+          document.getElementById("ev-category")?.value || "Other";
+        const date = (document.getElementById("ev-date")?.value || "").trim();
+        const time = (document.getElementById("ev-time")?.value || "").trim();
+        const location = (
+          document.getElementById("ev-location")?.value || ""
+        ).trim();
+        const imageUrl = (
+          document.getElementById("ev-image")?.value || ""
+        ).trim();
+        const description = (
+          document.getElementById("ev-description")?.value || ""
+        ).trim();
+        const shouldNotify = Boolean(
+          document.getElementById("ev-notify")?.checked,
+        );
+
+        if (!title || !date || !description) {
+          return showToast(
+            "Please fill in title, date, and description.",
+            "error",
+          );
+        }
+        if (imageUrl && !isSafeHttpUrl(imageUrl)) {
+          return showToast(
+            "Cover image URL must start with http:// or https://.",
+            "error",
+          );
+        }
+
+        const btn = document.getElementById("ev-save-btn");
+        if (btn) btn.disabled = true;
+        try {
+          if (id) {
+            await updateDoc(doc(db, "events", id), {
+              title,
+              category,
+              date,
+              time,
+              location,
+              imageUrl,
+              description,
+              updatedAt: serverTimestamp(),
+              updatedBy: currentUserProfile?.name || "Admin",
+            });
+            showToast("Event updated!");
+          } else {
+            await addDoc(collection(db, "events"), {
+              title,
+              category,
+              date,
+              time,
+              location,
+              imageUrl,
+              description,
+              attendees: [],
+              createdAt: serverTimestamp(),
+              createdByUid: currentUser?.uid || "",
+              authorName: currentUserProfile?.name || "Admin",
+            });
+            if (shouldNotify) {
+              await createAppNotification({
+                type: "event",
+                title: `New Event: ${title}`,
+                body: `${date}${time ? " • " + time : ""}${location ? " • " + location : ""}`,
+                targetRole: "all",
+                targetTab: "events",
+                createdByUid: currentUser?.uid || "",
+                authorName: currentUserProfile?.name || "Admin",
+              });
+            }
+            showToast("New event published!");
+          }
+          closeEventEditorModal();
+        } catch (err) {
+          showToast("Failed to save event: " + (err?.message || err), "error");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      window.deleteEventItem = async (id) => {
+        if (!requireSectorEdit("events")) return;
+        const ev = allEvents.find((x) => x.id === id);
+        if (!confirm(`Delete event "${ev?.title || "this event"}"?`)) return;
+        try {
+          await deleteDoc(doc(db, "events", id));
+          showToast("Event deleted.", "warn");
+        } catch (err) {
+          showToast("Delete failed: " + (err?.message || err), "error");
+        }
+      };
+
+      window.toggleEventRsvp = async (id) => {
+        if (!currentUser) return;
+        if (!canUseGeneralFeature("rsvpEvents")) {
+          return showToast(
+            "Event RSVP is disabled for General Users by Admin.",
+            "warn",
+          );
+        }
+        const ev = allEvents.find((x) => x.id === id);
+        if (!ev) return;
+        const list = Array.isArray(ev.attendees) ? [...ev.attendees] : [];
+        const idx = list.indexOf(currentUser.uid);
+        if (idx >= 0) list.splice(idx, 1);
+        else list.push(currentUser.uid);
+        try {
+          await updateDoc(doc(db, "events", id), { attendees: list });
+          showToast(idx >= 0 ? "Removed from Going list." : "Marked as Going!");
+        } catch (err) {
+          showToast("Could not update RSVP: " + (err?.message || err), "error");
+        }
+      };
+
+      window.openEventDetailModal = (id) => {
+        const ev = allEvents.find((x) => x.id === id);
+        const body = document.getElementById("event-detail-body");
+        const modal = document.getElementById("event-detail-modal");
+        if (!ev || !body || !modal) return;
+        const attendees = Array.isArray(ev.attendees) ? ev.attendees : [];
+        const isGoing = currentUser && attendees.includes(currentUser.uid);
+        const canRsvp = canUseGeneralFeature("rsvpEvents");
+        body.innerHTML = `
+          ${
+            isSafeHttpUrl(ev.imageUrl)
+              ? `<img src="${escapeHtml(ev.imageUrl)}" class="w-full max-h-60 object-cover border-b border-emerald-100" />`
+              : `<div class="h-24 bg-gradient-to-r from-emerald-800 to-violet-700 flex items-center justify-center text-white"><i data-lucide="calendar-days" class="w-8 h-8"></i></div>`
+          }
+          <div class="p-5 sm:p-6 space-y-4">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800">${escapeHtml(ev.category || "Event")}</span>
+                <h3 class="text-xl font-extrabold text-emerald-950 mt-1.5">${escapeHtml(ev.title || "")}</h3>
+              </div>
+              <button type="button" onclick="closeEventDetailModal()" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="bg-emerald-50/80 border border-emerald-100 rounded-2xl p-3.5 text-xs text-slate-700 space-y-1.5">
+              <p><strong>Date &amp; Time:</strong> ${escapeHtml(ev.date || "TBA")}${ev.time ? ` • ${escapeHtml(ev.time)}` : ""}</p>
+              ${ev.location ? `<p><strong>Venue / Location:</strong> ${escapeHtml(ev.location)}</p>` : ""}
+              <p><strong>Participants Going:</strong> ${attendees.length}</p>
+            </div>
+            <p class="text-sm text-slate-700 whitespace-pre-line leading-relaxed">${escapeHtml(ev.description || "")}</p>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-emerald-100">
+              ${
+                canRsvp
+                  ? `<button type="button" onclick="toggleEventRsvp('${ev.id}').then(() => openEventDetailModal('${ev.id}'))" class="px-4 py-2 rounded-xl text-xs font-bold ${isGoing ? "bg-emerald-700 text-white" : "bg-emerald-100 text-emerald-800"}">${isGoing ? "Going ✓" : "Mark Going"}</button>`
+                  : ""
+              }
+              <button type="button" onclick="closeEventDetailModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700">Close</button>
+            </div>
+          </div>`;
+        modal.classList.remove("hidden");
+        lucide.createIcons();
+      };
+
+      window.closeEventDetailModal = () => {
+        document.getElementById("event-detail-modal")?.classList.add("hidden");
+      };
+
+      window.renderAdminEventsList = () => {
+        const list = document.getElementById("admin-events-list");
+        if (!list || !hasAdminPanelAccess()) return;
+        if (eventsPermissionDenied) {
+          list.innerHTML = `<div class="col-span-full bg-amber-50 border border-amber-300 rounded-2xl p-4 text-xs text-amber-900">Firestore permission needed for <code class="font-mono font-bold">events</code> collection in Firebase Console Rules.</div>`;
+          return;
+        }
+        if (!allEvents.length) {
+          list.innerHTML = `<p class="col-span-full text-sm text-slate-500 text-center py-6">No events created yet. Click "+ New Event" to create one.</p>`;
+          return;
+        }
+        const editable = canEditSector("events");
+        list.innerHTML = allEvents
+          .map((ev) => {
+            const attendees = Array.isArray(ev.attendees)
+              ? ev.attendees.length
+              : 0;
+            return `
+              <div class="bg-white/85 border border-emerald-100 rounded-2xl p-4 flex flex-col justify-between gap-2.5">
+                <div>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-100 text-violet-800">${escapeHtml(ev.category || "Event")}</span>
+                    <span class="text-[11px] font-semibold text-slate-500">${escapeHtml(ev.date || "")}</span>
+                  </div>
+                  <h4 class="text-sm font-extrabold text-emerald-950 mt-1">${escapeHtml(ev.title || "")}</h4>
+                  <p class="text-xs text-slate-600 line-clamp-2 mt-0.5">${escapeHtml(ev.description || "")}</p>
+                </div>
+                <div class="flex items-center justify-between gap-2 pt-2 border-t border-emerald-100">
+                  <span class="text-[11px] font-semibold text-emerald-700">${attendees} Going</span>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" data-allow-viewonly="true" onclick="openEventDetailModal('${ev.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">View</button>
+                    <button type="button" ${editable ? "" : "disabled"} onclick="openEventEditorModal('${ev.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Edit</button>
+                    <button type="button" ${editable ? "" : "disabled"} onclick="deleteEventItem('${ev.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-600 border border-red-200">Delete</button>
+                  </div>
+                </div>
+              </div>`;
+          })
+          .join("");
+        if (activeTab === "admin" && activeAdminSector === "events") {
+          applySectorReadOnlyState("events");
+        }
+        lucide.createIcons();
+      };
+
+      // ================= PUBLICATION TAB & ADMIN MANAGER =================
+      function listenPublications() {
+        if (publicationsUnsub) {
+          try {
+            publicationsUnsub();
+          } catch (_) {}
+          publicationsUnsub = null;
+        }
+        if (!currentUser || !auth.currentUser) return;
+        publicationsPermissionDenied = false;
+        publicationsUnsub = onSnapshot(
+          query(collection(db, "publications"), orderBy("createdAt", "desc")),
+          (snap) => {
+            publicationsPermissionDenied = false;
+            allPublications = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+            renderPublications();
+            renderAdminPublicationsList();
+            renderAdminSectorsGrid();
+            scheduleDashboard();
+          },
+          (err) => {
+            if (err?.code === "permission-denied") {
+              publicationsPermissionDenied = true;
+            }
+            allPublications = [];
+            renderPublications();
+            renderAdminPublicationsList();
+          },
+        );
+      }
+
+      window.setPublicationFilter = (cat = "all") => {
+        pubCategoryFilter = cat;
+        [
+          "all",
+          "Article",
+          "Magazine",
+          "Book",
+          "Journal",
+          "Newsletter",
+          "Report",
+        ].forEach((k) => {
+          const b = document.getElementById(`pub-filter-${k}`);
+          if (!b) return;
+          const active = k === cat;
+          b.className = active
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition";
+        });
+        renderPublications();
+      };
+
+      window.renderPublications = () => {
+        const grid = document.getElementById("publications-grid");
+        const pill = document.getElementById("pub-count-pill");
+        if (!grid) return;
+
+        if (pill) {
+          pill.textContent = `${allPublications.length} Publication${allPublications.length === 1 ? "" : "s"}`;
+        }
+
+        if (publicationsPermissionDenied) {
+          grid.innerHTML = `<div class="col-span-full glass p-6 rounded-2xl text-center text-sm text-amber-800 border border-amber-200">Publications collection needs Firestore read/write rules enabled in Firebase Console.</div>`;
+          return;
+        }
+
+        const q = (document.getElementById("pub-search")?.value || "")
+          .trim()
+          .toLowerCase();
+        const canManage = canEditSector("publication");
+
+        const filtered = allPublications.filter((p) => {
+          if (pubCategoryFilter !== "all" && p.category !== pubCategoryFilter) {
+            return false;
+          }
+          if (q) {
+            const hay =
+              `${p.title || ""} ${p.author || ""} ${p.issue || ""} ${p.summary || ""} ${p.category || ""}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+
+        if (!filtered.length) {
+          grid.innerHTML = `<div class="col-span-full glass p-8 rounded-2xl text-center text-sm text-slate-500">No publications found.</div>`;
+          return;
+        }
+
+        grid.innerHTML = filtered
+          .map((p) => {
+            const cover = isSafeHttpUrl(p.coverUrl)
+              ? `<img src="${escapeHtml(p.coverUrl)}" alt="${escapeHtml(p.title || "")}" class="w-full h-40 object-cover border-b border-emerald-100" />`
+              : `<div class="w-full h-24 bg-gradient-to-br from-rose-700 via-emerald-800 to-teal-700 flex items-center justify-center text-white/90"><i data-lucide="book-open-text" class="w-8 h-8"></i></div>`;
+            const fileBtn = isSafeHttpUrl(p.fileUrl)
+              ? `<a href="${escapeHtml(p.fileUrl)}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 inline-flex items-center gap-1 transition"><i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>PDF / File</span></a>`
+              : "";
+            return `
+              <div class="glass rounded-2xl overflow-hidden border border-emerald-100 flex flex-col justify-between hover:shadow-xl transition">
+                <div>
+                  ${cover}
+                  <div class="p-4 space-y-2">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">${escapeHtml(p.category || "Article")}</span>
+                      ${p.issue ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">${escapeHtml(p.issue)}</span>` : ""}
+                    </div>
+                    <h3 class="text-base font-extrabold text-emerald-950 leading-snug">${escapeHtml(p.title || "")}</h3>
+                    <p class="text-[11px] font-semibold text-slate-500">
+                      ${p.author ? `By ${escapeHtml(p.author)}` : "Chandpurisha Special Force"}${p.publishDate ? ` • ${escapeHtml(p.publishDate)}` : ""}
+                    </p>
+                    <p class="text-xs text-slate-600 line-clamp-3">${escapeHtml(p.summary || "")}</p>
+                  </div>
+                </div>
+                <div class="px-4 py-3 border-t border-emerald-100/80 flex items-center justify-between gap-2 flex-wrap">
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="openPublicationReaderModal('${p.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white transition inline-flex items-center gap-1">
+                      <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+                      <span>Read</span>
+                    </button>
+                    ${fileBtn}
+                  </div>
+                  ${
+                    canManage
+                      ? `<div class="flex items-center gap-1">
+                          <button type="button" onclick="openPublicationEditorModal('${p.id}')" class="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 transition" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                          <button type="button" onclick="deletePublicationItem('${p.id}')" class="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition" title="Delete"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>`
+                      : ""
+                  }
+                </div>
+              </div>`;
+          })
+          .join("");
+        lucide.createIcons();
+      };
+
+      window.openPublicationEditorModal = (id = "") => {
+        if (!requireSectorEdit("publication")) return;
+        const modal = document.getElementById("publication-editor-modal");
+        const titleEl = document.getElementById("pub-editor-title");
+        const pub = id ? allPublications.find((x) => x.id === id) : null;
+        document.getElementById("pub-edit-id").value = pub?.id || "";
+        document.getElementById("pub-title").value = pub?.title || "";
+        document.getElementById("pub-category").value =
+          pub?.category || "Article";
+        document.getElementById("pub-author").value =
+          pub?.author || currentUserProfile?.name || "";
+        document.getElementById("pub-issue").value = pub?.issue || "";
+        document.getElementById("pub-date").value =
+          pub?.publishDate || todayDateStr();
+        document.getElementById("pub-cover").value = pub?.coverUrl || "";
+        document.getElementById("pub-file-url").value = pub?.fileUrl || "";
+        document.getElementById("pub-summary").value = pub?.summary || "";
+        document.getElementById("pub-content").value = pub?.content || "";
+        document.getElementById("pub-notify").checked = !pub;
+        if (titleEl) {
+          titleEl.querySelector("span").textContent = pub
+            ? "Edit Publication"
+            : "Add New Publication";
+        }
+        modal?.classList.remove("hidden");
+        lucide.createIcons();
+      };
+
+      window.closePublicationEditorModal = () => {
+        document
+          .getElementById("publication-editor-modal")
+          ?.classList.add("hidden");
+      };
+
+      window.savePublicationForm = async (e) => {
+        e.preventDefault();
+        if (!requireSectorEdit("publication")) return;
+        const id = (document.getElementById("pub-edit-id")?.value || "").trim();
+        const title = (
+          document.getElementById("pub-title")?.value || ""
+        ).trim();
+        const category =
+          document.getElementById("pub-category")?.value || "Article";
+        const author = (
+          document.getElementById("pub-author")?.value || ""
+        ).trim();
+        const issue = (
+          document.getElementById("pub-issue")?.value || ""
+        ).trim();
+        const publishDate = (
+          document.getElementById("pub-date")?.value || ""
+        ).trim();
+        const coverUrl = (
+          document.getElementById("pub-cover")?.value || ""
+        ).trim();
+        const fileUrl = (
+          document.getElementById("pub-file-url")?.value || ""
+        ).trim();
+        const summary = (
+          document.getElementById("pub-summary")?.value || ""
+        ).trim();
+        const content = (
+          document.getElementById("pub-content")?.value || ""
+        ).trim();
+        const shouldNotify = Boolean(
+          document.getElementById("pub-notify")?.checked,
+        );
+
+        if (!title || !summary) {
+          return showToast("Title and short summary are required.", "error");
+        }
+        if (coverUrl && !isSafeHttpUrl(coverUrl)) {
+          return showToast(
+            "Cover image URL must start with http:// or https://.",
+            "error",
+          );
+        }
+        if (fileUrl && !isSafeHttpUrl(fileUrl)) {
+          return showToast(
+            "Document/PDF link must start with http:// or https://.",
+            "error",
+          );
+        }
+
+        const btn = document.getElementById("pub-save-btn");
+        if (btn) btn.disabled = true;
+        try {
+          if (id) {
+            await updateDoc(doc(db, "publications", id), {
+              title,
+              category,
+              author,
+              issue,
+              publishDate,
+              coverUrl,
+              fileUrl,
+              summary,
+              content,
+              updatedAt: serverTimestamp(),
+              updatedBy: currentUserProfile?.name || "Admin",
+            });
+            showToast("Publication updated!");
+          } else {
+            await addDoc(collection(db, "publications"), {
+              title,
+              category,
+              author,
+              issue,
+              publishDate,
+              coverUrl,
+              fileUrl,
+              summary,
+              content,
+              createdAt: serverTimestamp(),
+              createdByUid: currentUser?.uid || "",
+              authorName: currentUserProfile?.name || "Admin",
+            });
+            if (shouldNotify) {
+              await createAppNotification({
+                type: "publication",
+                title: `New ${category}: ${title}`,
+                body: summary.slice(0, 120),
+                targetRole: "all",
+                targetTab: "publication",
+                createdByUid: currentUser?.uid || "",
+                authorName: author || currentUserProfile?.name || "Admin",
+              });
+            }
+            showToast("Publication added!");
+          }
+          closePublicationEditorModal();
+        } catch (err) {
+          showToast(
+            "Failed to save publication: " + (err?.message || err),
+            "error",
+          );
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      window.deletePublicationItem = async (id) => {
+        if (!requireSectorEdit("publication")) return;
+        const pub = allPublications.find((x) => x.id === id);
+        if (!confirm(`Delete publication "${pub?.title || "this item"}"?`))
+          return;
+        try {
+          await deleteDoc(doc(db, "publications", id));
+          showToast("Publication deleted.", "warn");
+        } catch (err) {
+          showToast("Delete failed: " + (err?.message || err), "error");
+        }
+      };
+
+      window.openPublicationReaderModal = (id) => {
+        const pub = allPublications.find((x) => x.id === id);
+        const body = document.getElementById("publication-reader-body");
+        const modal = document.getElementById("publication-reader-modal");
+        if (!pub || !body || !modal) return;
+        body.innerHTML = `
+          ${
+            isSafeHttpUrl(pub.coverUrl)
+              ? `<img src="${escapeHtml(pub.coverUrl)}" class="w-full max-h-60 object-cover border-b border-emerald-100" />`
+              : `<div class="h-20 bg-gradient-to-r from-rose-700 via-emerald-800 to-teal-700 flex items-center justify-center text-white"><i data-lucide="book-open-text" class="w-8 h-8"></i></div>`
+          }
+          <div class="p-5 sm:p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800">${escapeHtml(pub.category || "Article")}</span>
+                  ${pub.issue ? `<span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">${escapeHtml(pub.issue)}</span>` : ""}
+                </div>
+                <h3 class="text-xl font-extrabold text-emerald-950 mt-1.5">${escapeHtml(pub.title || "")}</h3>
+                <p class="text-xs text-slate-500 mt-0.5">${pub.author ? `By ${escapeHtml(pub.author)}` : "CSF"}${pub.publishDate ? ` • ${escapeHtml(pub.publishDate)}` : ""}</p>
+              </div>
+              <button type="button" onclick="closePublicationReaderModal()" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="bg-emerald-50/80 border border-emerald-100 rounded-2xl p-3.5 text-xs text-emerald-950 font-medium leading-relaxed">
+              ${escapeHtml(pub.summary || "")}
+            </div>
+            ${
+              pub.content
+                ? `<div class="text-sm text-slate-700 whitespace-pre-line leading-relaxed">${escapeHtml(pub.content)}</div>`
+                : ""
+            }
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-emerald-100">
+              ${
+                isSafeHttpUrl(pub.fileUrl)
+                  ? `<a href="${escapeHtml(pub.fileUrl)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white inline-flex items-center gap-1.5"><i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>Open Full PDF / Document</span></a>`
+                  : ""
+              }
+              <button type="button" onclick="closePublicationReaderModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700">Close</button>
+            </div>
+          </div>`;
+        modal.classList.remove("hidden");
+        lucide.createIcons();
+      };
+
+      window.closePublicationReaderModal = () => {
+        document
+          .getElementById("publication-reader-modal")
+          ?.classList.add("hidden");
+      };
+
+      window.renderAdminPublicationsList = () => {
+        const list = document.getElementById("admin-publications-list");
+        if (!list || !hasAdminPanelAccess()) return;
+        if (publicationsPermissionDenied) {
+          list.innerHTML = `<div class="col-span-full bg-amber-50 border border-amber-300 rounded-2xl p-4 text-xs text-amber-900">Firestore permission needed for <code class="font-mono font-bold">publications</code> collection in Firebase Console Rules.</div>`;
+          return;
+        }
+        if (!allPublications.length) {
+          list.innerHTML = `<p class="col-span-full text-sm text-slate-500 text-center py-6">No publications added yet. Click "+ New Publication" to publish one.</p>`;
+          return;
+        }
+        const editable = canEditSector("publication");
+        list.innerHTML = allPublications
+          .map(
+            (p) => `
+              <div class="bg-white/85 border border-emerald-100 rounded-2xl p-4 flex flex-col justify-between gap-2.5">
+                <div>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">${escapeHtml(p.category || "Article")}</span>
+                    <span class="text-[11px] text-slate-500">${escapeHtml(p.publishDate || "")}</span>
+                  </div>
+                  <h4 class="text-sm font-extrabold text-emerald-950 mt-1">${escapeHtml(p.title || "")}</h4>
+                  <p class="text-xs text-slate-600 line-clamp-2 mt-0.5">${escapeHtml(p.summary || "")}</p>
+                </div>
+                <div class="flex items-center justify-between gap-2 pt-2 border-t border-emerald-100">
+                  <span class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(p.author || "CSF")}${p.issue ? ` • ${escapeHtml(p.issue)}` : ""}</span>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" data-allow-viewonly="true" onclick="openPublicationReaderModal('${p.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">Read</button>
+                    <button type="button" ${editable ? "" : "disabled"} onclick="openPublicationEditorModal('${p.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Edit</button>
+                    <button type="button" ${editable ? "" : "disabled"} onclick="deletePublicationItem('${p.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-600 border border-red-200">Delete</button>
+                  </div>
+                </div>
+              </div>`,
+          )
+          .join("");
+        if (activeTab === "admin" && activeAdminSector === "publication") {
+          applySectorReadOnlyState("publication");
+        }
+        lucide.createIcons();
       };
     </script>
     <script>
