@@ -766,6 +766,68 @@
         border-color: #7dd3fc;
         color: #075985;
       }
+      /* View-only month cells (normal members: cannot click/select) */
+      .annual-month-static {
+        display: inline-block;
+        min-width: 60px;
+        padding: 5px 4px;
+        text-align: center;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        background: #f8fafc;
+        color: #94a3b8;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: default;
+      }
+      .annual-month-static.annual-paid-exact {
+        background-color: #dcfce7;
+        border-color: #86efac;
+        color: #166534;
+      }
+      .annual-month-static.annual-paid-extra {
+        background-color: #fef3c7;
+        border-color: #fcd34d;
+        color: #92400e;
+      }
+      .annual-month-static.annual-paid-partial {
+        background-color: #e0f2fe;
+        border-color: #7dd3fc;
+        color: #075985;
+      }
+      .annual-month-static.annual-unpaid {
+        background-color: #fee2e2;
+        border-color: #fca5a5;
+        color: #b91c1c;
+      }
+      html.dark .annual-month-static {
+        background-color: rgba(51, 65, 85, 0.5);
+        border-color: rgba(148, 163, 184, 0.35);
+        color: #94a3b8;
+      }
+      html.dark .annual-month-static.annual-paid-exact {
+        background-color: rgba(34, 197, 94, 0.2) !important;
+        border-color: rgba(74, 222, 128, 0.5) !important;
+        color: #86efac !important;
+      }
+      html.dark .annual-month-static.annual-paid-extra {
+        background-color: rgba(251, 191, 36, 0.2) !important;
+        border-color: rgba(251, 191, 36, 0.55) !important;
+        color: #fcd34d !important;
+      }
+      html.dark .annual-month-static.annual-paid-partial {
+        background-color: rgba(56, 189, 248, 0.2) !important;
+        border-color: rgba(56, 189, 248, 0.5) !important;
+        color: #7dd3fc !important;
+      }
+      html.dark .annual-month-static.annual-unpaid {
+        background-color: rgba(239, 68, 68, 0.2) !important;
+        border-color: rgba(248, 113, 113, 0.55) !important;
+        color: #fca5a5 !important;
+      }
       html.dark .annual-sheet-table th,
       html.dark .annual-sheet-table td {
         border-bottom-color: rgba(148, 163, 184, 0.2);
@@ -3202,7 +3264,7 @@
                 <input
                   id="pay-token-note"
                   type="text"
-                  placeholder="Note / Purpose (Optional)"
+                  placeholder="CSF ID (Optional)"
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
@@ -4951,8 +5013,16 @@
                         </span>
                       </div>
                       <div
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-2"
                       >
+                        <input
+                          id="fin-annual-entry-search"
+                          type="search"
+                          autocomplete="off"
+                          oninput="onAnnualEntrySearch()"
+                          placeholder="🔍 CSF ID / নাম লিখে সার্চ করুন..."
+                          class="lg:col-span-2 px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
                         <select
                           id="fin-annual-entry-member"
                           required
@@ -5046,6 +5116,12 @@
                             class="w-3 h-3 rounded bg-sky-100 border border-sky-300 inline-block"
                           ></span>
                           Partial (&lt;11৳)</span
+                        >
+                        <span class="inline-flex items-center gap-1.5"
+                          ><span
+                            class="w-3 h-3 rounded bg-red-100 border border-red-300 inline-block"
+                          ></span>
+                          Unpaid (Due)</span
                         >
                       </div>
                       <span
@@ -12546,10 +12622,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const fixed =
           Number(sheetSource?.monthlyFee) > 0
             ? Number(sheetSource.monthlyFee)
-            : 11;
+            : 11; 
         const val = Math.floor(Number(amtEl.value) || 0);
         if (!(val > 0)) {
-          hintEl.className = "text-[11px] font-semibold text-red-600 mt-1";
+          hintEl.className = "text-[11px] font-semibold text-red-600 mt-1"; 
           hintEl.textContent = `Mandatory monthly fee: ৳${fixed}`;
           return;
         }
@@ -12934,6 +13010,15 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           }
 
           if (m.isDueWindow) {
+            // Only Admin / Sub-Admin (finance) can click a month box; members just see status
+            if (!canEditSector("finance")) {
+              return `
+              <div class="rounded-xl p-2 border bg-red-50 border-red-200 text-center select-none pointer-events-none" style="user-select:none;-webkit-user-select:none;cursor:default">
+                <p class="text-[11px] font-bold text-red-900">${m.shortName}</p>
+                <p class="text-[11px] font-extrabold text-red-600 mt-0.5">${m.effectivePaid > 0 ? `৳${m.effectivePaid}/${monthlyFee}` : "Not Paid"}</p>
+                <p class="text-[9px] font-bold text-red-700">Due ৳${m.remaining}</p>
+              </div>`;
+            }
             return `
               <button
                 type="button"
@@ -13024,7 +13109,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                   <span>আগের ${dueMonths.length}টি মাসের Token Donation বকেয়া আছে! (Previous Months Unpaid)</span>
                 </p>
                 <p class="text-xs text-amber-800">
-                  বকেয়া মাস: <strong>${dueMonths.map((d) => d.shortName).join(", ")} ${targetYear}</strong> (মোট বকেয়া: <strong>৳${totalDueAmt}</strong>)। নিচের লাল ঘরে ক্লিক করে পরিশোধ করতে পারবেন।
+                  বকেয়া মাস: <strong>${dueMonths.map((d) => d.shortName).join(", ")} ${targetYear}</strong> (মোট বকেয়া: <strong>৳${totalDueAmt}</strong>)।
                 </p>
               </div>
               <button
@@ -15089,13 +15174,23 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const sel = document.getElementById("fin-annual-entry-member");
         if (!sel || !sheet) return;
         const prevVal = sel.value;
+        const eq = (document.getElementById("fin-annual-entry-search")?.value || "")
+          .trim()
+          .toLowerCase();
+        const matchQ = (x) =>
+          !eq ||
+          (x.name || "").toLowerCase().includes(eq) ||
+          (x.csfId || "").toLowerCase().includes(eq);
         const opts = ['<option value="">Select Member...</option>'];
         const existingUids = new Set();
         const existingNames = new Set();
+        const matchedValues = [];
         sheet.members.forEach((m, idx) => {
           if (m.uid) existingUids.add(m.uid);
           if (m.id) existingUids.add(m.id);
           if (m.name) existingNames.add(m.name.trim().toLowerCase());
+          if (!matchQ(m)) return;
+          matchedValues.push(`row:${idx}`);
           opts.push(
             `<option value="row:${idx}">${escapeHtml(m.name || "Member")}${m.csfId ? ` (${escapeHtml(m.csfId)})` : ""}</option>`,
           );
@@ -15105,6 +15200,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             (pm) =>
               pm.approved !== false &&
               (pm.name || "").trim() &&
+              matchQ(pm) &&
               !existingUids.has(pm.id) &&
               !(pm.uid && existingUids.has(pm.uid)) &&
               !existingNames.has(pm.name.trim().toLowerCase()),
@@ -15112,6 +15208,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           .sort((a, b) =>
             String(a.name || "").localeCompare(String(b.name || "")),
           );
+        extraPortal.forEach((pm) => matchedValues.push(`portal:${pm.id}`));
         if (extraPortal.length) {
           opts.push(
             `<optgroup label="Portal Members (Not in ${sheet.year} sheet yet)">${extraPortal
@@ -15123,13 +15220,21 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           );
         }
         sel.innerHTML = opts.join("");
-        if (
+        if (eq && matchedValues.length === 1) {
+          sel.value = matchedValues[0];
+        } else if (
           prevVal &&
           Array.from(sel.options).some((o) => o.value === prevVal)
         ) {
           sel.value = prevVal;
         }
       }
+
+      window.onAnnualEntrySearch = () => {
+        const sheet = getOrCreateAnnualSheet(activeAnnualYear);
+        populateAnnualManualEntryMembers(sheet);
+        renderAnnualSheetTableOnly();
+      };
 
       function updateAnnualSummaryCardsAndFooter(sheet) {
         const stats = computeAnnualTotals(sheet);
@@ -15169,6 +15274,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const q = (document.getElementById("fin-annual-search")?.value || "")
           .trim()
           .toLowerCase();
+        const entryQ = (
+          document.getElementById("fin-annual-entry-search")?.value || ""
+        )
+          .trim()
+          .toLowerCase();
 
         const theadRow = document.getElementById("fin-annual-thead-row");
         if (theadRow) {
@@ -15191,11 +15301,12 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const indexed = sheet.members
           .map((m, idx) => ({ m, idx, rowStat: stats.rowStats[idx] }))
           .filter(({ m }) => {
-            if (!q) return true;
-            return (
-              (m.name || "").toLowerCase().includes(q) ||
-              (m.csfId || "").toLowerCase().includes(q)
-            );
+            const name = (m.name || "").toLowerCase();
+            const cid = (m.csfId || "").toLowerCase();
+            if (q && !(name.includes(q) || cid.includes(q))) return false;
+            if (entryQ && !(name.includes(entryQ) || cid.includes(entryQ)))
+              return false;
+            return true;
           });
 
         if (!indexed.length) {
@@ -15228,6 +15339,18 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             const monthsHtml = m.months
               .map((val, mIdx) => {
                 const cls = annualInputColorClass(val, fixed);
+                if (!canEdit) {
+                  const isDue = curMIdx >= 0 && mIdx <= curMIdx;
+                  const paidAmt = Number(val) || 0;
+                  const staticCls = paidAmt > 0 ? cls : isDue ? "annual-unpaid" : "";
+                  const label =
+                    paidAmt > 0
+                      ? `✓ ${paidAmt}`
+                      : isDue
+                        ? "Unpaid"
+                        : "—";
+                  return `<td><span class="annual-month-static ${staticCls}" aria-readonly="true">${label}</span></td>`;
+                }
                 return `<td>
                   <input
                     type="number"
@@ -15331,6 +15454,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         populateAnnualYearSelector();
         populateAnnualManualEntryMembers(sheet);
 
+        ["fin-annual-manual-entry-box", "fin-annual-add-form"].forEach((id) => {
+          document.getElementById(id)?.classList.toggle("hidden", !canEdit);
+        });
+
         const badge = document.getElementById("fin-annual-status-badge");
         if (badge) {
           badge.textContent = isClosed
@@ -15382,6 +15509,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           "fin-annual-sync-members-btn",
           "fin-annual-sync-pay-btn",
           "fin-annual-save-btn",
+          "fin-annual-entry-search",
           "fin-annual-entry-member",
           "fin-annual-entry-target",
           "fin-annual-entry-mode",
@@ -15603,6 +15731,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           }
           const curVal = Math.max(0, Math.round(Number(row.months[mIdx]) || 0));
           row.months[mIdx] = modeVal === "add" ? curVal + amt : amt;
+          // Amount > fixed fee: cap this month, spread the rest over unpaid months, remainder -> Extra
+          const normM = normalizeMonthsAndExtra(row.months, row.extra, fixed);
+          row.months = normM.months;
+          row.extra = normM.extra;
           targetLabel = FULL_MONTH_NAMES[mIdx];
         }
 
