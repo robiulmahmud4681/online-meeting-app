@@ -3070,12 +3070,21 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="glass rounded-2xl p-3 text-center">
-              <p class="text-[11px] text-slate-500 font-semibold">Total Paid</p>
+              <p class="text-[11px] text-slate-500 font-semibold">Monthly Fee Paid</p>
               <p
                 id="mypay-total"
                 class="text-lg font-extrabold text-emerald-700"
+              >
+                ৳0
+              </p>
+            </div>
+            <div class="glass rounded-2xl p-3 text-center">
+              <p class="text-[11px] text-slate-500 font-semibold">Free Donation Paid</p>
+              <p
+                id="mypay-total-free"
+                class="text-lg font-extrabold text-sky-700"
               >
                 ৳0
               </p>
@@ -3123,7 +3132,7 @@
               class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition bg-emerald-700 text-white shadow flex items-center justify-center gap-1.5"
             >
               <i data-lucide="coins" class="w-4 h-4"></i>
-              <span>Token Donation (৳11)</span>
+              <span>Monthly Fee (৳11)</span>
             </button>
             <button
               type="button"
@@ -3153,7 +3162,7 @@
                     class="w-4 h-4 text-emerald-600"
                   ></i>
                   <span id="mypay-monthly-title"
-                    >Token Donation • Monthly ৳11 Status</span
+                    >Monthly ৳11 Payment Status</span
                   >
                 </h3>
                 <span
@@ -3184,7 +3193,7 @@
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <h3 class="font-bold text-emerald-950 flex items-center gap-2">
                   <i data-lucide="coins" class="w-4 h-4 text-emerald-600"></i>
-                  <span>Token Donation (Mandatory Monthly ৳11)</span>
+                  <span>Send Payment (Monthly Fee)</span>
                 </h3>
                 <span
                   class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"
@@ -3195,17 +3204,13 @@
               <div
                 class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1"
               >
-                <p class="font-bold">3-Step Token Donation Process:</p>
+                <p class="font-bold">কীভাবে পেমেন্ট করবেন:</p>
                 <p>
-                  <strong>1. Send Request:</strong> Each month is
-                  <strong>৳11</strong>. A larger amount is automatically spread
-                  over your unpaid months (৳11 each); anything left after all 12
-                  months goes to <strong>Extra Donation</strong>.
-                  <strong>2. Send Money &amp; Submit Proof:</strong> After Admin
-                  approves, send the amount to Collector's number above and
-                  submit your <strong>Sender Number &amp; TrxID</strong>.
-                  <strong>3. Collector Confirm &amp; Receipt:</strong> Collector
-                  confirms TrxID &amp; unlocks your signed Money Receipt.
+                  <strong>1.</strong> উপরের নম্বরে bKash/Nagad/Rocket থেকে টাকা পাঠান।
+                  <strong>2.</strong> নিচে টাকার পরিমাণ, আপনার <strong>CSF ID</strong>,
+                  <strong>Transaction ID</strong> ও যে নম্বর থেকে পাঠিয়েছেন সেটি দিয়ে Submit করুন।
+                  <strong>3.</strong> Admin Approve করলে আপনার মাস <strong>Paid</strong> দেখাবে।
+                  প্রতি মাস ৳11; বেশি দিলে বকেয়া মাসে ভাগ হবে, বাকিটা Extra হবে।
                 </p>
               </div>
               <form
@@ -3221,9 +3226,9 @@
                       min="1"
                       step="1"
                       required
-                      value="11"
+                      value=""
                       oninput="updateTokenExtraHint()"
-                      placeholder="Minimum Donation: ৳11 or *"
+                      placeholder="Enter your Ammount*"
                       class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                     <p
@@ -3257,14 +3262,31 @@
                   <input
                     id="pay-token-sender-number"
                     type="text"
-                    placeholder="Your Sender Account / Mobile No. (Optional)"
+                    placeholder="Your Sender Account / Mobile No. *"
                     class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    id="pay-token-csfid"
+                    type="text"
+                    required
+                    placeholder="Your CSF ID *"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    id="pay-token-trx"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Transaction ID (TrxID) *"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
                 <input
                   id="pay-token-note"
                   type="text"
-                  placeholder="CSF ID (Optional)"
+                  optional
+                  placeholder="Note / Purpose (Optional)"
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
@@ -3272,7 +3294,7 @@
                   type="submit"
                   class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 transition"
                 >
-                  Send Token Donation Request (৳11 Monthly)
+                  Submit Payment
                 </button>
               </form>
             </div>
@@ -3304,15 +3326,10 @@
                   How Free Donation &amp; Money Receipt Works (3 Simple Steps):
                 </p>
                 <p>
-                  <strong>1. Send Request:</strong> Submit your desired amount,
-                  method, and sender number below.
-                  <strong>2. Send Money &amp; Submit Proof:</strong> Once Admin
-                  approves, send the amount to the Collector's receiving number
-                  above and submit your
-                  <strong>Sender Number &amp; Transaction ID</strong>.
-                  <strong>3. Collector Confirm &amp; Receipt:</strong> Collector
-                  confirms your TrxID, unlocking your signed official English
-                  Money Receipt.
+                  <strong>1.</strong> উপরের নম্বরে bKash/Nagad/Rocket থেকে টাকা পাঠান।
+                  <strong>2.</strong> নিচে টাকার পরিমাণ, আপনার <strong>CSF ID</strong>,
+                  <strong>Transaction ID</strong> ও যে নম্বর থেকে পাঠিয়েছেন সেটি দিয়ে Submit করুন।
+                  <strong>3.</strong> Admin Approve করলে আপনার Money Receipt পাবেন।
                 </p>
               </div>
               <form
@@ -3355,13 +3372,30 @@
                   <input
                     id="pay-sender-number"
                     type="text"
-                    placeholder="Your Sender Account / Mobile No. (Optional)"
+                    placeholder="Your Sender Account / Mobile No. *"
                     class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    id="pay-csfid"
+                    type="text"
+                    required
+                    placeholder="Your CSF ID *"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    id="pay-trx"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Transaction ID (TrxID) *"
+                    class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
                 <input
                   id="pay-note"
                   type="text"
+                  optinal
                   placeholder="Note / Purpose (Optional)"
                   class="w-full px-3.5 py-2.5 bg-white/80 border border-emerald-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
@@ -3370,7 +3404,7 @@
                   type="submit"
                   class="w-full bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 transition"
                 >
-                  Send Free Donation Request
+                  Submit Free Donation
                 </button>
               </form>
             </div>
@@ -12513,7 +12547,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           typeof p === "object" &&
           p.memberProofSubmitted
         ) {
-          return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 bg-indigo-100 text-indigo-800 border-indigo-300">Proof Sent • Waiting Collector</span>`;
+          return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 bg-indigo-100 text-indigo-800 border-indigo-300">Submitted • Waiting Admin Approval</span>`;
         }
         const map = {
           requested: "bg-amber-100 text-amber-800 border-amber-300",
@@ -12622,10 +12656,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const fixed =
           Number(sheetSource?.monthlyFee) > 0
             ? Number(sheetSource.monthlyFee)
-            : 11; 
+            : 11;
         const val = Math.floor(Number(amtEl.value) || 0);
         if (!(val > 0)) {
-          hintEl.className = "text-[11px] font-semibold text-red-600 mt-1"; 
+          hintEl.className = "text-[11px] font-semibold text-red-600 mt-1";
           hintEl.textContent = `Mandatory monthly fee: ৳${fixed}`;
           return;
         }
@@ -12686,6 +12720,17 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             currentUserProfile?.phone
           ) {
             el.value = currentUserProfile.phone;
+          }
+        });
+        ["pay-token-csfid", "pay-csfid"].forEach((cid) => {
+          const el = document.getElementById(cid);
+          if (
+            el &&
+            !el.value &&
+            document.activeElement !== el &&
+            currentUserProfile?.csfId
+          ) {
+            el.value = currentUserProfile.csfId;
           }
         });
         updateTokenExtraHint();
@@ -13058,7 +13103,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             </div>`;
         }
         if (titleEl) {
-          titleEl.textContent = `Token Donation • Monthly ৳${monthlyFee} Status (${targetYear})`;
+          titleEl.textContent = `Monthly ৳${monthlyFee} Payment Status (${targetYear})`;
         }
         if (pillEl) {
           pillEl.textContent = `${paidCount} / 12 Paid`;
@@ -13135,7 +13180,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const listEl = document.getElementById("mypay-list");
         const mine = allPayments.filter((p) => p.uid === currentUser?.uid);
         const total = mine
-          .filter(isPaymentConfirmed)
+          .filter((p) => isPaymentConfirmed(p) && isTokenDonationPayment(p))
+          .reduce((s, p) => s + Number(p.amount || 0), 0);
+        const totalFree = mine
+          .filter((p) => isPaymentConfirmed(p) && !isTokenDonationPayment(p))
           .reduce((s, p) => s + Number(p.amount || 0), 0);
         const pending = mine
           .filter(isPaymentPending)
@@ -13144,6 +13192,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const pendEl = document.getElementById("mypay-pending");
         const cntEl = document.getElementById("mypay-count");
         if (totalEl) totalEl.textContent = BDT(total);
+        const totalFreeEl = document.getElementById("mypay-total-free");
+        if (totalFreeEl) totalFreeEl.textContent = BDT(totalFree);
         if (pendEl) pendEl.textContent = BDT(pending);
         if (cntEl) cntEl.textContent = mine.length;
 
@@ -13188,7 +13238,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               stepHint = `
               <div class="mt-2.5 bg-sky-50/90 border border-sky-200 rounded-xl p-3 space-y-2.5">
                 <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <p class="text-xs font-extrabold text-sky-950">Step 2: Send ${BDT(p.amount)} &amp; Submit Proof</p>
+                  <p class="text-xs font-extrabold text-sky-950">Payment Submitted • ${BDT(p.amount)}</p>
                   <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-sky-800 border border-sky-200">From Your bKash/Nagad App</span>
                 </div>
                 <div id="mem-pay-dest-${p.id}" class="flex items-center justify-between gap-2 bg-white border border-sky-200 rounded-lg px-3 py-2">
@@ -13206,11 +13256,11 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                   proofSubmitted
                     ? `<div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 flex items-start justify-between gap-2 flex-wrap">
                         <div class="text-[11px] text-emerald-900 space-y-0.5">
-                          <p class="font-bold">Proof Submitted — Waiting for Collector Verification</p>
+                          <p class="font-bold">Payment Submitted — Waiting for Admin Approval</p>
                           ${p.senderNumber ? `<p><strong>Sent From:</strong> ${escapeHtml(p.senderNumber)}</p>` : ""}
                           <p class="break-all"><strong>TrxID / Proof:</strong> ${trxHtml(existingTrx)}</p>
                         </div>
-                        <button type="button" onclick="toggleMemberProofEdit('${p.id}')" class="text-[11px] font-bold text-emerald-800 bg-white hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition">Edit Proof</button>
+                        
                       </div>`
                     : `<p class="text-[11px] text-sky-900 leading-relaxed">1. Copy the Collector number above. 2. Open your bKash/Nagad/Rocket app and <strong>Send Money (${BDT(p.amount)})</strong>. 3. Enter your Sender Number &amp; TrxID below.</p>`
                 }
@@ -13235,7 +13285,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 p.category || p.purpose || "",
               );
             const modePill = isTok
-              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Token Donation</span>`
+              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Monthly Fee</span>`
               : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">Free Donation</span>`;
 
             return `
@@ -13366,7 +13416,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const paymentMethod =
           document.getElementById(isToken ? "pay-token-method" : "pay-method")
             ?.value || "bKash";
-        const senderNumber = (
+        let senderNumber = (
           document.getElementById(
             isToken ? "pay-token-sender-number" : "pay-sender-number",
           )?.value || ""
@@ -13376,9 +13426,18 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             ?.value || ""
         ).trim();
 
+        const csfIdInput = (
+          document.getElementById(isToken ? "pay-token-csfid" : "pay-csfid")
+            ?.value || ""
+        ).trim();
+        let trxInput = (
+          document.getElementById(isToken ? "pay-token-trx" : "pay-trx")
+            ?.value || ""
+        ).trim();
+
         let category = "";
         if (isToken) {
-          category = "Token Donation (Monthly ৳11)";
+          category = "Monthly Fee (৳11)";
         } else {
           const catSel = document.getElementById("pay-category");
           category =
@@ -13387,13 +13446,32 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             return showToast("Please select a category.", "error");
         }
         if (!(amount > 0)) return showToast("Enter a valid amount.", "error");
+        {
+          if (!csfIdInput) return showToast("Please enter your CSF ID.", "error");
+          if (paymentMethod === "Cash") {
+            if (!senderNumber)
+              senderNumber = currentUserProfile?.phone || "Hand-to-Hand";
+            if (!trxInput) trxInput = "Cash given in person";
+          } else {
+            if (!senderNumber)
+              return showToast(
+                "Please enter the number you sent money from.",
+                "error",
+              );
+            if (!trxInput)
+              return showToast(
+                "Please enter your Transaction ID (TrxID).",
+                "error",
+              );
+          }
+        }
 
         if (btn) btn.disabled = true;
         try {
           await addDoc(collection(db, "payments"), {
             uid: currentUser.uid,
             name: currentUserProfile.name || "Member",
-            csfId: (currentUserProfile.csfId || "").trim(),
+            csfId: csfIdInput || (currentUserProfile.csfId || "").trim(),
             phone: currentUserProfile.phone || "",
             senderNumber,
             amount,
@@ -13405,9 +13483,10 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
               }),
             paymentMethod,
             note,
-            trxId: "",
-            memberTrxId: "",
-            memberProofSubmitted: false,
+            trxId: trxInput,
+            memberTrxId: trxInput,
+            memberProofSubmitted: true,
+            memberPaidAt: serverTimestamp(),
             collectorName: "",
             receiptNo: "",
             collectorConfirmed: false,
@@ -13415,17 +13494,17 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             donationType: isToken ? "Token Donation" : "Free Donation",
             category: category || "Free Donation",
             purpose: isToken
-              ? "Token Donation (Monthly ৳11)"
+              ? "Monthly Fee (৳11)"
               : category || "Free Donation",
-            status: "requested",
+            status: "awaiting_collector",
             createdAt: serverTimestamp(),
           });
           createAppNotification({
             type: "payment",
             title: isToken
-              ? "New Token Donation Request"
-              : "New Free Donation Request",
-            body: `${currentUserProfile.name || "A member"} requested ${isToken ? "Token Donation (৳11)" : "Free Donation"} of ${BDT(amount)}.`,
+              ? "New Payment Submitted • Verify & Approve"
+              : "New Free Donation Submitted • Verify & Approve",
+            body: `${currentUserProfile.name || "A member"} (${csfIdInput}) sent ${BDT(amount)} via ${paymentMethod} from ${senderNumber} (TrxID: ${trxInput}). Please verify & approve.`,
             targetRole: "admin",
             targetTab: "admin",
             createdByUid: currentUser.uid,
@@ -13441,8 +13520,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           renderPaymentInfo();
           showToast(
             isToken
-              ? "Token Donation request sent! Wait for Admin approval."
-              : "Free Donation request sent! Wait for Admin approval.",
+              ? "Payment submitted! Admin approve korle Paid dekhabe."
+              : "Free Donation submitted! Admin approve korle Receipt pabe.",
           );
         } catch (err) {
           showToast("Failed to submit: " + err.message, "error");
@@ -13757,7 +13836,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
                 p.category || p.purpose || "",
               );
             const finModeBadge = isTokReq
-              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Token Donation</span>`
+              ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Monthly Fee</span>`
               : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">Free Donation</span>`;
 
             return `
@@ -13787,6 +13866,25 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
             </div>`;
           })
           .join("");
+        {
+          const conf = allPayments.filter(isPaymentConfirmed);
+          const mf = conf.filter(isTokenDonationPayment);
+          const fd = conf.filter((x) => !isTokenDonationPayment(x));
+          const sum = (arr) => arr.reduce((t, x) => t + Number(x.amount || 0), 0);
+          el.insertAdjacentHTML(
+            "afterbegin",
+            `<div class="col-span-full grid grid-cols-2 gap-2">
+              <div class="rounded-xl p-3 border bg-emerald-50 border-emerald-200 text-center">
+                <p class="text-[11px] font-bold text-emerald-900">Monthly Fee Total (Confirmed)</p>
+                <p class="text-base font-extrabold text-emerald-700">${BDT(sum(mf))} <span class="text-[10px] font-semibold">• ${mf.length} receipt(s)</span></p>
+              </div>
+              <div class="rounded-xl p-3 border bg-sky-50 border-sky-200 text-center">
+                <p class="text-[11px] font-bold text-sky-900">Free Donation Total (Confirmed)</p>
+                <p class="text-base font-extrabold text-sky-700">${BDT(sum(fd))} <span class="text-[10px] font-semibold">• ${fd.length} receipt(s)</span></p>
+              </div>
+            </div>`,
+          );
+        }
         lucide.createIcons();
       };
 
@@ -13852,20 +13950,26 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         }
 
         try {
-          const existingCount = allPayments.filter((x) => x.receiptNo).length;
+          // Monthly Fee and Free Donation have separate receipt series
+          const isMonthlyPay = isTokenDonationPayment(p);
+          const rcPrefix = isMonthlyPay ? "CSF-MF" : "CSF-FD";
+          const rcSeqKey = isMonthlyPay ? "receiptSeqMonthly" : "receiptSeqFree";
+          const existingCount = allPayments.filter(
+            (x) => x.receiptNo && String(x.receiptNo).startsWith(rcPrefix),
+          ).length;
           const nextSeq =
-            Math.max(Number(paymentSettings.receiptSeq || 0), existingCount) +
+            Math.max(Number(paymentSettings[rcSeqKey] || 0), existingCount) +
             1;
           const receiptNo =
-            p.receiptNo || `CSF-MR-${String(nextSeq).padStart(5, "0")}`;
+            p.receiptNo || `${rcPrefix}-${String(nextSeq).padStart(5, "0")}`;
 
           if (!p.receiptNo) {
             await setDoc(
               doc(db, "settings", "payment"),
-              { receiptSeq: nextSeq },
+              { [rcSeqKey]: nextSeq },
               { merge: true },
             );
-            paymentSettings.receiptSeq = nextSeq;
+            paymentSettings[rcSeqKey] = nextSeq;
           }
 
           await setDoc(doc(db, "finance", "pay_" + id), {
@@ -13973,7 +14077,8 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         const phoneVal = (p.phone || member?.phone || "").trim() || "N/A";
         const createdD = tsToDate(p.createdAt);
         const receiptNo = confirmed
-          ? p.receiptNo || `CSF-MR-${p.id.slice(0, 6).toUpperCase()}`
+          ? p.receiptNo ||
+            `${isTokenDonationPayment(p) ? "CSF-MF" : "CSF-FD"}-${p.id.slice(0, 6).toUpperCase()}`
           : "PENDING";
         const dateStr = fmtEnglishReceiptDate(
           confirmed
@@ -14021,6 +14126,9 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
           } catch (_) {}
         }
         return {
+          receiptTitle: isTokenDonationPayment(p)
+            ? "MONTHLY FEE RECEIPT"
+            : "FREE DONATION RECEIPT",
           yearClear,
           p,
           confirmed,
@@ -14104,7 +14212,7 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
 
               <div class="flex justify-center pt-1">
                 <span class="bg-emerald-800 text-white text-xs sm:text-sm font-bold tracking-wider uppercase px-6 py-1.5 rounded-full shadow-sm">
-                  MONEY RECEIPT
+                  ${escapeHtml(r.receiptTitle)}
                 </span>
               </div>
 
@@ -14264,14 +14372,14 @@ ${emailSettings.senderName || "Darber E Chandpurishah"}`;
         pdf.line(left + 6, top + 26.5, left + boxW - 6, top + 26.5);
 
         // MONEY RECEIPT pill
-        const pillW = 46;
+        const pillW = 68;
         const pillX = left + (boxW - pillW) / 2;
         pdf.setFillColor(6, 95, 70);
         pdf.roundedRect(pillX, top + 30, pillW, 8.5, 4, 4, "F");
         pdf.setTextColor(255, 255, 255);
         pdf.setFont("helvetica", "bold");
         pdf.setFontSize(10.5);
-        pdf.text("MONEY RECEIPT", left + boxW / 2, top + 35.8, {
+        pdf.text(r.receiptTitle, left + boxW / 2, top + 35.8, {
           align: "center",
         });
 
